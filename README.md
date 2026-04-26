@@ -70,40 +70,68 @@ Compare two datasets in seconds
 
 ## Installation
 
-### Clone Repository
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/ReginaldErzoah/Dift.git
 cd Dift
 ```
 
-### Create Virtual Environment
+### 2. Create a Virtual Environment
 
-```bash
+**Windows:**
+
+```powershell
 python -m venv .venv
-source .venv/Scripts/activate
+.venv\Scripts\activate
 ```
 
-### Install Dependencies
+**macOS / Linux:**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Install CLI Locally
+### 4. Install Dift in Editable Mode
 
 ```bash
 pip install -e .
 ```
 
+This installs the package in development mode so changes are reflected immediately without reinstalling.
+
+---
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `command not found: dift` | Make sure the virtual environment is activated and you ran `pip install -e .` |
+| `ModuleNotFoundError` | Run `pip install -r requirements.txt` to install all dependencies |
+| Permission denied on install | Use `pip install -e . --user` or run in a virtual environment |
+| CSV or Parquet examples not found | Ensure you are in the project root directory where `examples/` lives |
+
 ---
 
 ## Quick Start
 
-Run a comparison:
+Run a comparison with CSV:
 
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id
+```
+
+Or with Parquet:
+
+```bash
+dift examples/old.parquet examples/new.parquet --key customer_id
 ```
 
 Or:
