@@ -1,13 +1,13 @@
 # Dift
-<p align="center">
+<p align="left">
   <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
 
-<p align="center">
+<p align="left">
 Compare datasets. Detect changes. Trust your data.
 </p>
 
-<p align="center">
+<p align="left">
   <code>pip install dift-cli</code>
 </p>
 
