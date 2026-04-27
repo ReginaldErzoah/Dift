@@ -1,9 +1,7 @@
 # Dift
 <p align="center">
-  <img src="assets/dift-logo.png" width="220" alt="Dift Logo">
+  <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
-
-<h1 align="center">Dift</h1>
 
 <p align="center">
 Compare datasets. Detect changes. Trust your data.
