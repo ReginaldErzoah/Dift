@@ -8,11 +8,6 @@ def test_example_csv_files_exist():
     assert Path("examples/new.csv").exists()
 
 
-def test_example_parquet_files_exist():
-    assert Path("examples/old.parquet").exists()
-    assert Path("examples/new.parquet").exists()
-
-
 def test_examples_run_successfully():
     if not Path("examples/old.csv").exists() or not Path("examples/new.csv").exists():
         return
