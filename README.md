@@ -8,6 +8,8 @@ Dift is an open-source CLI tool that helps data professionals compare two datase
 - why it matters  
 - whether the new data is safe to trust  
 
+---
+
 ## Install Anywhere (Windows / Mac / Linux)
 
 ```bash
@@ -20,8 +22,8 @@ Then run:
 dift --help
 ```
 
-Install package name: dift-cli  
-Command name: dift
+Install package name: `dift-cli`  
+Command name: `dift`
 
 ---
 
@@ -40,14 +42,15 @@ Dift helps teams catch risky data changes **before they cause damage**.
 
 ---
 
-## Features (v0.1 MVP)
+## Features (v0.2)
 
-Compare two datasets in seconds
+Compare two datasets in seconds.
 
 ### Supported Formats
 
 - CSV
 - Parquet
+- Excel (`.xlsx`, `.xls`)
 
 ### Detect Changes
 
@@ -70,7 +73,13 @@ Compare two datasets in seconds
 
 ## Installation
 
-### Clone Repository
+### Install from PyPI
+
+```bash
+pip install dift-cli
+```
+
+### Or Clone Repository
 
 ```bash
 git clone https://github.com/ReginaldErzoah/Dift.git
@@ -100,19 +109,31 @@ pip install -e .
 
 ## Quick Start
 
-Run a comparison:
+### Compare CSV Files
 
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id
 ```
 
-Or:
+### Compare Parquet Files
+
+```bash
+dift examples/old.parquet examples/new.parquet --key customer_id
+```
+
+### Compare Excel Files
+
+```bash
+dift examples/old.xlsx examples/new.xlsx --key customer_id
+```
+
+### Run via Python Module
 
 ```bash
 python -m dift.cli examples/old.csv examples/new.csv --key customer_id
 ```
 
-Generate JSON report:
+### Generate JSON Report
 
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id --report json --output report.json
@@ -140,6 +161,22 @@ Risk Level: MEDIUM
 
 ---
 
+## Example Files Included
+
+```text
+examples/
+├── old.csv
+├── new.csv
+├── old.parquet
+├── new.parquet
+├── old.xlsx
+└── new.xlsx
+```
+
+Use them to test instantly.
+
+---
+
 ## Example Use Cases
 
 ### ETL Validation
@@ -152,6 +189,12 @@ dift before.csv after.csv
 
 ```bash
 dift yesterday.parquet today.parquet
+```
+
+### Excel File Audits
+
+```bash
+dift old.xlsx new.xlsx --key id
 ```
 
 ### Production vs Staging
@@ -177,8 +220,11 @@ dift/
 │   ├── comparator.py
 │   ├── schema_diff.py
 │   ├── row_diff.py
+│   ├── quality_diff.py
+│   ├── risk.py
 │   └── stats_diff.py
 ├── io/
+│   └── readers.py
 ├── reports/
 └── utils/
 
@@ -194,15 +240,24 @@ examples/
 pytest
 ```
 
+Lint code:
+
+```bash
+ruff check .
+```
+
 ---
 
 ## Roadmap
 
 ### v0.2
 
-- HTML reports
+- Excel support
 - Better console formatting
-- Performance improvements
+- Rich colors
+- Cleaner summary tables
+- JSON improvements
+- More example datasets
 
 ### v0.5
 
