@@ -9,22 +9,6 @@ Dift is an open-source CLI tool that helps data professionals compare two datase
 - why it matters  
 - whether the new data is safe to trust  
 
----
-
-## Install Anywhere (Windows / Mac / Linux)
-
-```bash
-pip install dift-cli
-```
-
-Then run:
-
-```bash
-dift --help
-```
-
-Install package name: `dift-cli`  
-Command name: `dift`
 
 ---
 
@@ -70,41 +54,86 @@ Compare two datasets in seconds.
 - Rich CLI report
 - JSON report export
 
+## Required version
+
+Requires Python 3.10+
+
 ---
-
-## Installation
-
-### Install from PyPI
+## Quick Install
 
 ```bash
 pip install dift-cli
 ```
 
-### Or Clone Repository
+Then run:
 
 ```bash
-git clone https://github.com/ReginaldErzoah/Dift.git
-cd Dift
+dift --help
 ```
 
-### Create Virtual Environment
+## Cross-Platform Setup
 
+### Windows Git Bash
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate
+pip install dift-cli
 ```
 
-### Install Dependencies
+### Windows PowerShell
+```powershell
+python -m venv .venv
+.venv\\Scripts\\Activate.ps1
+pip install dift-cli
+```
+
+If `dift` is not recognized, restart terminal or reinstall Python with "Add Python to PATH".
+
+### Mac / Linux
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install dift-cli
+```
+
+### pipx (Recommended for CLI tools)
+```bash
+pipx install dift-cli
+```
+
+If user does not have pipx,
+```bash
+python -m pip install pipx
+python -m pipx ensurepath
+```
+
+
+## Verify Install
 
 ```bash
-pip install -r requirements.txt
+dift --help
 ```
 
-### Install CLI Locally
+or
 
 ```bash
-pip install -e .
+python -m dift.cli --help
 ```
+
+## Upgrade Later
+
+```bash
+pip install --upgrade dift-cli
+```
+
+## If Command Not Found
+
+Use:
+
+```bash
+python -m dift.cli --help
+```
+
 
 ---
 
