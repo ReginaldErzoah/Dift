@@ -25,4 +25,4 @@ build/
 Thumbs.db
 
 report.json
-reports/
+RELEASE_CHECKLIST.md
