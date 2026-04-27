@@ -4,7 +4,7 @@ from pathlib import Path
 
 import polars as pl
 
-SUPPORTED_EXTENSIONS = {".csv", ".parquet"}
+SUPPORTED_EXTENSIONS = {".csv", ".parquet", ".xlsx", ".xls"}
 
 
 class DatasetReadError(ValueError):
@@ -25,6 +25,9 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
 
     if suffix == ".parquet":
         return pl.read_parquet(dataset_path)
+    
+    if suffix in {".xlsx", ".xls"}:
+        return pl.read_excel(dataset_path)
 
     raise DatasetReadError(
         f"Unsupported dataset type '{suffix}'. Supported types: {sorted(SUPPORTED_EXTENSIONS)}"
