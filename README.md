@@ -43,7 +43,7 @@ Dift helps teams catch risky data changes **before they cause damage**.
 
 ---
 
-## Features (v0.2)
+## Features (v0.1.1)
 
 Compare two datasets in seconds.
 
@@ -251,23 +251,22 @@ ruff check .
 
 ## Roadmap
 
-### v0.2
+### v0.1.2
 
-- Excel support
 - Better console formatting
 - Rich colors
 - Cleaner summary tables
 - JSON improvements
 - More example datasets
 
-### v0.5
+### v0.2.0
 
 - SQL database support
 - Postgres connector
 - Snowflake connector
 - BigQuery connector
 
-### v1.0
+### v0.5
 
 - CI/CD fail checks
 - dbt integration
