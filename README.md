@@ -47,7 +47,7 @@ Dift helps teams catch risky data changes **before they cause damage**.
 
 ---
 
-## Features (v0.2.0)
+## Features (v0.2.1)
 
 Compare two datasets in seconds.
 
@@ -95,6 +95,11 @@ Then run:
 
 ```bash
 dift --help
+```
+
+## Quick Update (Latest version: 0.2.1)
+```
+pip install --upgrade dift-cli
 ```
 
 ---
