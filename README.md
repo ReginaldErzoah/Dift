@@ -12,9 +12,9 @@ Dift is an open-source CLI tool that helps data professionals compare two datase
 
 ---
 
-## What's New in v0.2.0
+## What's New in v0.2.1
 
-Dift v0.2.0 introduces a more polished CLI experience and broader file support.
+Dift v0.2.1 introduces a more polished CLI experience and broader file support.
 
 ### New Improvements
 
