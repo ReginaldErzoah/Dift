@@ -4,8 +4,6 @@
   <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
 
-> **Git diff for datasets.**
-
 Dift is an open-source CLI tool that helps data professionals compare two datasets and instantly understand:
 
 - what changed  
