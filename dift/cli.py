@@ -10,7 +10,10 @@ from dift.core.comparator import compare_datasets
 from dift.reports.console_report import render_console
 from dift.reports.json_report import render_json
 
-app = typer.Typer(help="Dift: Git diff for datasets.")
+app = typer.Typer(
+    no_args_is_help=True,
+    help="Dift — Git diff for datasets.",
+)
 console = Console()
 
 
@@ -57,7 +60,25 @@ def main(
         help="Write report to a file.",
     ),
 ) -> None:
-    """Compare two datasets and explain what changed."""
+    """
+    Compare two datasets and instantly detect:
+    • row changes
+    • schema changes
+    • null spikes
+    • duplicates
+    • risk level
+
+    Install:
+      pip install dift-cli
+
+    Upgrade:
+      pip install --upgrade dift-cli
+
+    Quick Start:
+      dift old.csv new.csv
+      dift old.csv new.csv --key customer_id
+      dift old.csv new.csv --report json --output report.json
+    """
 
     missing_files: list[str] = []
 
