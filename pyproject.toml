@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dift-cli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Git diff for datasets: compare datasets and understand what changed."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "Reginald Erzoah" }
+  { name = "Reginald Erzoah", email = "reginalderzoah10@gmail.com" }
 ]
 keywords = [
   "data",
@@ -20,7 +20,11 @@ keywords = [
   "validation",
   "etl",
   "mlops",
-  "analytics"
+  "analytics",
+  "data-engineering",
+  "data-diff",
+  "data-validation",
+  "dataset-comparison"
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -28,13 +32,15 @@ classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
   "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Topic :: Database",
   "Topic :: Scientific/Engineering :: Information Analysis",
-  "Topic :: Software Development :: Quality Assurance"
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Utilities"
 ]
 dependencies = [
   "pandas>=2.2.0",
@@ -42,7 +48,8 @@ dependencies = [
   "pyarrow>=15.0.0",
   "typer>=0.12.0",
   "rich>=13.7.0",
-  "pydantic>=2.7.0"
+  "pydantic>=2.7.0",
+  "fastexcel>=0.12.0"
 ]
 
 [project.optional-dependencies]
@@ -51,13 +58,15 @@ dev = [
   "ruff>=0.4.0",
   "mypy>=1.10.0",
   "mkdocs>=1.6.0",
-  "pre-commit>=3.7.0"
+  "pre-commit>=3.7.0",
+  "build>=1.2.0",
+  "twine>=5.0.0"
 ]
 
 [project.urls]
-Homepage = "https://github.com/reginald-erzoah/dift"
-Repository = "https://github.com/reginald-erzoah/dift"
-Issues = "https://github.com/reginald-erzoah/dift/issues"
+Homepage = "https://github.com/ReginaldErzoah/Dift"
+Repository = "https://github.com/ReginaldErzoah/Dift"
+Issues = "https://github.com/ReginaldErzoah/Dift/issues"
 
 [project.scripts]
 dift = "dift.cli:app"
@@ -69,6 +78,7 @@ include = ["dift*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"

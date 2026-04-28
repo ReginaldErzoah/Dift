@@ -1,7 +1,11 @@
+````markdown
 # Dift
+
 <p align="left">
   <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
+
+> **Git diff for datasets.**
 
 Dift is an open-source CLI tool that helps data professionals compare two datasets and instantly understand:
 
@@ -9,6 +13,25 @@ Dift is an open-source CLI tool that helps data professionals compare two datase
 - why it matters  
 - whether the new data is safe to trust  
 
+---
+
+## What's New in v0.2.0
+
+Dift v0.2.0 introduces a more polished CLI experience and broader file support.
+
+### New Improvements
+
+- Better console formatting
+- Rich terminal colors
+- Cleaner summary tables
+- Risk level highlighting
+- Percentage row change display
+- Better missing file error messages
+- JSON dataset support
+- JSON example datasets
+- Excel example datasets
+- Parquet example datasets
+- Improved installation instructions
 
 ---
 
@@ -27,7 +50,7 @@ Dift helps teams catch risky data changes **before they cause damage**.
 
 ---
 
-## Features (v0.1.1)
+## Features (v0.2.0)
 
 Compare two datasets in seconds.
 
@@ -36,34 +59,40 @@ Compare two datasets in seconds.
 - CSV
 - Parquet
 - Excel (`.xlsx`, `.xls`)
+- JSON
 
 ### Detect Changes
 
 - Schema diff
 - Row count diff
-- Added / removed rows
+- Added rows
+- Removed rows
 - Changed rows (with key column)
 - Column type changes
 - Null spikes
 - Duplicate increases
 - Numeric stats diff
 - Categorical value changes
+- Risk scoring (`low`, `medium`, `high`)
 
 ### Output
 
 - Rich CLI report
 - JSON report export
 
-## Required version
+---
 
-Requires Python 3.10+
+## Requirements
+
+- Python 3.10+
 
 ---
+
 ## Quick Install
 
 ```bash
 pip install dift-cli
-```
+````
 
 Then run:
 
@@ -71,42 +100,48 @@ Then run:
 dift --help
 ```
 
-## Cross-Platform Setup
+---
 
-### Windows Git Bash
+## Cross Platform Setup
+
+### Windows (Git Bash)
+
 ```bash
 python -m venv .venv
 source .venv/Scripts/activate
 pip install dift-cli
 ```
 
-### Windows PowerShell
+### Windows (PowerShell)
+
 ```powershell
 python -m venv .venv
-.venv\\Scripts\\Activate.ps1
+.venv\Scripts\Activate.ps1
 pip install dift-cli
 ```
 
-If `dift` is not recognized, restart terminal or reinstall Python with "Add Python to PATH".
-
 ### Mac / Linux
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install dift-cli
 ```
 
-### pipx (Recommended for CLI tools)
+### pipx (Recommended for CLI Tools)
+
 ```bash
 pipx install dift-cli
 ```
 
-If user does not have pipx,
+If `pipx` is not installed:
+
 ```bash
 python -m pip install pipx
 python -m pipx ensurepath
 ```
 
+---
 
 ## Verify Install
 
@@ -120,11 +155,15 @@ or
 python -m dift.cli --help
 ```
 
+---
+
 ## Upgrade Later
 
 ```bash
 pip install --upgrade dift-cli
 ```
+
+---
 
 ## If Command Not Found
 
@@ -134,6 +173,7 @@ Use:
 python -m dift.cli --help
 ```
 
+Or restart your terminal.
 
 ---
 
@@ -157,10 +197,10 @@ dift examples/old.parquet examples/new.parquet --key customer_id
 dift examples/old.xlsx examples/new.xlsx --key customer_id
 ```
 
-### Run via Python Module
+### Compare JSON Files
 
 ```bash
-python -m dift.cli examples/old.csv examples/new.csv --key customer_id
+dift examples/old.json examples/new.json --key customer_id
 ```
 
 ### Generate JSON Report
@@ -174,19 +214,19 @@ dift examples/old.csv examples/new.csv --key customer_id --report json --output 
 ## Example Output
 
 ```text
-Dift Comparison Report
+╭─────────────────────────╮
+│ Dift Dataset Comparison │
+│ Risk Level: HIGH        │
+╰─────────────────────────╯
 
+Summary
 Rows old: 10
 Rows new: 11
+Row delta: +1
+Row change %: +10.00%
 
-Added rows: 2
-Removed rows: 1
-Changed rows: 6
-
-Schema changes: 1
-Null spikes: 1
-
-Risk Level: MEDIUM
+Warnings:
+Nulls increased in revenue by 9.09%
 ```
 
 ---
@@ -200,7 +240,9 @@ examples/
 ├── old.parquet
 ├── new.parquet
 ├── old.xlsx
-└── new.xlsx
+├── new.xlsx
+├── old.json
+└── new.json
 ```
 
 Use them to test instantly.
@@ -225,6 +267,12 @@ dift yesterday.parquet today.parquet
 
 ```bash
 dift old.xlsx new.xlsx --key id
+```
+
+### JSON API Export Checks
+
+```bash
+dift old.json new.json --key id
 ```
 
 ### Production vs Staging
@@ -256,6 +304,9 @@ dift/
 ├── io/
 │   └── readers.py
 ├── reports/
+│   ├── console_report.py
+│   ├── json_report.py
+│   └── models.py
 └── utils/
 
 tests/
@@ -280,65 +331,57 @@ ruff check .
 
 ## Roadmap
 
-### v0.2.0
+## v0.3.0 — Report Exports
 
-- Better console formatting
-- Rich colors
-- Cleaner summary tables
-- JSON support & examples datasets
-- More supports & example datasets
-
-## v0.3.0 — Report exports
-
-- Add HTML report export
-- Add CSV summary export
-- Add Excel report export
-- Improve JSON report structure
-- Add report templates
-- Add --output-dir
+* HTML report export
+* CSV summary export
+* Excel report export
+* Better JSON report structure
+* Report templates
+* `--output-dir`
 
 ## v0.4.0
 
-- Improve null spike detection
-- Improve duplicate detection
+* Improve null spike detection
+* Improve duplicate detection
 
 ## v0.5.0
 
-- Add outlier detection
-- Add numeric drift thresholds
-- Add categorical shift warnings
-- Improve risk scoring
+* Outlier detection
+* Numeric drift thresholds
+* Categorical shift warnings
+* Better risk scoring
 
-### v0.6.0
+## v0.6.0
 
-- SQL database support
-- Postgres connector
+* SQL database support
+* Postgres connector
 
-### v0.7.0
+## v0.7.0
 
-- Snowflake connector
-- BigQuery connector
+* Snowflake connector
+* BigQuery connector
 
-### v0.8.0
+## v0.8.0
 
-- CI/CD fail checks
-- dbt integration
+* CI/CD fail checks
+* dbt integration
 
-### v0.9.0
-- Drift alerts
-- Python API
-- Plugin system
+## v0.9.0
 
+* Drift alerts
+* Python API
+* Plugin system
 
-## v1.0.0 - Stable release
+## v1.0.0
 
-- Stable CLI
-- Stable Python API
-- Full test coverage
-- Full docs site
-- Benchmarks
-- Security review
-- Production ready install
+* Stable CLI
+* Stable Python API
+* Full test coverage
+* Full docs site
+* Benchmarks
+* Security review
+* Production-ready install
 
 ---
 
@@ -354,12 +397,12 @@ CONTRIBUTING.md
 
 Ways to help:
 
-- Fix bugs
-- Improve docs
-- Add tests
-- Improve performance
-- Add connectors
-- Improve CLI UX
+* Fix bugs
+* Improve docs
+* Add tests
+* Improve performance
+* Add connectors
+* Improve CLI UX
 
 ---
 
