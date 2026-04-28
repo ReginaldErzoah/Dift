@@ -14,6 +14,15 @@ app = typer.Typer(help="Dift: Git diff for datasets.")
 console = Console()
 
 
+def success(msg:str): # Function to display successful messages in green
+    console.print(f"[green]{msg}[/green]")
+
+def error(msg:str): # Function to display error messages in red
+    console.print(f"[red]{msg}[/red]")
+
+def info(msg:str): # Function to display informational messages or suggestions in blue
+    console.print(f"[blue]{msg}[/blue]")
+
 class ReportFormat(str, Enum):
     console = "console"
     json = "json"
@@ -42,9 +51,9 @@ def main(
         for file in missing_files: # take the contents of missing_files and display error the exact error message
             name=os.path.basename(file) # to find the path of the file
             names.append(name) # adding file with missing path to names
-            console.print(f"[bold red]Error: File not found: {file}[/bold red]") # Error Message
-        console.print("[bold red]Tip:[/bold red]") # Message to prompt to the user to take necessary action
-        console.print(f"Use examples/{",".join(names)} or provide a full path") # Message to give expected input to user
+            error(f"Error: File not found: {file}") # Error Message
+        info("Tip:") # Message to prompt to the user to take necessary action
+        info(f"Use examples/{", ".join(names)} or provide a full path") # Message to give expected input to user
         raise typer.Exit(code=1)
     try:
         diff_report = compare_datasets(old_dataset, new_dataset, key=key)
@@ -57,7 +66,7 @@ def main(
         if output is None:
             console.print(payload)
         else:
-            console.print(f"Wrote JSON report to {output}")
+            success(f"Wrote JSON report to {output}") # Changed output color on success to green
     else:
         render_console(diff_report)
 
