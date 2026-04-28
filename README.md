@@ -1,4 +1,3 @@
-````markdown
 # Dift
 
 <p align="left">
