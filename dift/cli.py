@@ -68,33 +68,31 @@ def main(
         missing_files.append(new_dataset)
 
     if missing_files:
-        names: list[str] = []
-
         for file in missing_files:
             name = os.path.basename(file)
-            names.append(name)
-            error(f"Error: File not found: {file}")
 
-        warning("Tip:")
-        warning(f"Use examples/{', '.join(names)} or provide a full path")
+            error(f"Error: File not found: {file}")
+            warning("Tip:")
+            warning(f"Use examples/{name} or provide a full path.\n")
 
         raise typer.Exit(code=1)
 
     try:
         diff_report = compare_datasets(old_dataset, new_dataset, key=key)
-    except Exception as exc:
-        error(f"Error: {exc}")
-        raise typer.Exit(code=1) from exc
 
-    if report == ReportFormat.json:
-        payload = render_json(diff_report, output=output)
+        if report == ReportFormat.json:
+            payload = render_json(diff_report, output=output)
 
-        if output is None:
-            console.print(payload)
+            if output is None:
+                console.print(payload)
+            else:
+                success(f"Wrote JSON report to {output}")
         else:
-            success(f"Wrote JSON report to {output}")
-    else:
-        render_console(diff_report)
+            render_console(diff_report)
+
+    except Exception as exc:
+        error(f"Error: {repr(exc)}")
+        raise typer.Exit(code=1) from exc
 
 
 if __name__ == "__main__":
