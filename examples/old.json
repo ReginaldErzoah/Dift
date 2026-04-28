@@ -1,0 +1,26 @@
+[
+  {
+    "customer_id": 1001,
+    "name": "Ama Mensah",
+    "age": 28,
+    "status": "active",
+    "country": "Ghana",
+    "revenue": 1200.5
+  },
+  {
+    "customer_id": 1002,
+    "name": "Kofi Asare",
+    "age": 34,
+    "status": "active",
+    "country": "Ghana",
+    "revenue": 850.0
+  },
+  {
+    "customer_id": 1003,
+    "name": "Esi Boateng",
+    "age": 29,
+    "status": "inactive",
+    "country": "Ghana",
+    "revenue": 0.0
+  }
+]

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import polars as pl
 
-SUPPORTED_EXTENSIONS = {".csv", ".parquet", ".xlsx", ".xls"}
+SUPPORTED_EXTENSIONS = {".csv", ".parquet", ".xlsx", ".xls", ".json"}
 
 
 class DatasetReadError(ValueError):
@@ -12,7 +12,7 @@ class DatasetReadError(ValueError):
 
 
 def read_dataset(path: str | Path) -> pl.DataFrame:
-    """Read a local CSV or Parquet dataset into a Polars DataFrame."""
+    """Read a local CSV, Parquet, Excel, or JSON dataset into a Polars DataFrame."""
     dataset_path = Path(path)
 
     if not dataset_path.exists():
@@ -25,10 +25,14 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
 
     if suffix == ".parquet":
         return pl.read_parquet(dataset_path)
-    
+
     if suffix in {".xlsx", ".xls"}:
         return pl.read_excel(dataset_path)
 
+    if suffix == ".json":
+        return pl.read_json(dataset_path)
+
     raise DatasetReadError(
-        f"Unsupported dataset type '{suffix}'. Supported types: {sorted(SUPPORTED_EXTENSIONS)}"
+        f"Unsupported dataset type '{suffix}'. "
+        f"Supported types: {sorted(SUPPORTED_EXTENSIONS)}"
     )

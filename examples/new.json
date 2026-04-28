@@ -1,0 +1,29 @@
+[
+  {
+    "customer_id": 1001,
+    "name": "Ama Mensah",
+    "age": 28,
+    "status": "active",
+    "country": "Ghana",
+    "revenue": 1350.0,
+    "segment": "Gold"
+  },
+  {
+    "customer_id": 1002,
+    "name": "Kofi Asare",
+    "age": 35,
+    "status": "active",
+    "country": "Ghana",
+    "revenue": 850.0,
+    "segment": "Silver"
+  },
+  {
+    "customer_id": 1004,
+    "name": "Yaw Owusu",
+    "age": 41,
+    "status": "active",
+    "country": "Nigeria",
+    "revenue": 2300.75,
+    "segment": "Gold"
+  }
+]
