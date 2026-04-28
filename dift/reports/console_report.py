@@ -35,8 +35,22 @@ def _format_delta(value: int) -> str:
     return f"[green]{value}[/green]"
 
 
+def _percent_change(old_value: int, new_value: int) -> str:
+    """Calculate and color percentage change safely."""
+    if old_value == 0:
+        return "N/A"
+
+    change = ((new_value - old_value) / old_value) * 100
+
+    if change > 0:
+        return f"[yellow]+{change:.2f}%[/yellow]"
+    if change < 0:
+        return f"[red]{change:.2f}%[/red]"
+    return "[green]0.00%[/green]"
+
+
 def render_console(report: DiffReport) -> None:
-    """Render a compact terminal report."""
+    """Render a clean terminal report."""
     console = Console()
 
     risk = report.summary.risk_level.upper()
@@ -49,21 +63,34 @@ def render_console(report: DiffReport) -> None:
         )
     )
 
-    summary = Table(title=_section_title("Summary"))
-    summary.add_column("Metric")
+    summary = Table(
+        title=_section_title("Summary"),
+        header_style="bold cyan",
+        show_lines=False,
+    )
+    summary.add_column("Metric", style="cyan")
     summary.add_column("Value", justify="right")
 
     summary.add_row("Old rows", str(report.summary.old_rows))
     summary.add_row("New rows", str(report.summary.new_rows))
     summary.add_row("Row delta", _format_delta(report.summary.row_delta))
+    summary.add_row(
+        "Row change %",
+        _percent_change(report.summary.old_rows, report.summary.new_rows),
+    )
     summary.add_row("Old columns", str(report.summary.old_columns))
     summary.add_row("New columns", str(report.summary.new_columns))
     summary.add_row("Column delta", _format_delta(report.summary.column_delta))
+    summary.add_row("Risk level", f"[{risk_style}]{risk}[/{risk_style}]")
 
     console.print(summary)
 
-    schema = Table(title=_section_title("Schema Diff"))
-    schema.add_column("Change")
+    schema = Table(
+        title=_section_title("Schema Diff"),
+        header_style="bold cyan",
+        show_lines=False,
+    )
+    schema.add_column("Change", style="cyan")
     schema.add_column("Value")
 
     schema.add_row(
@@ -82,12 +109,19 @@ def render_console(report: DiffReport) -> None:
     console.print(schema)
 
     if report.row_diff.key:
-        rows = Table(title=_section_title(f"Row Diff by key: {report.row_diff.key}"))
-        rows.add_column("Metric")
+        rows = Table(
+            title=_section_title(f"Row Diff by key: {report.row_diff.key}"),
+            header_style="bold cyan",
+            show_lines=False,
+        )
+        rows.add_column("Metric", style="cyan")
         rows.add_column("Value", justify="right")
 
         rows.add_row("Added rows", _format_delta(report.row_diff.added_rows or 0))
-        rows.add_row("Removed rows", _format_delta(-(report.row_diff.removed_rows or 0)))
+        rows.add_row(
+            "Removed rows",
+            _format_delta(-(report.row_diff.removed_rows or 0)),
+        )
         rows.add_row("Changed rows", _format_delta(report.row_diff.changed_rows or 0))
         rows.add_row("Unchanged rows", str(report.row_diff.unchanged_rows))
 
@@ -97,18 +131,20 @@ def render_console(report: DiffReport) -> None:
         console.print(f"[dim]{report.row_diff.note}[/dim]")
 
     duplicate_delta = report.quality_diff.duplicate_diff.delta_duplicates
+    null_spikes = [
+        diff
+        for diff in report.quality_diff.null_diffs
+        if diff.delta_null_pct >= 5
+    ]
+
+    if duplicate_delta > 0 or null_spikes:
+        console.print(_section_title("Warnings"))
 
     if duplicate_delta > 0:
         console.print(
             f"[bold yellow]Warning:[/bold yellow] "
             f"Duplicates increased by {duplicate_delta}"
         )
-
-    null_spikes = [
-        diff
-        for diff in report.quality_diff.null_diffs
-        if diff.delta_null_pct >= 5
-    ]
 
     for diff in null_spikes:
         console.print(
