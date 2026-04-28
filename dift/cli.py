@@ -82,7 +82,7 @@ def main(
 
     try:
         diff_report = compare_datasets(old_dataset, new_dataset, key=key)
-    except Exception as exc:  # noqa: BLE001 - CLI should show readable errors
+    except Exception as exc:
         error(f"Error: {exc}")
         raise typer.Exit(code=1) from exc
 
