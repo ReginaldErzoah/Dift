@@ -333,7 +333,7 @@ ruff check .
 
 ## Roadmap
 
-## v0.3.0 — Report Exports
+## v0.3.0
 
 * HTML report export
 * CSV summary export
