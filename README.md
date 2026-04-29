@@ -159,14 +159,6 @@ python -m dift.cli --help
 
 ---
 
-## Upgrade Later
-
-```bash
-pip install --upgrade dift-cli
-```
-
----
-
 ## If Command Not Found
 
 Use:
