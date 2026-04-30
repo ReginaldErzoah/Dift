@@ -1,0 +1,12 @@
+emp_id,name,department,location,salary,hire_date,status,bonus,remote
+E101,Alice Smith,HR,New York,65000,2023-01-15,active,5000.0,False
+E102,Bob Johnson,Engineering,Austin,90000,2024-03-10,active,8000.0,True
+E103,Charlie Brown,Marketing,Chicago,73000,2022-11-05,active,4500.0,False
+E104,Diana Prince,Sales,Los Angeles,80000,2021-06-20,active,6000.0,False
+E105,Ethan Carter,Finance,New York,97000,2020-09-01,active,9500.0,True
+E106,Fiona Gallagher,Engineering,Austin,93000,2023-07-14,active,7000.0,True
+E107,George Hill,HR,Chicago,60000,2025-01-05,active,,False
+E108,Hannah Lee,Marketing,Seattle,70000,2022-04-19,active,3500.0,True
+E110,Julia Roberts,Finance,New York,100000,2019-03-25,active,12000.0,False
+E111,Kevin Osei,Engineering,Remote,87000,2026-04-20,probation,,True
+E112,Laura Mensah,Sales,Houston,68000,2026-04-26,probation,,False

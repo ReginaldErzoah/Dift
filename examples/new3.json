@@ -1,0 +1,123 @@
+[
+  {
+    "emp_id": "E101",
+    "name": "Alice Smith",
+    "department": "HR",
+    "location": "New York",
+    "salary": 65000,
+    "hire_date": "2023-01-15",
+    "status": "active",
+    "bonus": 5000,
+    "remote": false
+  },
+  {
+    "emp_id": "E102",
+    "name": "Bob Johnson",
+    "department": "Engineering",
+    "location": "Austin",
+    "salary": 90000,
+    "hire_date": "2024-03-10",
+    "status": "active",
+    "bonus": 8000,
+    "remote": true
+  },
+  {
+    "emp_id": "E103",
+    "name": "Charlie Brown",
+    "department": "Marketing",
+    "location": "Chicago",
+    "salary": 73000,
+    "hire_date": "2022-11-05",
+    "status": "active",
+    "bonus": 4500,
+    "remote": false
+  },
+  {
+    "emp_id": "E104",
+    "name": "Diana Prince",
+    "department": "Sales",
+    "location": "Los Angeles",
+    "salary": 80000,
+    "hire_date": "2021-06-20",
+    "status": "active",
+    "bonus": 6000,
+    "remote": false
+  },
+  {
+    "emp_id": "E105",
+    "name": "Ethan Carter",
+    "department": "Finance",
+    "location": "New York",
+    "salary": 97000,
+    "hire_date": "2020-09-01",
+    "status": "active",
+    "bonus": 9500,
+    "remote": true
+  },
+  {
+    "emp_id": "E106",
+    "name": "Fiona Gallagher",
+    "department": "Engineering",
+    "location": "Austin",
+    "salary": 93000,
+    "hire_date": "2023-07-14",
+    "status": "active",
+    "bonus": 7000,
+    "remote": true
+  },
+  {
+    "emp_id": "E107",
+    "name": "George Hill",
+    "department": "HR",
+    "location": "Chicago",
+    "salary": 60000,
+    "hire_date": "2025-01-05",
+    "status": "active",
+    "bonus": null,
+    "remote": false
+  },
+  {
+    "emp_id": "E108",
+    "name": "Hannah Lee",
+    "department": "Marketing",
+    "location": "Seattle",
+    "salary": 70000,
+    "hire_date": "2022-04-19",
+    "status": "active",
+    "bonus": 3500,
+    "remote": true
+  },
+  {
+    "emp_id": "E110",
+    "name": "Julia Roberts",
+    "department": "Finance",
+    "location": "New York",
+    "salary": 100000,
+    "hire_date": "2019-03-25",
+    "status": "active",
+    "bonus": 12000,
+    "remote": false
+  },
+  {
+    "emp_id": "E111",
+    "name": "Kevin Osei",
+    "department": "Engineering",
+    "location": "Remote",
+    "salary": 87000,
+    "hire_date": "2026-04-20",
+    "status": "probation",
+    "bonus": null,
+    "remote": true
+  },
+  {
+    "emp_id": "E112",
+    "name": "Laura Mensah",
+    "department": "Sales",
+    "location": "Houston",
+    "salary": 68000,
+    "hire_date": "2026-04-26",
+    "status": "probation",
+    "bonus": null,
+    "remote": false
+  }
+]

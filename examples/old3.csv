@@ -1,0 +1,11 @@
+emp_id,name,department,location,salary,hire_date,status
+E101,Alice Smith,HR,New York,60000,2023-01-15,active
+E102,Bob Johnson,Engineering,Austin,85000,2024-03-10,active
+E103,Charlie Brown,Marketing,Chicago,70000,2022-11-05,active
+E104,Diana Prince,Sales,Los Angeles,75000,2021-06-20,active
+E105,Ethan Carter,Finance,New York,92000,2020-09-01,active
+E106,Fiona Gallagher,Engineering,Austin,88000,2023-07-14,active
+E107,George Hill,HR,Chicago,58000,2025-01-05,probation
+E108,Hannah Lee,Marketing,Seattle,67000,2022-04-19,active
+E109,Ivan Petrov,Sales,Houston,71000,2021-12-01,inactive
+E110,Julia Roberts,Finance,New York,95000,2019-03-25,active
