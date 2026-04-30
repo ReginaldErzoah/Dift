@@ -1,6 +1,6 @@
 # Contributing to Dift
 
-Thanks for your interest in contributing to **Dift**.
+Thanks for your interest in contributing to Dift.
 
 We welcome thoughtful contributions that improve the project for real users.
 
@@ -30,6 +30,17 @@ We value contributions that improve usability, reliability, performance, documen
 - Add tests
 - Improve CI workflows
 - Refactor maintainable code
+
+### How to Contribute to Dift
+- Fork the repository
+- Clone your fork
+- Create a new branch
+- Set up the project (venv + install)
+- Make your changes
+- Test your changes (pytest, ruff)
+- Commit your work
+- Push to your fork
+- Open a Pull Request
 
 ## Development Setup
 
