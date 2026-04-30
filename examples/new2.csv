@@ -1,0 +1,12 @@
+product_id,name,category,price,stock,supplier,last_updated,rating,discount
+P001,Laptop Pro,Electronics,1250.0,45,TechCorp,2026-04-25,4.5,0.05
+P002,Mouse,Electronics,25.5,180,TechCorp,2026-04-25,4.2,
+P003,Desk,Furniture,320.0,12,FurnCo,2026-04-25,4.0,0.1
+P004,Monitor,Electronics,430.0,75,ScreenPlus,2026-04-25,4.7,
+P005,Keyboard,Electronics,80.0,140,TechCorp,2026-04-24,4.3,
+P006,Office Chair,Furniture,230.0,38,FurnCo,2026-04-23,4.6,0.08
+P007,USB Hub,Electronics,35.0,280,TechCorp,2026-04-22,4.1,
+P008,Bookshelf,Furniture,195.0,20,FurnCo,2026-04-20,3.9,0.15
+P009,Webcam,Electronics,95.0,55,ScreenPlus,2026-04-25,4.4,
+P011,Standing Desk,Furniture,520.0,10,FurnCo,2026-04-26,4.9,0.05
+P012,Headphones,Electronics,130.0,90,SoundMax,2026-04-26,4.6,

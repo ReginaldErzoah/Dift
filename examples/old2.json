@@ -1,0 +1,92 @@
+[
+  {
+    "product_id": "P001",
+    "name": "Laptop",
+    "category": "Electronics",
+    "price": 1200.0,
+    "stock": 50,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-20"
+  },
+  {
+    "product_id": "P002",
+    "name": "Mouse",
+    "category": "Electronics",
+    "price": 25.5,
+    "stock": 200,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-19"
+  },
+  {
+    "product_id": "P003",
+    "name": "Desk",
+    "category": "Furniture",
+    "price": 300.0,
+    "stock": 15,
+    "supplier": "FurnCo",
+    "last_updated": "2026-03-01"
+  },
+  {
+    "product_id": "P004",
+    "name": "Monitor",
+    "category": "Electronics",
+    "price": 450.0,
+    "stock": 80,
+    "supplier": "ScreenPlus",
+    "last_updated": "2026-04-18"
+  },
+  {
+    "product_id": "P005",
+    "name": "Keyboard",
+    "category": "Electronics",
+    "price": 75.0,
+    "stock": 150,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-15"
+  },
+  {
+    "product_id": "P006",
+    "name": "Office Chair",
+    "category": "Furniture",
+    "price": 220.0,
+    "stock": 40,
+    "supplier": "FurnCo",
+    "last_updated": "2026-04-10"
+  },
+  {
+    "product_id": "P007",
+    "name": "USB Hub",
+    "category": "Electronics",
+    "price": 35.0,
+    "stock": 300,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-12"
+  },
+  {
+    "product_id": "P008",
+    "name": "Bookshelf",
+    "category": "Furniture",
+    "price": 180.0,
+    "stock": 25,
+    "supplier": "FurnCo",
+    "last_updated": "2026-03-20"
+  },
+  {
+    "product_id": "P009",
+    "name": "Webcam",
+    "category": "Electronics",
+    "price": 90.0,
+    "stock": 60,
+    "supplier": "ScreenPlus",
+    "last_updated": "2026-04-17"
+  },
+  {
+    "product_id": "P010",
+    "name": "Desk Lamp",
+    "category": "Furniture",
+    "price": 55.0,
+    "stock": 0,
+    "supplier": "LightWave",
+    "last_updated": "2026-02-28"
+  }
+]

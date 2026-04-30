@@ -1,0 +1,123 @@
+[
+  {
+    "product_id": "P001",
+    "name": "Laptop Pro",
+    "category": "Electronics",
+    "price": 1250.0,
+    "stock": 45,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-25",
+    "rating": 4.5,
+    "discount": 0.05
+  },
+  {
+    "product_id": "P002",
+    "name": "Mouse",
+    "category": "Electronics",
+    "price": 25.5,
+    "stock": 180,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-25",
+    "rating": 4.2,
+    "discount": null
+  },
+  {
+    "product_id": "P003",
+    "name": "Desk",
+    "category": "Furniture",
+    "price": 320.0,
+    "stock": 12,
+    "supplier": "FurnCo",
+    "last_updated": "2026-04-25",
+    "rating": 4.0,
+    "discount": 0.1
+  },
+  {
+    "product_id": "P004",
+    "name": "Monitor",
+    "category": "Electronics",
+    "price": 430.0,
+    "stock": 75,
+    "supplier": "ScreenPlus",
+    "last_updated": "2026-04-25",
+    "rating": 4.7,
+    "discount": null
+  },
+  {
+    "product_id": "P005",
+    "name": "Keyboard",
+    "category": "Electronics",
+    "price": 80.0,
+    "stock": 140,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-24",
+    "rating": 4.3,
+    "discount": null
+  },
+  {
+    "product_id": "P006",
+    "name": "Office Chair",
+    "category": "Furniture",
+    "price": 230.0,
+    "stock": 38,
+    "supplier": "FurnCo",
+    "last_updated": "2026-04-23",
+    "rating": 4.6,
+    "discount": 0.08
+  },
+  {
+    "product_id": "P007",
+    "name": "USB Hub",
+    "category": "Electronics",
+    "price": 35.0,
+    "stock": 280,
+    "supplier": "TechCorp",
+    "last_updated": "2026-04-22",
+    "rating": 4.1,
+    "discount": null
+  },
+  {
+    "product_id": "P008",
+    "name": "Bookshelf",
+    "category": "Furniture",
+    "price": 195.0,
+    "stock": 20,
+    "supplier": "FurnCo",
+    "last_updated": "2026-04-20",
+    "rating": 3.9,
+    "discount": 0.15
+  },
+  {
+    "product_id": "P009",
+    "name": "Webcam",
+    "category": "Electronics",
+    "price": 95.0,
+    "stock": 55,
+    "supplier": "ScreenPlus",
+    "last_updated": "2026-04-25",
+    "rating": 4.4,
+    "discount": null
+  },
+  {
+    "product_id": "P011",
+    "name": "Standing Desk",
+    "category": "Furniture",
+    "price": 520.0,
+    "stock": 10,
+    "supplier": "FurnCo",
+    "last_updated": "2026-04-26",
+    "rating": 4.9,
+    "discount": 0.05
+  },
+  {
+    "product_id": "P012",
+    "name": "Headphones",
+    "category": "Electronics",
+    "price": 130.0,
+    "stock": 90,
+    "supplier": "SoundMax",
+    "last_updated": "2026-04-26",
+    "rating": 4.6,
+    "discount": null
+  }
+]
