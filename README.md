@@ -251,6 +251,7 @@ examples/
 ```
 More examples also available.
 Check examples folder and use them to test instantly.
+
 But familiar with the examples columns and remember to use it's primary key column for the --key input.
 
 ---
