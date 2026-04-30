@@ -178,6 +178,9 @@ Or restart your terminal.
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id
 ```
+```bash
+dift examples/old3.csv examples/new3.csv --key emp_id
+```
 
 ### Compare Parquet Files
 
@@ -236,10 +239,19 @@ examples/
 ├── old.xlsx
 ├── new.xlsx
 ├── old.json
+|── new.json
+├── old.csv
+├── new.csv
+├── old.parquet
+├── new.parquet
+├── old.xlsx
+├── new.xlsx
+├── old.json
 └── new.json
 ```
-
-Use them to test instantly.
+More examples also available.
+Check examples folder and use them to test instantly.
+But familiar with the examples columns and remember to use it's primary key column for the --key input.
 
 ---
 
