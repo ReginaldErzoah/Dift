@@ -328,6 +328,8 @@ dift/
 │   ├── console_report.py
 │   ├── json_report.py
 |   ├── csv_report.py
+|   ├── excel_report.py
+|   ├── html_report.py
 │   └── models.py
 └── utils/
 
