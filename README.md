@@ -208,7 +208,17 @@ dift examples/old.csv examples/new.csv --key customer_id --report json --output 
 ### Generate CSV Report
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report csv --output csv.json
+dift examples/old.csv examples/new.csv --key customer_id --report csv --output report.csv
+```
+### Generate Excel Report
+
+```bash
+dift examples/old.csv examples/new.csv --key customer_id --report excel --output report.xlsx
+```
+### Generate HTML Report
+
+```bash
+dift examples/old.csv examples/new.csv --key customer_id --report html --output report.html
 ```
 ---
 

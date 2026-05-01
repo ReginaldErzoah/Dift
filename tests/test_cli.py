@@ -61,4 +61,23 @@ def test_cli_json_report_writes_file(sample_csv_files, tmp_path):
     assert output_path.exists()
 
     report = json.loads(output_path.read_text(encoding="utf-8"))
+
     assert isinstance(report, dict)
+
+    assert "metadata" in report
+    assert "summary" in report
+    assert "schema" in report
+    assert "rows" in report
+    assert "quality" in report
+    assert "numeric" in report
+    assert "categorical" in report
+
+    assert "schema_diff" not in report
+    assert "row_diff" not in report
+    assert "quality_diff" not in report
+    assert "numeric_diff" not in report
+    assert "categorical_diff" not in report
+
+    assert report["metadata"]["tool"] == "dift"
+    assert report["metadata"]["version"] == "0.3.0"
+    assert report["metadata"]["report_type"] == "dataset_diff"

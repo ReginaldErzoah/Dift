@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class ReportMetadata(BaseModel):
+    tool: str = "dift"
+    version: str = "0.3.0"
+    report_type: str = "dataset_diff"
 
 
 class Summary(BaseModel):
@@ -17,6 +23,7 @@ class TypeChange(BaseModel):
     column: str
     old_type: str
     new_type: str
+    change_type: str = "type_changed"
 
 
 class SchemaDiff(BaseModel):
@@ -59,15 +66,15 @@ class QualityDiff(BaseModel):
 
 class NumericDiff(BaseModel):
     column: str
-    old_min: float | None
-    new_min: float | None
-    old_max: float | None
-    new_max: float | None
-    old_mean: float | None
-    new_mean: float | None
-    delta_mean: float | None
-    old_std: float | None
-    new_std: float | None
+    old_min: float | None = None
+    new_min: float | None = None
+    old_max: float | None = None
+    new_max: float | None = None
+    old_mean: float | None = None
+    new_mean: float | None = None
+    delta_mean: float | None = None
+    old_std: float | None = None
+    new_std: float | None = None
 
 
 class CategoricalDiff(BaseModel):
@@ -84,9 +91,17 @@ class StatsDiff(BaseModel):
 
 
 class DiffReport(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    metadata: ReportMetadata = Field(default_factory=ReportMetadata)
     summary: Summary
-    schema_diff: SchemaDiff
-    row_diff: RowDiff
-    quality_diff: QualityDiff
-    numeric_diff: list[NumericDiff] = Field(default_factory=list)
-    categorical_diff: list[CategoricalDiff] = Field(default_factory=list)
+
+    schema_diff: SchemaDiff = Field(alias="schema")
+    row_diff: RowDiff = Field(alias="rows")
+    quality_diff: QualityDiff = Field(alias="quality")
+
+    numeric_diff: list[NumericDiff] = Field(default_factory=list, alias="numeric")
+    categorical_diff: list[CategoricalDiff] = Field(
+        default_factory=list,
+        alias="categorical",
+    )
