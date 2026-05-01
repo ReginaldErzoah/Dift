@@ -9,6 +9,7 @@ from rich.console import Console
 from dift.core.comparator import compare_datasets
 from dift.reports.console_report import render_console
 from dift.reports.json_report import render_json
+from dift.reports.csv_report import render_csv
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -35,6 +36,7 @@ def error(msg: str) -> None:
 class ReportFormat(str, Enum):
     console = "console"
     json = "json"
+    csv = "csv"
 
 
 @app.command()
@@ -78,6 +80,7 @@ def main(
       dift old.csv new.csv
       dift old.csv new.csv --key customer_id
       dift old.csv new.csv --report json --output report.json
+      dift old.csv new.csv --report csv --output summary.csv
     """
 
     missing_files: list[str] = []
@@ -108,6 +111,15 @@ def main(
                 console.print(payload)
             else:
                 success(f"Wrote JSON report to {output}")
+
+        elif report == ReportFormat.csv:
+            payload = render_csv(diff_report, output=output)
+
+            if output is None:
+                console.print(payload)
+            else:
+                success(f"Wrote CSV report to {output}")
+
         else:
             render_console(diff_report)
 
