@@ -205,7 +205,11 @@ dift examples/old.json examples/new.json --key customer_id
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id --report json --output report.json
 ```
+### Generate CSV Report
 
+```bash
+dift examples/old.csv examples/new.csv --key customer_id --report csv --output csv.json
+```
 ---
 
 ## Example Output
@@ -313,6 +317,7 @@ dift/
 ├── reports/
 │   ├── console_report.py
 │   ├── json_report.py
+|   ├── csv_report.py
 │   └── models.py
 └── utils/
 
