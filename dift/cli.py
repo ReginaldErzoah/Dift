@@ -61,6 +61,11 @@ def main(
         "-o",
         help="Write report to a file.",
     ),
+    output_dir: str | None = typer.Option(
+        None,
+        "--output-dir",
+        help="Directory to save generated reports.",
+    ),
 ) -> None:
     """
     Compare two datasets and instantly detect:
@@ -81,6 +86,7 @@ def main(
       dift old.csv new.csv --key customer_id
       dift old.csv new.csv --report json --output report.json
       dift old.csv new.csv --report csv --output summary.csv
+      dift old.csv new.csv --report csv --output-dir reports/
     """
 
     missing_files: list[str] = []
@@ -100,6 +106,22 @@ def main(
             warning(f"Use examples/{name} or provide a full path.\n")
 
         raise typer.Exit(code=1)
+
+    if output and output_dir:
+        error("Error: Use either --output or --output-dir, not both.")
+        raise typer.Exit(code=1)
+
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+        extension_map = {
+            ReportFormat.json: "json",
+            ReportFormat.csv: "csv",
+        }
+
+        if report in extension_map:
+            extension = extension_map[report]
+            output = os.path.join(output_dir, f"dift_report.{extension}")
 
     try:
         diff_report = compare_datasets(old_dataset, new_dataset, key=key)
