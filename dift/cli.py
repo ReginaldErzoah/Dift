@@ -70,6 +70,11 @@ def main(
         "--output-dir",
         help="Directory to save generated reports.",
     ),
+    template: str = typer.Option(
+        "default",
+        "--template",
+        help="HTML report template. Options: default, clean, compact, enterprise, dark.",
+    ),
 ) -> None:
     """
     Compare two datasets and instantly detect:
@@ -91,9 +96,9 @@ def main(
       dift old.csv new.csv --report json --output report.json
       dift old.csv new.csv --report csv --output summary.csv
       dift old.csv new.csv --report csv --output-dir reports/
-      dift old.csv new.csv --report csv --output report.csv
       dift old.csv new.csv --report excel --output report.xlsx
       dift old.csv new.csv --report html --output report.html
+      dift old.csv new.csv --report html --template dark --output report.html
     """
 
     missing_files: list[str] = []
@@ -156,7 +161,11 @@ def main(
             success(f"Wrote Excel report to {output_path}")
 
         elif report == ReportFormat.html:
-            output_path = render_html(diff_report, output=output)
+            output_path = render_html(
+                diff_report,
+                output=output,
+                template=template,
+            )
             success(f"Wrote HTML report to {output_path}")
 
         else:

@@ -81,3 +81,89 @@ def test_cli_json_report_writes_file(sample_csv_files, tmp_path):
     assert report["metadata"]["tool"] == "dift"
     assert report["metadata"]["version"] == "0.3.0"
     assert report["metadata"]["report_type"] == "dataset_diff"
+
+
+def test_cli_json_report_writes_to_output_dir(sample_csv_files, tmp_path):
+    old_csv, new_csv = sample_csv_files
+    output_dir = tmp_path / "reports"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dift.cli",
+            str(old_csv),
+            str(new_csv),
+            "--key",
+            "customer_id",
+            "--report",
+            "json",
+            "--output-dir",
+            str(output_dir),
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert output_dir.exists()
+    assert (output_dir / "dift_report.json").exists()
+
+
+def test_cli_csv_report_writes_to_output_dir(sample_csv_files, tmp_path):
+    old_csv, new_csv = sample_csv_files
+    output_dir = tmp_path / "reports"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dift.cli",
+            str(old_csv),
+            str(new_csv),
+            "--key",
+            "customer_id",
+            "--report",
+            "csv",
+            "--output-dir",
+            str(output_dir),
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert output_dir.exists()
+    assert (output_dir / "dift_report.csv").exists()
+
+
+def test_cli_rejects_output_and_output_dir_together(sample_csv_files, tmp_path):
+    old_csv, new_csv = sample_csv_files
+    output_dir = tmp_path / "reports"
+    output_path = tmp_path / "report.json"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dift.cli",
+            str(old_csv),
+            str(new_csv),
+            "--key",
+            "customer_id",
+            "--report",
+            "json",
+            "--output",
+            str(output_path),
+            "--output-dir",
+            str(output_dir),
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode != 0
+
+    combined_output = result.stdout + result.stderr
+    assert "--output" in combined_output
+    assert "--output-dir" in combined_output
