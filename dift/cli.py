@@ -65,6 +65,11 @@ def main(
         "-o",
         help="Write report to a file.",
     ),
+    output_dir: str | None = typer.Option(
+        None,
+        "--output-dir",
+        help="Directory to save generated reports.",
+    ),
 ) -> None:
     """
     Compare two datasets and instantly detect:
@@ -84,6 +89,8 @@ def main(
       dift old.csv new.csv
       dift old.csv new.csv --key customer_id
       dift old.csv new.csv --report json --output report.json
+      dift old.csv new.csv --report csv --output summary.csv
+      dift old.csv new.csv --report csv --output-dir reports/
       dift old.csv new.csv --report csv --output report.csv
       dift old.csv new.csv --report excel --output report.xlsx
       dift old.csv new.csv --report html --output report.html
@@ -107,6 +114,24 @@ def main(
 
         raise typer.Exit(code=1)
 
+    if output and output_dir:
+        error("Error: Use either --output or --output-dir, not both.")
+        raise typer.Exit(code=1)
+
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+        extension_map = {
+            ReportFormat.json: "json",
+            ReportFormat.csv: "csv",
+            ReportFormat.excel: "xlsx",
+            ReportFormat.html: "html",
+        }
+
+        if report in extension_map:
+            extension = extension_map[report]
+            output = os.path.join(output_dir, f"dift_report.{extension}")
+
     try:
         diff_report = compare_datasets(old_dataset, new_dataset, key=key)
 
@@ -129,14 +154,13 @@ def main(
         elif report == ReportFormat.excel:
             output_path = render_excel(diff_report, output=output)
             success(f"Wrote Excel report to {output_path}")
-        
+
         elif report == ReportFormat.html:
             output_path = render_html(diff_report, output=output)
             success(f"Wrote HTML report to {output_path}")
 
         else:
             render_console(diff_report)
-
 
     except Exception as exc:
         error(f"Error: {repr(exc)}")
