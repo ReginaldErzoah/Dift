@@ -50,6 +50,8 @@ class NullDiff(BaseModel):
     old_null_pct: float
     new_null_pct: float
     delta_null_pct: float
+    is_spike: bool = False
+    severity: str = "low"
 
 
 class DuplicateDiff(BaseModel):

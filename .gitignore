@@ -1,48 +1,38 @@
-# -------------------------
 # Virtual Environments
-# -------------------------
 .venv/
 venv/
 env/
 
-# -------------------------
+
 # Python Cache / Bytecode
-# -------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 
-# -------------------------
 # Testing / Linting / Coverage
-# -------------------------
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
 
-# -------------------------
+
 # Build / Packaging
-# -------------------------
 dist/
 build/
 *.egg-info/
 
-# -------------------------
 # Environment Variables / Secrets
-# -------------------------
 .env
 .env.*
 .pypirc
 
-# -------------------------
+
 # Jupyter
-# -------------------------
 .ipynb_checkpoints/
 
-# -------------------------
+
 # OS Files
-# -------------------------
 .DS_Store
 Thumbs.db
 
@@ -51,7 +41,5 @@ Thumbs.db
 **/report.*
 **/dift_report.*
 
-# -------------------------
 # Logs / Misc
-# -------------------------
 *.log

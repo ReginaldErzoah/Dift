@@ -156,11 +156,13 @@ def _quality_section(report: DiffReport) -> str:
             f"<td>{item.old_null_pct:.2f}%</td>"
             f"<td>{item.new_null_pct:.2f}%</td>"
             f"<td>{item.delta_null_pct:.2f}%</td>"
+            f"<td>{'Yes' if item.is_spike else 'No'}</td>"
+            f"<td>{_safe(item.severity)}</td>"
             "</tr>"
         )
 
     if not null_rows:
-        null_rows = '<tr><td colspan="6">No null changes detected.</td></tr>'
+        null_rows = '<tr><td colspan="8">No null changes detected.</td></tr>'
 
     return f"""
     <section class="card">
@@ -175,6 +177,8 @@ def _quality_section(report: DiffReport) -> str:
           <th>Old Null %</th>
           <th>New Null %</th>
           <th>Delta Null %</th>
+          <th>Spike</th>
+          <th>Severity</th>
         </tr>
         {null_rows}
       </table>

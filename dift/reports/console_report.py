@@ -134,11 +134,11 @@ def render_console(report: DiffReport) -> None:
     null_spikes = [
         diff
         for diff in report.quality_diff.null_diffs
-        if diff.delta_null_pct >= 5
+        if diff.is_spike
     ]
 
     if duplicate_delta > 0 or null_spikes:
-        console.print(_section_title("Warnings"))
+        console.print("[bold red]Warnings[/bold red]")
 
     if duplicate_delta > 0:
         console.print(
@@ -147,7 +147,10 @@ def render_console(report: DiffReport) -> None:
         )
 
     for diff in null_spikes:
+        spike_style = _risk_style(diff.severity)
+
         console.print(
-            f"[bold yellow]Warning:[/bold yellow] "
-            f"Nulls increased in '{diff.column}' by {diff.delta_null_pct}%"
+            f"[{spike_style}]Null spike:[/{spike_style}] "
+            f"'{diff.column}' increased by {diff.delta_null_pct:.2f}% "
+            f"({diff.severity})"
         )

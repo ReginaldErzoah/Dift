@@ -5,7 +5,30 @@ import polars as pl
 from dift.reports.models import DuplicateDiff, NullDiff, QualityDiff
 
 
-def compare_quality(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None) -> QualityDiff:
+def classify_null_spike(delta_null_pct: float) -> tuple[bool, str]:
+    """
+    Classify null percentage increases.
+
+    Thresholds:
+    - < 5% increase: low
+    - 5% to < 15% increase: medium
+    - >= 15% increase: high
+    """
+
+    if delta_null_pct >= 15:
+        return True, "high"
+
+    if delta_null_pct >= 5:
+        return True, "medium"
+
+    return False, "low"
+
+
+def compare_quality(
+    old: pl.DataFrame,
+    new: pl.DataFrame,
+    key: str | None = None,
+) -> QualityDiff:
     """Compare null and duplicate behavior across shared columns."""
     shared_cols = sorted(set(old.columns) & set(new.columns))
     old_rows = old.height or 1
@@ -17,6 +40,9 @@ def compare_quality(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None
         new_nulls = new[column].null_count()
         old_pct = old_nulls / old_rows * 100
         new_pct = new_nulls / new_rows * 100
+        delta_null_pct = round(new_pct - old_pct, 4)
+        is_spike, severity = classify_null_spike(delta_null_pct)
+
         null_diffs.append(
             NullDiff(
                 column=column,
@@ -24,7 +50,9 @@ def compare_quality(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None
                 new_nulls=new_nulls,
                 old_null_pct=round(old_pct, 4),
                 new_null_pct=round(new_pct, 4),
-                delta_null_pct=round(new_pct - old_pct, 4),
+                delta_null_pct=delta_null_pct,
+                is_spike=is_spike,
+                severity=severity,
             )
         )
 

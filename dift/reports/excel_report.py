@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -25,6 +24,7 @@ def render_excel(report: DiffReport, output: str | None = None) -> Path:
     ws.title = "Summary"
 
     _add_summary_sheet(ws, report)
+    _add_quality_sheet(wb, report)
 
     wb.save(output_path)
     return output_path
@@ -38,6 +38,44 @@ def _add_summary_sheet(ws, report: DiffReport) -> None:
         ["row_delta", report.summary.row_delta],
         ["risk_level", report.summary.risk_level],
     ]
+
+    for row in rows:
+        ws.append(row)
+
+    _style_header(ws)
+    _auto_size_columns(ws)
+    ws.freeze_panes = "A2"
+
+
+def _add_quality_sheet(wb: Workbook, report: DiffReport) -> None:
+    ws = wb.create_sheet("Quality Diff")
+
+    rows = [
+        [
+            "Column",
+            "Old Nulls",
+            "New Nulls",
+            "Old Null %",
+            "New Null %",
+            "Delta Null %",
+            "Spike",
+            "Severity",
+        ]
+    ]
+
+    for item in report.quality_diff.null_diffs:
+        rows.append(
+            [
+                item.column,
+                item.old_nulls,
+                item.new_nulls,
+                item.old_null_pct,
+                item.new_null_pct,
+                item.delta_null_pct,
+                "Yes" if item.is_spike else "No",
+                item.severity,
+            ]
+        )
 
     for row in rows:
         ws.append(row)
