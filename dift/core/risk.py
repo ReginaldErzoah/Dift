@@ -59,10 +59,17 @@ def _row_risk_score(report: DiffReport) -> int:
 def _quality_risk_score(report: DiffReport) -> int:
     score = 0
 
-    duplicate_delta = report.quality_diff.duplicate_diff.delta_duplicates
+    duplicate = report.quality_diff.duplicate_diff
 
-    if duplicate_delta > 0:
-        score += min(duplicate_delta * 5, 20)
+    if duplicate.is_spike:
+        if duplicate.severity == "high":
+            score += 25
+        elif duplicate.severity == "medium":
+            score += 15
+        else:
+            score += 5
+    elif duplicate.delta_duplicates > 0:
+        score += min(duplicate.delta_duplicates * 5, 20)
 
     for null_diff in report.quality_diff.null_diffs:
         if not null_diff.is_spike:
@@ -75,7 +82,7 @@ def _quality_risk_score(report: DiffReport) -> int:
         else:
             score += 5
 
-    return score
+    return min(score, 50)
 
 
 def _stats_risk_score(report: DiffReport) -> int:
@@ -106,4 +113,4 @@ def _stats_risk_score(report: DiffReport) -> int:
         score += min(added_count * 3, 15)
         score += min(removed_count * 4, 20)
 
-    return min(score,30)
+    return min(score, 30)
