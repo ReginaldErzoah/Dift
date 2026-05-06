@@ -35,6 +35,17 @@ def compare_stats(old: pl.DataFrame, new: pl.DataFrame, top_n: int = 10) -> Stat
             new_series = new[column]
             old_mean = _safe_float(old_series.mean())
             new_mean = _safe_float(new_series.mean())
+
+            def list_outliers_iqr(col: pl.Series) -> list[float]:
+                iqr = col.quantile(0.75) - col.quantile(0.25)
+                threshold = 1.5
+                lower_limit = col.quantile(0.25) - iqr * threshold
+                upper_limit = col.quantile(0.75) + iqr * threshold
+                return col.filter((col < lower_limit) | (col > upper_limit)).sort(descending=True).to_list()
+
+            old_outliers = list_outliers_iqr(old_series)
+            new_outliers = list_outliers_iqr(new_series)
+
             numeric_diffs.append(
                 NumericDiff(
                     column=column,
@@ -47,6 +58,8 @@ def compare_stats(old: pl.DataFrame, new: pl.DataFrame, top_n: int = 10) -> Stat
                     delta_mean=_safe_delta(new_mean, old_mean),
                     old_std=_safe_float(old_series.std()),
                     new_std=_safe_float(new_series.std()),
+                    old_outliers=old_outliers,
+                    new_outliers=new_outliers,
                 )
             )
 
