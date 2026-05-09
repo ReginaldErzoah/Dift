@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import polars as pl
 
 from dift.reports.models import CategoricalDiff, NumericDiff, StatsDiff
@@ -35,16 +34,8 @@ def compare_stats(old: pl.DataFrame, new: pl.DataFrame, top_n: int = 10) -> Stat
             new_series = new[column]
             old_mean = _safe_float(old_series.mean())
             new_mean = _safe_float(new_series.mean())
-
-            def list_outliers_iqr(col: pl.Series) -> list[float]:
-                iqr = col.quantile(0.75) - col.quantile(0.25)
-                threshold = 1.5
-                lower_limit = col.quantile(0.25) - iqr * threshold
-                upper_limit = col.quantile(0.75) + iqr * threshold
-                return col.filter((col < lower_limit) | (col > upper_limit)).sort(descending=True).to_list()
-
-            old_outliers = list_outliers_iqr(old_series)
-            new_outliers = list_outliers_iqr(new_series)
+            old_outliers = _list_outliers_iqr(old_series)
+            new_outliers = _list_outliers_iqr(new_series)
 
             numeric_diffs.append(
                 NumericDiff(
@@ -102,3 +93,17 @@ def _safe_delta(new_value: float | None, old_value: float | None) -> float | Non
     if new_value is None or old_value is None:
         return None
     return new_value - old_value
+
+
+def _list_outliers_iqr(col: pl.Series) -> list[float] | None:
+    q1, q3 = col.quantile(0.25), col.quantile(0.75)
+    if (q1 is None) or (q3 is None):
+        return None
+
+    iqr = q3 - q1
+    threshold = 1.5
+    lower_limit = q1 - iqr * threshold
+    upper_limit = q3 + iqr * threshold
+    return [val for val
+            in col.drop_nans().drop_nulls().sort(descending=True)
+            if (val < lower_limit) | (val > upper_limit)]

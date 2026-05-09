@@ -77,8 +77,8 @@ class NumericDiff(BaseModel):
     delta_mean: float | None = None
     old_std: float | None = None
     new_std: float | None = None
-    old_outliers: list[float] = Field(default_factory=list)
-    new_outliers: list[float] = Field(default_factory=list)
+    old_outliers: list[float] | None = None
+    new_outliers: list[float] | None = None
 
 
 class CategoricalDiff(BaseModel):
