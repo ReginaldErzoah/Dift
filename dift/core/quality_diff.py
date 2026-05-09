@@ -24,6 +24,25 @@ def classify_null_spike(delta_null_pct: float) -> tuple[bool, str]:
     return False, "low"
 
 
+def classify_duplicate_spike(delta_duplicate_pct: float) -> tuple[bool, str]:
+    """
+    Classify duplicate percentage increases.
+
+    Thresholds:
+    - < 5% increase: low
+    - 5% to < 15% increase: medium
+    - >= 15% increase: high
+    """
+
+    if delta_duplicate_pct >= 15:
+        return True, "high"
+
+    if delta_duplicate_pct >= 5:
+        return True, "medium"
+
+    return False, "low"
+
+
 def compare_quality(
     old: pl.DataFrame,
     new: pl.DataFrame,
@@ -57,15 +76,31 @@ def compare_quality(
         )
 
     duplicate_subset = [key] if key else None
+    duplicate_basis = key or "entire_row"
+
     old_duplicates = old.height - old.unique(subset=duplicate_subset).height
     new_duplicates = new.height - new.unique(subset=duplicate_subset).height
+    delta_duplicates = new_duplicates - old_duplicates
+
+    old_duplicate_pct = round(old_duplicates / old_rows * 100, 4)
+    new_duplicate_pct = round(new_duplicates / new_rows * 100, 4)
+    delta_duplicate_pct = round(new_duplicate_pct - old_duplicate_pct, 4)
+
+    is_duplicate_spike, duplicate_severity = classify_duplicate_spike(
+        delta_duplicate_pct
+    )
 
     return QualityDiff(
         null_diffs=null_diffs,
         duplicate_diff=DuplicateDiff(
             old_duplicates=old_duplicates,
             new_duplicates=new_duplicates,
-            delta_duplicates=new_duplicates - old_duplicates,
-            duplicate_basis=key or "entire_row",
+            delta_duplicates=delta_duplicates,
+            old_duplicate_pct=old_duplicate_pct,
+            new_duplicate_pct=new_duplicate_pct,
+            delta_duplicate_pct=delta_duplicate_pct,
+            duplicate_basis=duplicate_basis,
+            is_spike=is_duplicate_spike,
+            severity=duplicate_severity,
         ),
     )

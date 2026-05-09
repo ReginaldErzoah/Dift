@@ -77,6 +77,24 @@ def _add_quality_sheet(wb: Workbook, report: DiffReport) -> None:
             ]
         )
 
+    duplicate = report.quality_diff.duplicate_diff
+
+    rows.extend(
+        [
+            [],
+            ["Duplicate Metric", "Value"],
+            ["Old duplicates", duplicate.old_duplicates],
+            ["New duplicates", duplicate.new_duplicates],
+            ["Delta duplicates", duplicate.delta_duplicates],
+            ["Old duplicate %", duplicate.old_duplicate_pct],
+            ["New duplicate %", duplicate.new_duplicate_pct],
+            ["Delta duplicate %", duplicate.delta_duplicate_pct],
+            ["Duplicate basis", duplicate.duplicate_basis],
+            ["Spike", "Yes" if duplicate.is_spike else "No"],
+            ["Severity", duplicate.severity],
+        ]
+    )
+    
     for row in rows:
         ws.append(row)
 

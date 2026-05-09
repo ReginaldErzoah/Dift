@@ -189,7 +189,12 @@ def _quality_section(report: DiffReport) -> str:
         <tr><td>Old duplicates</td><td>{duplicate.old_duplicates}</td></tr>
         <tr><td>New duplicates</td><td>{duplicate.new_duplicates}</td></tr>
         <tr><td>Delta duplicates</td><td>{duplicate.delta_duplicates}</td></tr>
+        <tr><td>Old duplicate %</td><td>{duplicate.old_duplicate_pct:.2f}%</td></tr>
+        <tr><td>New duplicate %</td><td>{duplicate.new_duplicate_pct:.2f}%</td></tr>
+        <tr><td>Delta duplicate %</td><td>{duplicate.delta_duplicate_pct:.2f}%</td></tr>
         <tr><td>Duplicate basis</td><td>{_safe(duplicate.duplicate_basis)}</td></tr>
+        <tr><td>Spike</td><td>{"Yes" if duplicate.is_spike else "No"}</td></tr>
+        <tr><td>Severity</td><td>{_safe(duplicate.severity)}</td></tr>
       </table>
     </section>
     """

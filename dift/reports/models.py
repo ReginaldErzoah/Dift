@@ -58,8 +58,12 @@ class DuplicateDiff(BaseModel):
     old_duplicates: int
     new_duplicates: int
     delta_duplicates: int
+    old_duplicate_pct: float = 0.0
+    new_duplicate_pct: float = 0.0
+    delta_duplicate_pct: float = 0.0
     duplicate_basis: str
-
+    is_spike: bool = False
+    severity: str = "low"
 
 class QualityDiff(BaseModel):
     null_diffs: list[NullDiff] = Field(default_factory=list)

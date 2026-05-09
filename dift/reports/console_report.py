@@ -130,20 +130,29 @@ def render_console(report: DiffReport) -> None:
     elif report.row_diff.note:
         console.print(f"[dim]{report.row_diff.note}[/dim]")
 
-    duplicate_delta = report.quality_diff.duplicate_diff.delta_duplicates
+    duplicate = report.quality_diff.duplicate_diff
     null_spikes = [
         diff
         for diff in report.quality_diff.null_diffs
         if diff.is_spike
     ]
 
-    if duplicate_delta > 0 or null_spikes:
+    if duplicate.is_spike or duplicate.delta_duplicates > 0 or null_spikes:
         console.print("[bold red]Warnings[/bold red]")
 
-    if duplicate_delta > 0:
+    if duplicate.is_spike:
+        spike_style = _risk_style(duplicate.severity)
+
+        console.print(
+            f"[{spike_style}]Duplicate spike:[/{spike_style}] "
+            f"increased by {duplicate.delta_duplicate_pct:.2f}% "
+            f"({duplicate.severity}) using {duplicate.duplicate_basis}"
+        )
+
+    elif duplicate.delta_duplicates > 0:
         console.print(
             f"[bold yellow]Warning:[/bold yellow] "
-            f"Duplicates increased by {duplicate_delta}"
+            f"Duplicates increased by {duplicate.delta_duplicates}"
         )
 
     for diff in null_spikes:
