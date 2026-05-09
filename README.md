@@ -65,7 +65,7 @@ Compare two datasets in seconds.
 * Column type changes
 * Null spikes
 * Duplicate increases
-* Numeric stats diff
+* Numeric stats diff (with configurable threshold)
 * Categorical value changes
 * Risk scoring (`low`, `medium`, `high`)
 
@@ -339,9 +339,7 @@ ruff check .
 
 ### v0.5.0
 
-* Drift thresholds
 * Outlier detection
-* Numeric drift thresholds
 * Categorical shift warnings
 * Better risk scoring
 
