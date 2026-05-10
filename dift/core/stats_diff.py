@@ -20,11 +20,13 @@ NUMERIC_DTYPES = {
 CATEGORICAL_DTYPES = {pl.String, pl.Categorical, pl.Enum, pl.Boolean}
 
 
-def compare_stats(old: pl.DataFrame, new: pl.DataFrame, top_n: int = 10) -> StatsDiff:
+def compare_stats(
+    old: pl.DataFrame,
+    new: pl.DataFrame,
+    top_n: int = 10,
+    threshold: float = 0.1,
+) -> StatsDiff:
     """Compare numeric summary stats and categorical top values + value shifts."""
-    shared_cols = sorted(set(old.columns) & set(new.columns))
-    numeric_diffs: list[NumericDiff] = []
-    categorical_diffs: list[CategoricalDiff] = []
 
     for column in shared_cols:
         old_dtype = old.schema[column]
@@ -39,19 +41,36 @@ def compare_stats(old: pl.DataFrame, new: pl.DataFrame, top_n: int = 10) -> Stat
 
             old_mean = _safe_float(old_series.mean())
             new_mean = _safe_float(new_series.mean())
+            o_min, n_min = _safe_float(old_series.min()), _safe_float(new_series.min())
+            o_max, n_max = _safe_float(old_series.max()), _safe_float(new_series.max())
+            o_mean, n_mean = _safe_float(old_series.mean()), _safe_float(new_series.mean())
+            o_std, n_std = _safe_float(old_series.std()), _safe_float(new_series.std())
+
+            mean_delta = abs(n_mean - o_mean) if n_mean is not None and o_mean is not None else 0            
+            std_delta = abs(n_std - o_std) if n_std is not None and o_std is not None else 0
+            
+            o_range = o_max - o_min if o_max is not None and o_min is not None else 0
+            n_range = n_max - n_min if n_max is not None and n_min is not None else 0
+            range_delta = abs(n_range - o_range)
+
+            is_drifted = (mean_delta > threshold) or (std_delta > threshold) or (range_delta > threshold)
 
             numeric_diffs.append(
                 NumericDiff(
                     column=column,
-                    old_min=_safe_float(old_series.min()),
-                    new_min=_safe_float(new_series.min()),
-                    old_max=_safe_float(old_series.max()),
-                    new_max=_safe_float(new_series.max()),
-                    old_mean=old_mean,
-                    new_mean=new_mean,
-                    delta_mean=_safe_delta(new_mean, old_mean),
-                    old_std=_safe_float(old_series.std()),
-                    new_std=_safe_float(new_series.std()),
+                    old_min=o_min,
+                    new_min=n_min,
+                    old_max=o_max,
+                    new_max=n_max,
+                    old_mean=o_mean,
+                    new_mean=n_mean,
+                    delta_mean=_safe_delta(n_mean, o_mean),
+                    old_std=o_std,
+                    new_std=n_std,
+                    delta_std=_safe_delta(n_std, o_std),
+                    delta_range=_safe_delta(n_range, o_range),
+                    is_drifted=is_drifted,
+                    drift_threshold=threshold
                 )
             )
 

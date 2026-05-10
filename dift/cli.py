@@ -8,10 +8,10 @@ from rich.console import Console
 
 from dift.core.comparator import compare_datasets
 from dift.reports.console_report import render_console
-from dift.reports.json_report import render_json
 from dift.reports.csv_report import render_csv
 from dift.reports.excel_report import render_excel
 from dift.reports.html_report import render_html
+from dift.reports.json_report import render_json
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -52,6 +52,12 @@ def main(
         "--key",
         "-k",
         help="Primary key column for row comparison.",
+    ),
+    threshold: float = typer.Option(
+        0.1,
+        "--threshold",
+        "-t",
+        help="Threshold for numeric drift detection (mean difference).",
     ),
     report: ReportFormat = typer.Option(
         ReportFormat.console,
@@ -138,8 +144,7 @@ def main(
             output = os.path.join(output_dir, f"dift_report.{extension}")
 
     try:
-        diff_report = compare_datasets(old_dataset, new_dataset, key=key)
-
+        diff_report = compare_datasets(old_dataset, new_dataset, key=key, threshold=threshold)
         if report == ReportFormat.json:
             payload = render_json(diff_report, output=output)
 

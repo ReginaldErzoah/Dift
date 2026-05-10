@@ -49,6 +49,7 @@ def test_numeric_drift_adds_risk_score():
                 old_mean=100,
                 new_mean=160,
                 delta_mean=60,
+                is_drifted=True,
             )
         ]
     )

@@ -9,7 +9,7 @@ from dift.io.readers import read_dataset
 from dift.reports.models import DiffReport, Summary
 
 
-def compare_datasets(old_path: str, new_path: str, key: str | None = None) -> DiffReport:
+def compare_datasets(old_path: str, new_path: str, key: str | None = None, threshold: float = 0.1) -> DiffReport:
     """Run the full MVP dataset comparison."""
     old = read_dataset(old_path)
     new = read_dataset(new_path)
@@ -17,8 +17,7 @@ def compare_datasets(old_path: str, new_path: str, key: str | None = None) -> Di
     schema_diff = compare_schema(old, new)
     row_diff = compare_rows(old, new, key=key)
     quality_diff = compare_quality(old, new, key=key)
-    stats_diff = compare_stats(old, new)
-
+    stats_diff = compare_stats(old, new, threshold=threshold)
     report = DiffReport(
         summary=Summary(
             old_rows=old.height,

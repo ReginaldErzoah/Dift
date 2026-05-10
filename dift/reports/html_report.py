@@ -6,7 +6,6 @@ from typing import Any
 
 from dift.reports.models import DiffReport
 
-
 SUPPORTED_TEMPLATES = {
     "default",
     "clean",
