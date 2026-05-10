@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import polars as pl
 
 from dift.reports.models import CategoricalDiff, NumericDiff, StatsDiff
