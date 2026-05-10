@@ -136,7 +136,7 @@ Default threshold:
 Example:
 
 ```bash
-dift old.csv new.csv --threshold 0.2
+dift old.csv new.csv --key id --threshold 0.2
 ```
 
 This helps detect silent numeric drift in:
