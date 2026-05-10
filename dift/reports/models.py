@@ -65,6 +65,7 @@ class DuplicateDiff(BaseModel):
     is_spike: bool = False
     severity: str = "low"
 
+
 class QualityDiff(BaseModel):
     null_diffs: list[NullDiff] = Field(default_factory=list)
     duplicate_diff: DuplicateDiff
@@ -89,6 +90,9 @@ class CategoricalDiff(BaseModel):
     values_removed: list[str] = Field(default_factory=list)
     old_top_values: dict[str, int] = Field(default_factory=dict)
     new_top_values: dict[str, int] = Field(default_factory=dict)
+
+    # NEW: category distribution / frequency change detection
+    frequency_shifts: dict[str, dict[str, float]] = Field(default_factory=dict)
 
 
 class StatsDiff(BaseModel):
