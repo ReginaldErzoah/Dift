@@ -63,6 +63,9 @@ def render_console(report: DiffReport) -> None:
         )
     )
 
+    # =========================================================================
+    # SUMMARY
+    # =========================================================================
     summary = Table(
         title=_section_title("Summary"),
         header_style="bold cyan",
@@ -85,6 +88,9 @@ def render_console(report: DiffReport) -> None:
 
     console.print(summary)
 
+    # =========================================================================
+    # SCHEMA DIFF
+    # =========================================================================
     schema = Table(
         title=_section_title("Schema Diff"),
         header_style="bold cyan",
@@ -108,6 +114,9 @@ def render_console(report: DiffReport) -> None:
 
     console.print(schema)
 
+    # =========================================================================
+    # ROW DIFF
+    # =========================================================================
     if report.row_diff.key:
         rows = Table(
             title=_section_title(f"Row Diff by key: {report.row_diff.key}"),
@@ -130,6 +139,44 @@ def render_console(report: DiffReport) -> None:
     elif report.row_diff.note:
         console.print(f"[dim]{report.row_diff.note}[/dim]")
 
+    # =========================================================================
+    # CATEGORICAL DRIFT
+    # =========================================================================
+    if report.categorical_diff:
+        categorical = Table(
+            title=_section_title("Categorical Drift"),
+            header_style="bold cyan",
+            show_lines=False,
+        )
+
+        categorical.add_column("Column", style="cyan")
+        categorical.add_column("Added Values")
+        categorical.add_column("Removed Values")
+        categorical.add_column("Frequency Shifts")
+
+        for diff in report.categorical_diff:
+            shift_summary = []
+
+            for value, shift in diff.frequency_shifts.items():
+                delta = shift["delta"]
+
+                if delta > 0:
+                    shift_summary.append(f"{value}: +{delta:.2%}")
+                elif delta < 0:
+                    shift_summary.append(f"{value}: {delta:.2%}")
+
+            categorical.add_row(
+                diff.column,
+                ", ".join(diff.values_added) or "None",
+                ", ".join(diff.values_removed) or "None",
+                ", ".join(shift_summary[:3]) or "None",
+            )
+
+        console.print(categorical)
+
+    # =========================================================================
+    # WARNINGS
+    # =========================================================================
     duplicate = report.quality_diff.duplicate_diff
     null_spikes = [
         diff
