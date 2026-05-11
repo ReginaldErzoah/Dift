@@ -458,5 +458,3 @@ MIT License
 ## Vision
 
 Dift aims to become the standard open-source tool for dataset comparison and trust checks.
-
-If Git has `git diff`, data teams should have `dift`.
