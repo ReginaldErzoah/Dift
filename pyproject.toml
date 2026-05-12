@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dift-cli"
-version = "0.3.0"
-description = "Git diff for datasets: compare datasets and understand what changed."
+version = "0.5.0"
+description = "Git diff for datasets: compare datasets, detect drift, find outliers, and assess data risk."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

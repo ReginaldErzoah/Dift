@@ -4,7 +4,14 @@
   <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
 
-Dift is an open-source CLI tool that helps data professionals compare two datasets and instantly understand:
+![Python](https://img.shields.io/badge/python-3.10+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-0.5.0-orange)
+
+
+Dift is an open-source CLI platform for dataset comparison, drift detection, and data trust validation.
+
+It helps data teams instantly understand:
 
 * what changed
 * why it matters
@@ -12,25 +19,25 @@ Dift is an open-source CLI tool that helps data professionals compare two datase
 
 ---
 
-## What's New in v0.4.0
+# What's New in v0.5.0
 
-Dift v0.4.0 introduces major improvements to data quality validation, numeric drift detection, and weighted risk scoring.
+Dift v0.5.0 introduces advanced drift analysis, outlier detection, improved reporting, and stronger dataset risk analysis.
 
-### New Features
+## New Features
 
-* Improved null spike detection
-* Improved duplicate spike detection
-* Weighted risk scoring system
-* Numeric drift detection
-* Configurable drift thresholds
-* Severity-based warnings
-* Better quality validation
-* Improved JSON report structure
-* HTML report templates
-* Excel report export
-* CSV summary export
-* `--output-dir` support
-
+* Outlier detection using IQR analysis
+* Outlier severity classification
+* Outlier risk scoring
+* Advanced categorical drift detection
+* Frequency distribution shift detection
+* Categorical severity classification
+* Numeric drift reporting across all report formats
+* Improved Excel reporting
+* Improved HTML reporting
+* Better CSV drift summaries
+* Enhanced weighted risk scoring
+* Improved warning system
+* Better drift visibility in console reports
 ---
 
 ## Why Dift?
@@ -48,60 +55,48 @@ Dift helps teams catch risky data changes before they cause damage.
 
 ---
 
-## Features (v0.4.0)
+# Features (v0.5.0)
 
-Compare two datasets in seconds.
-
-### Supported Formats
+## Supported Formats
 
 * CSV
 * Parquet
 * Excel (`.xlsx`, `.xls`)
 * JSON
 
----
+## Drift Detection
 
-### Detect Changes
+### Numeric Drift
 
-* Schema diff
-* Row count diff
-* Added rows
-* Removed rows
-* Changed rows (with key column)
-* Column type changes
-
-### Data Quality Checks
-
-* Null spikes
-* Duplicate spikes
-* Duplicate percentage changes
-* Severity classification (`low`, `medium`, `high`)
-
-### Drift Detection
-
-* Numeric drift detection
 * Mean shift detection
 * Standard deviation drift
 * Range shift detection
-* Configurable drift threshold
-* Categorical value changes
-* Frequency distribution changes
+* Configurable drift thresholds
+* Severity classification
 
-### Risk Analysis
+### Categorical Drift
 
-* Weighted risk scoring
-* Risk classification (`low`, `medium`, `high`)
-* Multi-signal risk evaluation
+* New categorical value detection
+* Removed categorical value detection
+* Frequency distribution shifts
+* Severity classification
+
+### Outlier Detection
+
+* IQR outlier detection
+* Outlier spike detection
+* Outlier percentage tracking
+* Risk integration
 
 ---
 
-### Output Options
+# Output Options
 
 * Rich CLI report
 * JSON report
-* CSV summary
-* Excel report
-* HTML report
+* CSV summary report
+* Excel workbook report
+* HTML dashboard-style report
 
 ---
 
@@ -185,7 +180,7 @@ dift --help
 
 ---
 
-## Quick Update (Latest version: 0.4.0)
+## Quick Update (Latest version: 0.5.0)
 
 ```bash
 pip install --upgrade dift-cli
@@ -293,7 +288,7 @@ dift examples/old.csv examples/new.csv --key customer_id --report html --templat
 
 ---
 
-## Example Output
+# Example Output
 
 ```text
 ╭─────────────────────────╮
@@ -301,15 +296,19 @@ dift examples/old.csv examples/new.csv --key customer_id --report html --templat
 │ Risk Level: MEDIUM      │
 ╰─────────────────────────╯
 
-Summary
-Rows old: 5
-Rows new: 5
-Row delta: 0
-
 Warnings
-Null spike: 'revenue' increased by 80.00% (high)
-Duplicate spike: increased by 40.00% (high) using id
-Numeric drift detected in 'revenue'
+
+Numeric drift: 'revenue'
+mean shift 900.00%
+(high, threshold 0.1)
+
+Outlier spike:
+'revenue' increased by 100.00%
+(high)
+
+Categorical shift:
+'segment' max frequency shift 60.00%
+(high)
 ```
 
 ---
@@ -403,28 +402,163 @@ ruff check .
 
 ## Roadmap
 
-### v0.4.0
+## v0.6.0
 
-* Improved null spike detection
-* Improved duplicate spike detection
-* Weighted risk scoring
-* Numeric drift detection
-* Threshold-based drift alerts
-* Better reporting
+### Database Support
 
-### v0.5.0
+#### SQL Database Integration
 
-* Outlier detection
-* Advanced categorical drift analysis
-* Frequency shift alerts
-* Trend analysis
-* Time-series comparison
-* Better visualization support
+* Direct database-to-database comparison
+* Table-to-table comparison support
+* Query-based dataset comparison
+* Connection string support
+* CLI database input support
 
-### v0.6.0
+#### PostgreSQL Connector
 
-* SQL database support
-* Postgres connector
+* PostgreSQL table reader
+* Schema inference support
+* Query execution support
+* Secure connection handling
+
+#### MySQL Connector
+
+* MySQL table reader
+* Query-based comparisons
+* Type compatibility handling
+
+#### SQLite Connector
+
+* SQLite local database support
+* Lightweight comparison workflows
+* File-based database comparison
+
+#### DuckDB Support
+
+* Native DuckDB integration
+* Analytical dataset support
+* Parquet interoperability
+
+
+### Data Warehouse Support
+
+#### Snowflake Connector
+
+* Snowflake authentication support
+* Warehouse query execution
+* Large-scale dataset comparison
+
+#### BigQuery Connector
+
+* BigQuery dataset comparison
+* Service account authentication
+* Query-based workflows
+
+#### Redshift Connector
+
+* Redshift warehouse support
+* Efficient table extraction
+* Warehouse schema compatibility
+
+### Configuration System
+
+#### Config File Support
+
+* YAML configuration support
+* TOML configuration support
+* JSON configuration support
+
+#### Saved Comparison Profiles
+
+* Reusable comparison profiles
+* Saved report configurations
+* Named comparison presets
+
+#### Reusable Threshold Configs
+
+* Numeric drift thresholds
+* Categorical shift thresholds
+* Outlier thresholds
+* Column-level threshold overrides
+
+#### Environment-Based Configs
+
+* Development/staging/production configs
+* Environment variable support
+* Secret management support
+
+
+### Automation Features
+
+#### Scheduled Comparisons
+
+* Scheduled dataset checks
+* Cron-friendly execution
+* Time-based comparison workflows
+
+#### CLI Automation Workflows
+
+* Non-interactive CLI support
+* Automation-friendly exit codes
+* Pipeline integration support
+
+#### Batch Dataset Comparison
+
+* Multi-dataset comparison support
+* Folder-based comparisons
+* Batch report generation
+
+#### Comparison History
+
+* Historical comparison tracking
+* Drift trend analysis
+* Historical risk tracking
+
+### Reporting Improvements
+
+#### Better Excel Formatting
+
+* Severity color coding
+* Conditional formatting
+* Improved worksheet layouts
+* Better readability styling
+
+#### Better HTML Reports
+
+* Drift highlighting
+* Severity badges
+* Improved visual summaries
+* Responsive layouts
+
+#### Report Metadata Expansion
+
+* Execution timestamps
+* Runtime metrics
+* Dataset source metadata
+* Threshold metadata
+
+
+
+### Developer Experience
+
+#### Testing Improvements
+
+* Connector integration tests
+* Cross-format consistency tests
+* Warehouse mock testing
+
+#### CLI Improvements
+
+* Better help messages
+* Clearer validation errors
+* Progress indicators
+
+#### Plugin Preparation
+
+* Extensible reader interfaces
+* Connector registry architecture
+* Internal plugin preparation
+
 
 ---
 
@@ -457,4 +591,9 @@ MIT License
 
 ## Vision
 
-Dift aims to become the standard open-source tool for dataset comparison and trust checks.
+Dift aims to become the open-source standard for:
+* dataset regression testing
+* data drift monitoring
+* ML data validation
+* warehouse trust checks
+* automated data quality enforcement
