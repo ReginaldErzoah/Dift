@@ -64,6 +64,7 @@ def _build_html(report: DiffReport, template: str) -> str:
     {_row_section(report)}
     {_quality_section(report)}
     {_outlier_section(report)}
+    {_categorical_section(report)}
 
   </main>
 </body>
@@ -239,6 +240,42 @@ def _outlier_section(report: DiffReport) -> str:
           <th>Lower Bound</th>
           <th>Upper Bound</th>
           <th>Spike</th>
+          <th>Severity</th>
+        </tr>
+        {rows}
+      </table>
+    </section>
+    """
+def _categorical_section(report: DiffReport) -> str:
+    rows = ""
+
+    for item in report.categorical_diff:
+        rows += (
+            "<tr>"
+            f"<td>{_safe(item.column)}</td>"
+            f"<td>{_safe_list(item.values_added)}</td>"
+            f"<td>{_safe_list(item.values_removed)}</td>"
+            f"<td>{_safe_frequency_shifts(item.frequency_shifts)}</td>"
+            f"<td>{item.max_frequency_shift:.2%}</td>"
+            f"<td>{'Yes' if item.is_shifted else 'No'}</td>"
+            f"<td>{_safe(item.severity)}</td>"
+            "</tr>"
+        )
+
+    if not rows:
+        rows = '<tr><td colspan="7">No categorical changes detected.</td></tr>'
+
+    return f"""
+    <section class="card">
+      <h2>Categorical Diff</h2>
+      <table>
+        <tr>
+          <th>Column</th>
+          <th>Values Added</th>
+          <th>Values Removed</th>
+          <th>Frequency Shifts</th>
+          <th>Max Frequency Shift</th>
+          <th>Shifted</th>
           <th>Severity</th>
         </tr>
         {rows}
@@ -527,6 +564,14 @@ def _template_css(template: str) -> str:
 
     return base + themes[template]
 
+def _safe_frequency_shifts(shifts: dict[str, float]) -> str:
+    if not shifts:
+        return ""
+
+    return ", ".join(
+        f"{_safe(value)}: {shift:.2%}"
+        for value, shift in shifts.items()
+    )
 
 def _safe(value: Any) -> str:
     if value is None:

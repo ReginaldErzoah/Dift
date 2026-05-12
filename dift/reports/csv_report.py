@@ -17,6 +17,26 @@ def render_csv(report: DiffReport, output: str | None = None) -> str:
     )
     total_new_outliers = sum(diff.new_outliers for diff in report.outlier_diff)
 
+    categorical_shifts = sum(
+        1
+        for diff in report.categorical_diff
+        if diff.is_shifted
+    )
+
+    high_categorical_shifts = sum(
+        1
+        for diff in report.categorical_diff
+        if diff.is_shifted and diff.severity == "high"
+    )
+
+    max_categorical_shift = max(
+        (
+            diff.max_frequency_shift
+            for diff in report.categorical_diff
+        ),
+        default=0.0,
+    )   
+
     rows = [
         "metric,value",
         f"old_rows,{report.summary.old_rows}",
@@ -44,6 +64,9 @@ def render_csv(report: DiffReport, output: str | None = None) -> str:
         f"outlier_spikes,{outlier_spikes}",
         f"high_outlier_spikes,{high_outlier_spikes}",
         f"total_new_outliers,{total_new_outliers}",
+        f"categorical_shifts,{categorical_shifts}",
+        f"high_categorical_shifts,{high_categorical_shifts}",
+        f"max_categorical_shift,{max_categorical_shift}",
         f"risk_level,{report.summary.risk_level}",
     ]
 

@@ -26,6 +26,7 @@ def render_excel(report: DiffReport, output: str | None = None) -> Path:
     _add_summary_sheet(ws, report)
     _add_quality_sheet(wb, report)
     _add_outlier_sheet(wb, report)
+    _add_categorical_sheet(wb, report)
 
     wb.save(output_path)
     return output_path
@@ -148,6 +149,49 @@ def _add_outlier_sheet(wb: Workbook, report: DiffReport) -> None:
     _style_header(ws)
     _auto_size_columns(ws)
     ws.freeze_panes = "A2"
+
+
+def _add_categorical_sheet(wb: Workbook, report: DiffReport) -> None:
+    ws = wb.create_sheet("Categorical Diff")
+
+    rows = [
+        [
+            "Column",
+            "Values Added",
+            "Values Removed",
+            "Frequency Shifts",
+            "Max Frequency Shift",
+            "Shifted",
+            "Severity",
+        ]
+    ]
+
+    for item in report.categorical_diff:
+        rows.append(
+            [
+                item.column,
+                ", ".join(item.values_added),
+                ", ".join(item.values_removed),
+                _format_frequency_shifts(item.frequency_shifts),
+                item.max_frequency_shift,
+                "Yes" if item.is_shifted else "No",
+                item.severity,
+            ]
+        )
+
+    for row in rows:
+        ws.append(row)
+
+    _style_header(ws)
+    _auto_size_columns(ws)
+    ws.freeze_panes = "A2"
+
+
+def _format_frequency_shifts(shifts: dict[str, float]) -> str:
+    if not shifts:
+        return ""
+
+    return ", ".join(f"{value}: {shift:.2%}" for value, shift in shifts.items())
 
 
 def _style_header(ws) -> None:

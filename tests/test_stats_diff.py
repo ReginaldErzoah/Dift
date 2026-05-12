@@ -48,3 +48,56 @@ def test_outlier_detection_ignores_non_numeric_columns():
     result = compare_stats(old, new)
 
     assert all(item.column != "segment" for item in result.outlier_diffs)
+
+def test_categorical_frequency_shift_is_detected():
+    old = pl.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "segment": ["basic", "basic", "basic", "basic", "enterprise"],
+        }
+    )
+
+    new = pl.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "segment": ["basic", "enterprise", "enterprise", "startup", "startup"],
+        }
+    )
+
+    result = compare_stats(old, new, threshold=0.1, key="id")
+
+    segment_diff = next(
+        item for item in result.categorical_diffs if item.column == "segment"
+    )
+
+    assert segment_diff.is_shifted is True
+    assert segment_diff.severity == "high"
+    assert segment_diff.max_frequency_shift == 0.6
+    assert segment_diff.frequency_shifts["basic"] == -0.6
+    assert segment_diff.frequency_shifts["startup"] == 0.4
+    assert segment_diff.values_added == ["startup"]
+
+
+def test_categorical_frequency_shift_respects_threshold():
+    old = pl.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "segment": ["basic", "basic", "basic", "basic", "enterprise"],
+        }
+    )
+
+    new = pl.DataFrame(
+        {
+            "id": [1, 2, 3, 4, 5],
+            "segment": ["basic", "enterprise", "enterprise", "startup", "startup"],
+        }
+    )
+
+    result = compare_stats(old, new, threshold=0.9, key="id")
+
+    segment_diff = next(
+        item for item in result.categorical_diffs if item.column == "segment"
+    )
+
+    assert segment_diff.frequency_shifts == {}
+    assert segment_diff.max_frequency_shift == 0.0

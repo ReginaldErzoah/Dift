@@ -113,6 +113,10 @@ class CategoricalDiff(BaseModel):
     values_removed: list[str] = Field(default_factory=list)
     old_top_values: dict[str, int] = Field(default_factory=dict)
     new_top_values: dict[str, int] = Field(default_factory=dict)
+    frequency_shifts: dict[str, float] = Field(default_factory=dict)
+    max_frequency_shift: float = 0.0
+    is_shifted: bool = False
+    severity: str = "low"
 
 
 class StatsDiff(BaseModel):

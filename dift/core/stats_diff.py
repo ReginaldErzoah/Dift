@@ -41,6 +41,7 @@ def compare_stats(
     for column in shared_cols:
         if key and column == key:
             continue
+
         old_dtype = old.schema[column]
         new_dtype = new.schema[column]
 
@@ -121,13 +122,41 @@ def compare_stats(
             old_values = set(old_counts)
             new_values = set(new_counts)
 
+            old_freq = _value_frequencies(old, column)
+            new_freq = _value_frequencies(new, column)
+
+            frequency_shifts: dict[str, float] = {}
+            for value in sorted(set(old_freq) | set(new_freq), key=str):
+                shift = round(
+                    new_freq.get(value, 0.0) - old_freq.get(value, 0.0),
+                    4,
+                )
+
+                if abs(shift) >= threshold:
+                    frequency_shifts[str(value)] = shift
+
+            max_frequency_shift = (
+                max(abs(shift) for shift in frequency_shifts.values())
+                if frequency_shifts
+                else 0.0
+            )
+
+            values_added = sorted(map(str, new_values - old_values))
+            values_removed = sorted(map(str, old_values - new_values))
+            is_shifted = bool(values_added or values_removed or frequency_shifts)
+            severity = _classify_categorical_shift(max_frequency_shift, threshold)
+
             categorical_diffs.append(
                 CategoricalDiff(
                     column=column,
-                    values_added=sorted(map(str, new_values - old_values)),
-                    values_removed=sorted(map(str, old_values - new_values)),
+                    values_added=values_added,
+                    values_removed=values_removed,
                     old_top_values={str(k): v for k, v in old_counts.items()},
                     new_top_values={str(k): v for k, v in new_counts.items()},
+                    frequency_shifts=frequency_shifts,
+                    max_frequency_shift=max_frequency_shift,
+                    is_shifted=is_shifted,
+                    severity=severity,
                 )
             )
 
@@ -224,6 +253,13 @@ def _top_counts(df: pl.DataFrame, column: str, top_n: int) -> dict[object, int]:
     return {row[column]: row["len"] for row in result}
 
 
+def _value_frequencies(df: pl.DataFrame, column: str) -> dict[object, float]:
+    total = df.height or 1
+    counts = df.group_by(column).len().to_dicts()
+
+    return {row[column]: row["len"] / total for row in counts}
+
+
 def _safe_float(value: object) -> float | None:
     if value is None:
         return None
@@ -269,6 +305,22 @@ def _classify_numeric_drift(
         return "medium"
 
     if max_shift >= threshold:
+        return "low"
+
+    return "low"
+
+
+def _classify_categorical_shift(
+    max_frequency_shift: float,
+    threshold: float,
+) -> str:
+    if max_frequency_shift >= threshold * 5:
+        return "high"
+
+    if max_frequency_shift >= threshold * 2:
+        return "medium"
+
+    if max_frequency_shift >= threshold:
         return "low"
 
     return "low"

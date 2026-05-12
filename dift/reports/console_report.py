@@ -141,12 +141,17 @@ def render_console(report: DiffReport) -> None:
         for diff in report.outlier_diff
         if diff.is_spike
     ]
-
+    categorical_shifts = [
+        diff
+        for diff in report.categorical_diff
+        if diff.is_shifted
+    ]
     if (
         duplicate.is_spike
         or duplicate.delta_duplicates > 0
         or null_spikes
         or outlier_spikes
+        or categorical_shifts
     ):
         console.print("[bold red]Warnings[/bold red]")
 
@@ -171,6 +176,15 @@ def render_console(report: DiffReport) -> None:
         console.print(
             f"[{spike_style}]Null spike:[/{spike_style}] "
             f"'{diff.column}' increased by {diff.delta_null_pct:.2f}% "
+            f"({diff.severity})"
+        )
+
+    for diff in outlier_spikes:
+        spike_style = _risk_style(diff.severity)
+
+        console.print(
+            f"[{spike_style}]Outlier spike:[/{spike_style}] "
+            f"'{diff.column}' increased by {diff.delta_outlier_pct:.2f}% "
             f"({diff.severity})"
         )
 
