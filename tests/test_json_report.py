@@ -62,4 +62,4 @@ def test_render_json_structure():
 
     # Metadata sanity check
     assert data["metadata"]["tool"] == "dift"
-    assert data["metadata"]["version"] == "0.3.0"
+    assert data["metadata"]["version"] == "0.5.0"
