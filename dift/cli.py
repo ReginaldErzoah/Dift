@@ -12,6 +12,7 @@ from dift.reports.csv_report import render_csv
 from dift.reports.excel_report import render_excel
 from dift.reports.html_report import render_html
 from dift.reports.json_report import render_json
+from dift.io.config_loader import load_config
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -42,6 +43,10 @@ class ReportFormat(str, Enum):
     excel = "excel"
     html = "html"
 
+# defaults
+DEFAULT_THRESHOLD = 0.1
+DEFAULT_REPORT = ReportFormat.console
+
 
 @app.command()
 def main(
@@ -54,13 +59,13 @@ def main(
         help="Primary key column for row comparison.",
     ),
     threshold: float = typer.Option(
-        0.1,
+        DEFAULT_THRESHOLD,
         "--threshold",
         "-t",
         help="Threshold for numeric drift detection (mean difference).",
     ),
     report: ReportFormat = typer.Option(
-        ReportFormat.console,
+        DEFAULT_REPORT,
         "--report",
         "-r",
         help="Report format.",
@@ -75,6 +80,12 @@ def main(
         None,
         "--output-dir",
         help="Directory to save generated reports.",
+    ),
+    config: str | None = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Path to a config file (YAML, TOML, JSON) for reusable settings.",
     ),
     template: str = typer.Option(
         "default",
@@ -106,6 +117,24 @@ def main(
       dift old.csv new.csv --report html --output report.html
       dift old.csv new.csv --report html --template dark --output report.html
     """
+
+    # loading config file
+    config_data = load_config(config) if config else {}
+
+    # Priority: CLI > Config File > Default
+    if key is None:
+        key = config_data.get("key", key)
+
+    if threshold == DEFAULT_THRESHOLD:  
+        threshold = float(config_data.get("threshold", threshold))
+
+    if report == DEFAULT_REPORT:
+        report_str = config_data.get("report")
+        if report_str:
+            try:
+                report = ReportFormat(report_str)
+            except ValueError:
+                warning(f"Invalid report format '{report_str}' in config. Keeping default.")
 
     missing_files: list[str] = []
 
