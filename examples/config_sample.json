@@ -1,0 +1,5 @@
+{
+  "key": "transaction_id",
+  "threshold": 0.2,
+  "report": "csv"
+}

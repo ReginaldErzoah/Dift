@@ -105,8 +105,8 @@ Dift helps teams catch risky data changes before they cause damage.
 Customize your HTML reports:
 
 ```bash
-dift old.csv new.csv --report html --template clean
-````
+dift old.csv new.csv --report html --template cleans
+```
 
 Available templates:
 
@@ -157,6 +157,28 @@ Auto-generated filenames:
 * `dift_report.csv`
 * `dift_report.xlsx`
 * `dift_report.html`
+
+---
+
+### Configuration System
+
+Dift supports persistent configuration files to make your workflows reproducible and cleaner.
+
+```bash
+dift old.csv new.csv --config dift.yaml
+```
+
+### Supported Formats
+* **YAML** (`.yaml`, `.yml`)
+* **TOML** (`.toml`)
+* **JSON** (`.json`)
+
+### Example Configuration (`dift.yaml`)
+```yaml
+key: "customer_id"
+threshold: 0.05
+report: "html"  
+```
 
 ---
 
@@ -286,6 +308,12 @@ dift examples/old.csv examples/new.csv --key customer_id --report html --output 
 dift examples/old.csv examples/new.csv --key customer_id --report html --template dark --output report.html
 ```
 
+### Compare using a Config File
+
+```bash
+dift examples/old.csv examples/new.csv --config examples/config_sample.yaml
+```
+
 ---
 
 # Example Output
@@ -327,6 +355,10 @@ examples/
 ├── new.json
 ├── old_drift.csv
 └── new_drift.csv
+├── ...
+├── config_sample.yaml
+├── config_sample.toml
+└── config_sample.json
 ```
 
 ---
@@ -464,9 +496,9 @@ ruff check .
 
 #### Config File Support
 
-* YAML configuration support
-* TOML configuration support
-* JSON configuration support
+* [x] YAML configuration support
+* [x] TOML configuration support
+* [x] JSON configuration support
 
 #### Saved Comparison Profiles
 
