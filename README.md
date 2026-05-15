@@ -378,6 +378,104 @@ dift batch \
 
 ---
 
+# Comparison History
+
+Dift supports persistent comparison history tracking.
+
+This helps teams monitor:
+
+* dataset drift over time
+* recurring quality issues
+* historical risk changes
+* long-term data trust trends
+
+---
+
+## Save Comparison History
+
+```bash
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --history
+````
+
+By default, history is saved to:
+
+```text
+.dift/history/history.jsonl
+```
+
+---
+
+## Custom History Directory
+
+```bash
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --history \
+  --history-dir reports/history
+```
+
+---
+
+## View Saved History
+
+```bash
+dift history list
+```
+
+Example output:
+
+```text
+1. 2026-05-15T12:30:00Z | risk=medium | old.csv -> new.csv
+2. 2026-05-16T08:10:00Z | risk=high | prod.csv -> staging.csv
+```
+
+---
+
+## Show Detailed History Record
+
+```bash
+dift history show 1
+```
+
+---
+
+## Clear History
+
+```bash
+dift history clear
+```
+
+---
+
+## Batch Comparison History
+
+Save history during batch workflows:
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --history \
+  --history-dir reports/batch-history
+```
+
+Example structure:
+
+```text
+reports/
+└── batch-history/
+    ├── customers/
+    │   └── history.jsonl
+    ├── orders/
+    │   └── history.jsonl
+    └── products/
+        └── history.jsonl
+```
+
+---
+
 ## Requirements
 
 * Python 3.10+
@@ -634,9 +732,22 @@ dift batch \
   --new-dir warehouse_snapshot_2 \
   --report html \
   --output-dir reports/
-````
+```
+
+
+## Historical Drift Monitoring
+
+```bash
+dift prod.csv staging.csv \
+  --key customer_id \
+  --history
+```
+
+Track how risk and drift evolve across repeated comparison runs.
+
 
 ---
+
 
 # Project Structure
 
@@ -644,13 +755,15 @@ dift batch \
 dift/
 ├── cli.py
 ├── core/
+│   ├── comparator.py
 │   ├── schema_diff.py
 │   ├── row_diff.py
 │   ├── quality_diff.py
 │   ├── stats_diff.py
 │   └── risk.py
 ├── io/
-│   └── config_loader.py
+│   ├── config_loader.py
+|   └── readers.py
 ├── reports/
 │   ├── console_report.py
 │   ├── json_report.py
@@ -659,6 +772,8 @@ dift/
 │   ├── html_report.py
 │   └── models.py
 ├── profiles.py
+├── batch.py
+├── history.py
 └── utils/
 
 tests/
@@ -797,9 +912,9 @@ mypy dift
 
 #### Comparison History
 
-* Historical comparison tracking
-* Drift trend analysis
-* Historical risk tracking
+* [x] Historical comparison tracking
+* [x] Drift trend analysis
+* [x] Historical risk tracking
 
 ### Reporting Improvements
 
