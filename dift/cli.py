@@ -3,10 +3,12 @@ from __future__ import annotations
 import os
 import sys
 from enum import Enum
+from pathlib import Path
 
 import typer
 from rich.console import Console
 
+from dift.batch import find_dataset_pairs
 from dift.core.comparator import compare_datasets
 from dift.io.config_loader import load_config
 from dift.profiles import (
@@ -27,22 +29,20 @@ compare_app = typer.Typer(
 )
 
 profile_app = typer.Typer(help="Manage saved comparison profiles.")
+batch_app = typer.Typer(help="Run batch dataset comparisons.")
 
 console = Console()
 
 
 def success(msg: str) -> None:
-    """Display success messages in green."""
     console.print(f"[green]{msg}[/green]")
 
 
 def warning(msg: str) -> None:
-    """Display warnings and tips in yellow."""
     console.print(f"[yellow]{msg}[/yellow]")
 
 
 def error(msg: str) -> None:
-    """Display errors and high-risk messages in red."""
     console.print(f"[red]{msg}[/red]")
 
 
@@ -69,7 +69,6 @@ def run_comparison(
     output_dir: str | None,
     template: str,
 ) -> None:
-    """Run dataset comparison and render the selected report."""
     missing_files: list[str] = []
 
     if not os.path.exists(old_dataset):
@@ -81,7 +80,6 @@ def run_comparison(
     if missing_files:
         for file in missing_files:
             name = os.path.basename(file)
-
             error(f"Error: File not found: {file}")
             warning("Tip:")
             warning(f"Use examples/{name} or provide a full path.\n")
@@ -149,48 +147,14 @@ def run_comparison(
 def main(
     old_dataset: str = typer.Argument(..., help="Path to the old dataset."),
     new_dataset: str = typer.Argument(..., help="Path to the new dataset."),
-    key: str | None = typer.Option(
-        None,
-        "--key",
-        "-k",
-        help="Primary key column for row comparison.",
-    ),
-    threshold: float = typer.Option(
-        DEFAULT_THRESHOLD,
-        "--threshold",
-        "-t",
-        help="Threshold for numeric drift detection.",
-    ),
-    report: ReportFormat = typer.Option(
-        DEFAULT_REPORT,
-        "--report",
-        "-r",
-        help="Report format.",
-    ),
-    output: str | None = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help="Write report to a file.",
-    ),
-    output_dir: str | None = typer.Option(
-        None,
-        "--output-dir",
-        help="Directory to save generated reports.",
-    ),
-    config: str | None = typer.Option(
-        None,
-        "--config",
-        "-c",
-        help="Path to a config file (YAML, TOML, JSON).",
-    ),
-    template: str = typer.Option(
-        DEFAULT_TEMPLATE,
-        "--template",
-        help="HTML report template. Options: default, clean, compact, enterprise, dark.",
-    ),
+    key: str | None = typer.Option(None, "--key", "-k"),
+    threshold: float = typer.Option(DEFAULT_THRESHOLD, "--threshold", "-t"),
+    report: ReportFormat = typer.Option(DEFAULT_REPORT, "--report", "-r"),
+    output: str | None = typer.Option(None, "--output", "-o"),
+    output_dir: str | None = typer.Option(None, "--output-dir"),
+    config: str | None = typer.Option(None, "--config", "-c"),
+    template: str = typer.Option(DEFAULT_TEMPLATE, "--template"),
 ) -> None:
-    """Compare two datasets."""
     config_data = load_config(config) if config else {}
 
     if key is None:
@@ -237,6 +201,77 @@ def main(
         raise typer.Exit(code=1) from exc
 
 
+@batch_app.callback(invoke_without_command=True)
+def batch_run(
+    old_dir: str = typer.Option(..., "--old-dir", help="Directory with old datasets."),
+    new_dir: str = typer.Option(..., "--new-dir", help="Directory with new datasets."),
+    key: str | None = typer.Option(None, "--key", "-k"),
+    threshold: float = typer.Option(DEFAULT_THRESHOLD, "--threshold", "-t"),
+    report: ReportFormat = typer.Option(DEFAULT_REPORT, "--report", "-r"),
+    output_dir: str | None = typer.Option(None, "--output-dir"),
+    template: str = typer.Option(DEFAULT_TEMPLATE, "--template"),
+    continue_on_error: bool = typer.Option(
+        True,
+        "--continue-on-error/--stop-on-error",
+        help="Continue running other comparisons if one fails.",
+    ),
+) -> None:
+    try:
+        pairs = find_dataset_pairs(old_dir, new_dir)
+
+        if not pairs:
+            warning("No matching dataset files found.")
+            raise typer.Exit(code=1)
+
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+
+        success(f"Found {len(pairs)} dataset pair(s).")
+
+        failures = 0
+
+        for old_file, new_file in pairs:
+            dataset_name = old_file.stem
+            success(f"Comparing {old_file.name}")
+
+            pair_output_dir = None
+
+            if output_dir:
+                pair_output_dir = str(Path(output_dir) / dataset_name)
+
+            try:
+                run_comparison(
+                    old_dataset=str(old_file),
+                    new_dataset=str(new_file),
+                    key=key,
+                    threshold=threshold,
+                    report=report,
+                    output=None,
+                    output_dir=pair_output_dir,
+                    template=template,
+                )
+
+            except Exception as exc:
+                failures += 1
+                error(f"Failed comparison for {old_file.name}: {exc}")
+
+                if not continue_on_error:
+                    raise typer.Exit(code=1) from exc
+
+        if failures:
+            error(f"Batch completed with {failures} failure(s).")
+            raise typer.Exit(code=1)
+
+        success("Batch comparison completed successfully.")
+
+    except typer.Exit:
+        raise
+
+    except Exception as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=1) from exc
+
+
 @profile_app.command("create")
 def profile_create(
     name: str = typer.Argument(..., help="Profile name."),
@@ -251,7 +286,6 @@ def profile_create(
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
     overwrite: bool = typer.Option(False, "--overwrite"),
 ) -> None:
-    """Create a saved comparison profile."""
     try:
         create_profile(
             name=name,
@@ -279,7 +313,6 @@ def profile_create(
 def profile_list(
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
 ) -> None:
-    """List saved comparison profiles."""
     try:
         names = list_profile_names(profiles_file)
 
@@ -300,7 +333,6 @@ def profile_show(
     name: str = typer.Argument(..., help="Profile name."),
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
 ) -> None:
-    """Show a saved comparison profile."""
     try:
         profile = get_profile(name, profiles_file)
         console.print_json(data=profile)
@@ -315,7 +347,6 @@ def profile_delete(
     name: str = typer.Argument(..., help="Profile name."),
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
 ) -> None:
-    """Delete a saved comparison profile."""
     try:
         delete_profile(name, profiles_file)
         success(f"Deleted profile '{name}'.")
@@ -336,7 +367,6 @@ def profile_run(
     template: str | None = typer.Option(None, "--template"),
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
 ) -> None:
-    """Run a saved comparison profile."""
     try:
         profile = get_profile(name, profiles_file)
 
@@ -381,10 +411,14 @@ def profile_run(
 
 
 def app() -> None:
-    """Dispatch between normal comparison commands and profile commands."""
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
         sys.argv.pop(1)
         profile_app()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "batch":
+        sys.argv.pop(1)
+        batch_app()
         return
 
     compare_app()

@@ -37,9 +37,6 @@ Dift v0.5.0 introduces advanced drift analysis, outlier detection, reusable conf
 * Enhanced weighted risk scoring
 * Improved warning system
 * Better drift visibility in console reports
-* Config file support
-* Saved comparison profiles
-* Reusable workflow automation support
 
 ---
 
@@ -273,6 +270,114 @@ This makes Dift flexible for:
 
 ---
 
+# Batch Dataset Comparison
+
+Dift supports batch comparison workflows for validating multiple dataset pairs in one command.
+
+This is useful for:
+
+* ETL validation pipelines
+* scheduled dataset monitoring
+* multi-table warehouse checks
+* automated regression testing
+
+---
+
+## Folder Structure Example
+
+```text
+data/
+├── old/
+│   ├── customers.csv
+│   ├── orders.csv
+│   └── products.csv
+│
+└── new/
+    ├── customers.csv
+    ├── orders.csv
+    └── products.csv
+````
+
+Dift automatically matches files by filename.
+
+Example:
+
+* `old/customers.csv` ↔ `new/customers.csv`
+* `old/orders.csv` ↔ `new/orders.csv`
+
+---
+
+## Run Batch Comparison
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --key id
+```
+
+---
+
+## Generate Batch HTML Reports
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --key id \
+  --report html \
+  --output-dir reports/batch
+```
+
+Example output structure:
+
+```text
+reports/
+└── batch/
+    ├── customers/
+    │   └── dift_report.html
+    ├── orders/
+    │   └── dift_report.html
+    └── products/
+        └── dift_report.html
+```
+
+---
+
+## Batch CSV Reports
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --report csv \
+  --output-dir reports/csv
+```
+
+---
+
+## Continue On Error
+
+By default, Dift continues running other comparisons even if one fails.
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --continue-on-error
+```
+
+Stop immediately on first failure:
+
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --stop-on-error
+```
+
+---
+
 ## Requirements
 
 * Python 3.10+
@@ -431,7 +536,14 @@ dift examples/old.csv examples/new.csv \
 ```bash
 dift profile run nightly-check
 ```
+## Run Batch Dataset Comparison
 
+```bash
+dift batch \
+  --old-dir data/old \
+  --new-dir data/new \
+  --key customer_id
+````
 ---
 
 # Example Output
@@ -512,6 +624,17 @@ dift train_v1.csv train_v2.csv --threshold 0.1
 ```bash
 dift profile run nightly-check
 ```
+
+
+## Multi-Table ETL Validation
+
+```bash
+dift batch \
+  --old-dir warehouse_snapshot_1 \
+  --new-dir warehouse_snapshot_2 \
+  --report html \
+  --output-dir reports/
+````
 
 ---
 
@@ -668,9 +791,9 @@ mypy dift
 
 #### Batch Dataset Comparison
 
-* Multi-dataset comparison support
-* Folder-based comparisons
-* Batch report generation
+* [x] Multi-dataset comparison support
+* [x] Folder-based comparisons
+* [x] Batch report generation
 
 #### Comparison History
 
