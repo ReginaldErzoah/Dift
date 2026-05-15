@@ -8,7 +8,6 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Version](https://img.shields.io/badge/version-0.5.0-orange)
 
-
 Dift is an open-source CLI platform for dataset comparison, drift detection, and data trust validation.
 
 It helps data teams instantly understand:
@@ -21,16 +20,16 @@ It helps data teams instantly understand:
 
 # What's New in v0.5.0
 
-Dift v0.5.0 introduces advanced drift analysis, outlier detection, improved reporting, and stronger dataset risk analysis.
+Dift v0.5.0 introduces advanced drift analysis, outlier detection, reusable configurations, saved comparison profiles, improved reporting, and stronger dataset risk analysis.
 
 ## New Features
 
+* Numeric drift detection
+* Advanced categorical drift analysis
 * Outlier detection using IQR analysis
 * Outlier severity classification
 * Outlier risk scoring
-* Advanced categorical drift detection
 * Frequency distribution shift detection
-* Categorical severity classification
 * Numeric drift reporting across all report formats
 * Improved Excel reporting
 * Improved HTML reporting
@@ -38,6 +37,10 @@ Dift v0.5.0 introduces advanced drift analysis, outlier detection, improved repo
 * Enhanced weighted risk scoring
 * Improved warning system
 * Better drift visibility in console reports
+* Config file support
+* Saved comparison profiles
+* Reusable workflow automation support
+
 ---
 
 ## Why Dift?
@@ -63,6 +66,8 @@ Dift helps teams catch risky data changes before they cause damage.
 * Parquet
 * Excel (`.xlsx`, `.xls`)
 * JSON
+
+---
 
 ## Drift Detection
 
@@ -100,7 +105,7 @@ Dift helps teams catch risky data changes before they cause damage.
 
 ---
 
-### HTML Templates
+## HTML Templates
 
 Customize your HTML reports:
 
@@ -118,7 +123,7 @@ Available templates:
 
 ---
 
-### Numeric Drift Thresholds
+## Numeric Drift Thresholds
 
 Control drift sensitivity using `--threshold`.
 
@@ -143,7 +148,7 @@ This helps detect silent numeric drift in:
 
 ---
 
-### Output Directory Support
+## Output Directory Support
 
 Save reports to a directory without specifying filenames:
 
@@ -160,25 +165,111 @@ Auto-generated filenames:
 
 ---
 
-### Configuration System
+# Configuration System
 
-Dift supports persistent configuration files to make your workflows reproducible and cleaner.
+Dift supports reusable configuration files for cleaner and reproducible workflows.
 
 ```bash
-dift old.csv new.csv --config dift.yaml
+dift old.csv new.csv --config examples/config_sample.yaml
 ```
 
-### Supported Formats
-* **YAML** (`.yaml`, `.yml`)
-* **TOML** (`.toml`)
-* **JSON** (`.json`)
+## Supported Formats
 
-### Example Configuration (`config_sample.yaml`)
+* YAML (`.yaml`, `.yml`)
+* TOML (`.toml`)
+* JSON (`.json`)
+
+## Example YAML Config
+
 ```yaml
-key: "customer_id"
-threshold: 0.05
-report: "html"  
+key: customer_id
+threshold: 0.1
+report: html
+template: dark
+output_dir: reports/
 ```
+
+## Example TOML Config
+
+```toml
+key = "customer_id"
+threshold = 0.1
+report = "html"
+template = "dark"
+output_dir = "reports/"
+```
+
+## Example JSON Config
+
+```json
+{
+  "key": "customer_id",
+  "threshold": 0.1,
+  "report": "html",
+  "template": "dark",
+  "output_dir": "reports/"
+}
+```
+
+---
+
+# Saved Comparison Profiles
+
+Dift supports reusable saved comparison profiles.
+
+Profiles help automate recurring dataset checks and validation workflows.
+
+## Create a Profile
+
+```bash
+dift profile create nightly-check \
+  --old examples/old.csv \
+  --new examples/new.csv \
+  --key customer_id \
+  --report html \
+  --threshold 0.1
+```
+
+## Run a Profile
+
+```bash
+dift profile run nightly-check
+```
+
+## List Profiles
+
+```bash
+dift profile list
+```
+
+## Show Profile Details
+
+```bash
+dift profile show nightly-check
+```
+
+## Delete a Profile
+
+```bash
+dift profile delete nightly-check
+```
+
+---
+
+# Configuration Priority
+
+Dift resolves settings using:
+
+```text
+CLI arguments > Saved Profiles > Config Files > Defaults
+```
+
+This makes Dift flexible for:
+
+* automation
+* CI/CD pipelines
+* scheduled validations
+* reusable workflows
 
 ---
 
@@ -258,9 +349,9 @@ python -m dift.cli --help
 
 ---
 
-## Quick Start
+# Quick Start
 
-### Compare CSV Files
+## Compare CSV Files
 
 ```bash
 dift examples/old.csv examples/new.csv --key customer_id
@@ -268,7 +359,7 @@ dift examples/old.csv examples/new.csv --key customer_id
 
 ---
 
-### Detect Numeric Drift
+## Detect Numeric Drift
 
 ```bash
 dift examples/old_drift.csv examples/new_drift.csv --key id --threshold 0.1
@@ -276,42 +367,69 @@ dift examples/old_drift.csv examples/new_drift.csv --key id --threshold 0.1
 
 ---
 
-### Generate Reports
+# Generate Reports
 
-#### JSON
+## JSON
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report json --output report.json
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report json \
+  --output report.json
 ```
 
-#### CSV
+## CSV
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report csv --output report.csv
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report csv \
+  --output report.csv
 ```
 
-#### Excel
+## Excel
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report excel --output report.xlsx
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report excel \
+  --output report.xlsx
 ```
 
-#### HTML
+## HTML
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report html --output report.html
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report html \
+  --output report.html
 ```
 
-#### HTML with Template
+## HTML with Template
 
 ```bash
-dift examples/old.csv examples/new.csv --key customer_id --report html --template dark --output report.html
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report html \
+  --template dark \
+  --output report.html
 ```
 
-### Compare using a Config File
+---
+
+# Run using Config Files
 
 ```bash
-dift examples/old.csv examples/new.csv --config examples/config_sample.yaml
+dift examples/old.csv examples/new.csv \
+  --config examples/config_sample.yaml
+```
+
+---
+
+# Run using Saved Profiles
+
+```bash
+dift profile run nightly-check
 ```
 
 ---
@@ -326,7 +444,8 @@ dift examples/old.csv examples/new.csv --config examples/config_sample.yaml
 
 Warnings
 
-Numeric drift: 'revenue'
+Numeric drift:
+'revenue'
 mean shift 900.00%
 (high, threshold 0.1)
 
@@ -341,7 +460,7 @@ Categorical shift:
 
 ---
 
-## Example Files
+# Example Files
 
 ```text
 examples/
@@ -354,8 +473,7 @@ examples/
 ├── old.json
 ├── new.json
 ├── old_drift.csv
-└── new_drift.csv
-├── ...
+├── new_drift.csv
 ├── config_sample.yaml
 ├── config_sample.toml
 └── config_sample.json
@@ -363,35 +481,41 @@ examples/
 
 ---
 
-## Use Cases
+# Use Cases
 
-### ETL Validation
+## ETL Validation
 
 ```bash
 dift before.csv after.csv
 ```
 
-### ML Dataset Drift
+## ML Dataset Drift
 
 ```bash
 dift train_v1.csv train_v2.csv
 ```
 
-### Production vs Staging
+## Production vs Staging
 
 ```bash
 dift prod.csv staging.csv --key id
 ```
 
-### Silent Data Drift Detection
+## Silent Data Drift Detection
 
 ```bash
 dift train_v1.csv train_v2.csv --threshold 0.1
 ```
 
+## Automated Validation Workflow
+
+```bash
+dift profile run nightly-check
+```
+
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 dift/
@@ -403,6 +527,7 @@ dift/
 │   ├── stats_diff.py
 │   └── risk.py
 ├── io/
+│   └── config_loader.py
 ├── reports/
 │   ├── console_report.py
 │   ├── json_report.py
@@ -410,6 +535,7 @@ dift/
 │   ├── excel_report.py
 │   ├── html_report.py
 │   └── models.py
+├── profiles.py
 └── utils/
 
 tests/
@@ -418,7 +544,7 @@ examples/
 
 ---
 
-## Run Tests
+# Run Tests
 
 ```bash
 pytest
@@ -430,9 +556,15 @@ Lint:
 ruff check .
 ```
 
+Type checking:
+
+```bash
+mypy dift
+```
+
 ---
 
-## Roadmap
+# Roadmap
 
 ## v0.6.0
 
@@ -502,9 +634,9 @@ ruff check .
 
 #### Saved Comparison Profiles
 
-* Reusable comparison profiles
-* Saved report configurations
-* Named comparison presets
+* [x] Reusable comparison profiles
+* [x] Saved report configurations
+* [x] Named comparison presets
 
 #### Reusable Threshold Configs
 
