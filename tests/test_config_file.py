@@ -1,10 +1,13 @@
 import json
-
-import toml
 import yaml
 from typer.testing import CliRunner
 
 from dift.cli import compare_app
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 runner = CliRunner()
 
@@ -57,9 +60,8 @@ def test_yaml_config(tmp_path):
 
 def test_toml_config(tmp_path):
     config_file = tmp_path / "test_config.toml"
-    content = {"old_dataset": "examples/old.csv", "new_dataset": "examples/new.csv"}
-    with open(config_file, "w") as f:
-        toml.dump(content, f)
+    content = 'old_dataset = "examples/old.csv"\nnew_dataset = "examples/new.csv"'
+    config_file.write_text(content)
 
     result = runner.invoke(compare_app, ["--config", str(config_file)])
     assert result.exit_code == 0

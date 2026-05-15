@@ -5,9 +5,8 @@ from typing import Any, cast
 
 try:
     import tomllib
-except ImportError:
+except ModuleNotFoundError:
     try:
-        # type: ignore[import-not-found, no-redef]
         import tomli as tomllib
     except ImportError:
         tomllib = None
