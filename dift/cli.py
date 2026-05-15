@@ -61,6 +61,7 @@ DEFAULT_REPORT = ReportFormat.console
 DEFAULT_TEMPLATE = "default"
 
 
+<<<<<<< HEAD
 def run_comparison(
     old_dataset: str,
     new_dataset: str,
@@ -73,7 +74,108 @@ def run_comparison(
     save_history: bool = False,
     history_dir: str | None = None,
 ) -> None:
+=======
+@app.command()
+def main(
+    old_dataset: str | None = typer.Argument(None, help="Path to the old dataset."),
+    new_dataset: str | None = typer.Argument(None, help="Path to the new dataset."),
+    key: str | None = typer.Option(
+        None,
+        "--key",
+        "-k",
+        help="Primary key column for row comparison.",
+    ),
+    threshold: float = typer.Option(
+        DEFAULT_THRESHOLD,
+        "--threshold",
+        "-t",
+        help="Threshold for numeric drift detection (mean difference).",
+    ),
+    report: ReportFormat = typer.Option(
+        DEFAULT_REPORT,
+        "--report",
+        "-r",
+        help="Report format.",
+    ),
+    output: str | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Write report to a file.",
+    ),
+    output_dir: str | None = typer.Option(
+        None,
+        "--output-dir",
+        help="Directory to save generated reports.",
+    ),
+    config: str | None = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Path to a config file (YAML, TOML, JSON) for reusable settings.",
+    ),
+    template: str = typer.Option(
+        "default",
+        "--template",
+        help="HTML report template. Options: default, clean, compact, enterprise, dark.",
+    ),
+) -> None:
+    """
+    Compare two datasets and instantly detect:
+    • row changes
+    • schema changes
+    • null spikes
+    • duplicates
+    • risk level
+
+    Install:
+      pip install dift-cli
+
+    Upgrade:
+      pip install --upgrade dift-cli
+
+    Quick Start:
+      dift old.csv new.csv
+      dift old.csv new.csv --key customer_id
+      dift old.csv new.csv --report json --output report.json
+      dift old.csv new.csv --report csv --output summary.csv
+      dift old.csv new.csv --report csv --output-dir reports/
+      dift old.csv new.csv --report excel --output report.xlsx
+      dift old.csv new.csv --report html --output report.html
+      dift old.csv new.csv --report html --template dark --output report.html
+      dift old.csv new.csv --config my_config.yaml
+    """
+
+    config_data = load_config(config) if config else {}
+
+    # Priority: CLI > Config File > Default
+    if key is None:
+        key = config_data.get("key", key)
+
+    if threshold == DEFAULT_THRESHOLD:  
+        threshold = float(config_data.get("threshold", threshold))
+
+    if report == DEFAULT_REPORT:
+        report_str = config_data.get("report")
+        if report_str:
+            try:
+                report = ReportFormat(report_str)
+            except ValueError:
+                warning(f"Invalid report format '{report_str}' in config. Keeping default.")
+
+>>>>>>> dda4c1f (feat: support dataset paths in configuration files)
     missing_files: list[str] = []
+
+    old_dataset = old_dataset or config_data.get("old_dataset")
+    new_dataset = new_dataset or config_data.get("new_dataset")
+
+    if not old_dataset or not new_dataset:
+        error("Error: Missing dataset paths.")
+        console.print("Please provide paths as arguments or via a config file.")
+        warning("\nExample:")
+        warning("  dift old.csv new.csv")
+        warning("  dift --config config.yaml")
+        raise typer.Exit(code=1)
 
     if not os.path.exists(old_dataset):
         missing_files.append(old_dataset)
