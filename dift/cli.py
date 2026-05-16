@@ -25,6 +25,14 @@ from dift.reports.csv_report import render_csv
 from dift.reports.excel_report import render_excel
 from dift.reports.html_report import render_html
 from dift.reports.json_report import render_json
+from dift.schedules import (
+    build_profile_command,
+    create_schedule,
+    delete_schedule,
+    get_schedule,
+    list_schedule_names,
+    load_schedules,
+)
 from dift.thresholds import resolve_threshold_config
 
 compare_app = typer.Typer(
@@ -35,6 +43,7 @@ compare_app = typer.Typer(
 profile_app = typer.Typer(help="Manage saved comparison profiles.")
 batch_app = typer.Typer(help="Run batch dataset comparisons.")
 history_app = typer.Typer(help="Manage comparison history.")
+schedule_app = typer.Typer(help="Manage scheduled comparison workflows.")
 
 console = Console()
 
@@ -608,6 +617,162 @@ def profile_run(
         raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
 
+@schedule_app.command("create")
+def schedule_create(
+    name: str = typer.Argument(..., help="Schedule name."),
+    profile: str = typer.Option(..., "--profile", help="Saved profile to run."),
+    cron: str = typer.Option(..., "--cron", help="Cron expression."),
+    history: bool = typer.Option(
+        True,
+        "--history/--no-history",
+        help="Include --history when running the scheduled profile.",
+    ),
+    strict_exit_codes: bool = typer.Option(
+        True,
+        "--strict-exit-codes/--no-strict-exit-codes",
+        help="Include --strict-exit-codes when running the scheduled profile.",
+    ),
+    schedules_file: str | None = typer.Option(None, "--schedules-file"),
+    overwrite: bool = typer.Option(False, "--overwrite"),
+) -> None:
+    try:
+        path = create_schedule(
+            name=name,
+            profile=profile,
+            cron=cron,
+            history=history,
+            strict_exit_codes=strict_exit_codes,
+            path=schedules_file,
+            overwrite=overwrite,
+        )
+        success(f"Created schedule '{name}' at {path}")
+
+    except Exception as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
+
+@schedule_app.command("list")
+def schedule_list(
+    schedules_file: str | None = typer.Option(None, "--schedules-file"),
+) -> None:
+    names = list_schedule_names(schedules_file)
+
+    if not names:
+        warning("No schedules found.")
+        return
+
+    schedules = load_schedules(schedules_file)
+
+    for name in names:
+        schedule = schedules[name]
+        console.print(
+            f"- {name}: {schedule['cron']} -> "
+            f"dift profile run {schedule['profile']}"
+        )
+
+
+@schedule_app.command("show")
+def schedule_show(
+    name: str = typer.Argument(..., help="Schedule name."),
+    schedules_file: str | None = typer.Option(None, "--schedules-file"),
+) -> None:
+    try:
+        schedule = get_schedule(name, schedules_file)
+        console.print_json(data=schedule)
+
+    except Exception as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
+
+@schedule_app.command("delete")
+def schedule_delete(
+    name: str = typer.Argument(..., help="Schedule name."),
+    schedules_file: str | None = typer.Option(None, "--schedules-file"),
+) -> None:
+    try:
+        delete_schedule(name, schedules_file)
+        success(f"Deleted schedule '{name}'.")
+
+    except Exception as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
+
+@schedule_app.command("run")
+def schedule_run(
+    name: str = typer.Argument(..., help="Schedule name."),
+    schedules_file: str | None = typer.Option(None, "--schedules-file"),
+) -> None:
+    try:
+        schedule = get_schedule(name, schedules_file)
+
+        profile_run(
+            name=schedule["profile"],
+            key=None,
+            threshold=None,
+            report=None,
+            output=None,
+            output_dir=None,
+            template=None,
+            profiles_file=None,
+            save_history=bool(schedule.get("history", True)),
+            history_dir=None,
+            strict_exit_codes=bool(schedule.get("strict_exit_codes", True)),
+        )
+
+    except typer.Exit:
+        raise
+
+    except Exception as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
+
+@schedule_app.command("cron")
+def schedule_cron(
+    profile_name: str = typer.Argument(..., help="Saved profile name to schedule."),
+    hour: int = typer.Option(2, "--hour", help="Hour to run, 0-23."),
+    minute: int = typer.Option(0, "--minute", help="Minute to run, 0-59."),
+    history: bool = typer.Option(True, "--history/--no-history"),
+    strict_exit_codes: bool = typer.Option(
+        True,
+        "--strict-exit-codes/--no-strict-exit-codes",
+    ),
+) -> None:
+    if hour < 0 or hour > 23:
+        error("Error: --hour must be between 0 and 23.")
+        raise typer.Exit(code=ERROR_EXIT_CODE)
+
+    if minute < 0 or minute > 59:
+        error("Error: --minute must be between 0 and 59.")
+        raise typer.Exit(code=ERROR_EXIT_CODE)
+
+    command = build_profile_command(
+        profile=profile_name,
+        history=history,
+        strict_exit_codes=strict_exit_codes,
+    )
+    console.print(f"{minute} {hour} * * * {command}")
+
+
+@schedule_app.command("examples")
+def schedule_examples(
+    profile_name: str = typer.Argument(..., help="Saved profile name to schedule."),
+) -> None:
+    command = build_profile_command(profile_name)
+
+    console.print("Daily at 2:00 AM:")
+    console.print(f"0 2 * * * {command}")
+
+    console.print("\nEvery Monday at 6:00 AM:")
+    console.print(f"0 6 * * 1 {command}")
+
+    console.print("\nEvery 6 hours:")
+    console.print(f"0 */6 * * * {command}")
+
+
 def app() -> None:
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
         sys.argv.pop(1)
@@ -622,6 +787,11 @@ def app() -> None:
     if len(sys.argv) > 1 and sys.argv[1] == "history":
         sys.argv.pop(1)
         history_app()
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "schedule":
+        sys.argv.pop(1)
+        schedule_app()
         return
 
     compare_app()
