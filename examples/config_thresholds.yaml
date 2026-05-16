@@ -1,0 +1,20 @@
+old_dataset: examples/old.csv
+new_dataset: examples/new.csv
+key: customer_id
+report: html
+output: reports/threshold_report.html
+
+threshold: 0.1
+
+thresholds:
+  numeric: 0.1
+  categorical: 0.2
+  outlier: 0.15
+
+  columns:
+    revenue:
+      numeric: 0.05
+      outlier: 0.1
+
+    status:
+      categorical: 0.3
