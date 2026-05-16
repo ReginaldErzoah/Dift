@@ -5,17 +5,20 @@ from typing import Any, cast
 
 try:
     import tomllib
-except ImportError:
+except ModuleNotFoundError:
     try:
-        # type: ignore[import-not-found, no-redef]
         import tomli as tomllib
     except ImportError:
         tomllib = None
 
+
 def load_config(file_path: str) -> dict[str, Any]:
     path = pathlib.Path(file_path)
     if not path.exists():
-        print(f"Warning: Configuration file '{file_path}' not found. Using defaults.", file=sys.stderr)
+        print(
+            f"Warning: Configuration file '{file_path}' not found. Using defaults.",
+            file=sys.stderr,
+        )
         return {}
 
     suffix = path.suffix.lower()
@@ -23,7 +26,7 @@ def load_config(file_path: str) -> dict[str, Any]:
     try:
         if suffix == ".json":
             with open(path) as f:
-                return cast(dict[str, Any], json.load(f))        
+                return cast(dict[str, Any], json.load(f))
         elif suffix == ".toml":
             if tomllib:
                 with open(path, "rb") as f:
@@ -35,6 +38,7 @@ def load_config(file_path: str) -> dict[str, Any]:
         elif suffix in [".yaml", ".yml"]:
             try:
                 import yaml
+
                 with open(path) as f:
                     return cast(dict[str, Any], yaml.safe_load(f))
             except ImportError:

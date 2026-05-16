@@ -58,16 +58,8 @@ def compare_stats(
             o_std = _safe_float(old_series.std())
             n_std = _safe_float(new_series.std())
 
-            o_range = (
-                o_max - o_min
-                if o_max is not None and o_min is not None
-                else None
-            )
-            n_range = (
-                n_max - n_min
-                if n_max is not None and n_min is not None
-                else None
-            )
+            o_range = o_max - o_min if o_max is not None and o_min is not None else None
+            n_range = n_max - n_min if n_max is not None and n_min is not None else None
 
             mean_shift_pct = _relative_change(n_mean, o_mean)
             std_shift_pct = _relative_change(n_std, o_std)
@@ -244,11 +236,7 @@ def _classify_outlier_spike(delta_outlier_pct: float) -> tuple[bool, str]:
 
 def _top_counts(df: pl.DataFrame, column: str, top_n: int) -> dict[object, int]:
     result = (
-        df.group_by(column)
-        .len()
-        .sort("len", descending=True)
-        .head(top_n)
-        .to_dicts()
+        df.group_by(column).len().sort("len", descending=True).head(top_n).to_dicts()
     )
     return {row[column]: row["len"] for row in result}
 

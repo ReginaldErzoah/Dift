@@ -1,3 +1,5 @@
+old_dataset = "examples/old.csv"
+new_dataset = "examples/new.csv"
 key = "customer_id"
 threshold = 0.1
 report = "json"

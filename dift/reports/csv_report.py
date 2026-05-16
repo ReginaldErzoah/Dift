@@ -11,17 +11,11 @@ def render_csv(report: DiffReport, output: str | None = None) -> str:
     null_spikes = sum(1 for diff in report.quality_diff.null_diffs if diff.is_spike)
     outlier_spikes = sum(1 for diff in report.outlier_diff if diff.is_spike)
     high_outlier_spikes = sum(
-        1
-        for diff in report.outlier_diff
-        if diff.is_spike and diff.severity == "high"
+        1 for diff in report.outlier_diff if diff.is_spike and diff.severity == "high"
     )
     total_new_outliers = sum(diff.new_outliers for diff in report.outlier_diff)
 
-    categorical_shifts = sum(
-        1
-        for diff in report.categorical_diff
-        if diff.is_shifted
-    )
+    categorical_shifts = sum(1 for diff in report.categorical_diff if diff.is_shifted)
 
     high_categorical_shifts = sum(
         1
@@ -30,38 +24,24 @@ def render_csv(report: DiffReport, output: str | None = None) -> str:
     )
 
     max_categorical_shift = max(
-        (
-            diff.max_frequency_shift
-            for diff in report.categorical_diff
-        ),
+        (diff.max_frequency_shift for diff in report.categorical_diff),
         default=0.0,
-    )   
+    )
 
     numeric_drifts = sum(1 for diff in report.numeric_diff if diff.is_drifted)
     high_numeric_drifts = sum(
-        1
-        for diff in report.numeric_diff
-        if diff.is_drifted and diff.severity == "high"
+        1 for diff in report.numeric_diff if diff.is_drifted and diff.severity == "high"
     )
     max_mean_shift_pct = max(
-        (
-            diff.mean_shift_pct or 0.0
-            for diff in report.numeric_diff
-        ),
+        (diff.mean_shift_pct or 0.0 for diff in report.numeric_diff),
         default=0.0,
     )
     max_std_shift_pct = max(
-        (
-            diff.std_shift_pct or 0.0
-            for diff in report.numeric_diff
-        ),
+        (diff.std_shift_pct or 0.0 for diff in report.numeric_diff),
         default=0.0,
     )
     max_range_shift_pct = max(
-        (
-            diff.range_shift_pct or 0.0
-            for diff in report.numeric_diff
-        ),
+        (diff.range_shift_pct or 0.0 for diff in report.numeric_diff),
         default=0.0,
     )
 

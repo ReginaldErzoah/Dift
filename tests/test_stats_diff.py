@@ -49,6 +49,7 @@ def test_outlier_detection_ignores_non_numeric_columns():
 
     assert all(item.column != "segment" for item in result.outlier_diffs)
 
+
 def test_categorical_frequency_shift_is_detected():
     old = pl.DataFrame(
         {

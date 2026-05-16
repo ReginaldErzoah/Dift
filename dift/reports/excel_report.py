@@ -155,6 +155,7 @@ def _add_numeric_sheet(wb: Workbook, report: DiffReport) -> None:
     _auto_size_columns(ws)
     ws.freeze_panes = "A2"
 
+
 def _add_outlier_sheet(wb: Workbook, report: DiffReport) -> None:
     ws = wb.create_sheet("Outlier Diff")
 

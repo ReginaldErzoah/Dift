@@ -25,8 +25,7 @@ def render_html(
     if template not in SUPPORTED_TEMPLATES:
         supported = ", ".join(sorted(SUPPORTED_TEMPLATES))
         raise ValueError(
-            f"Unsupported HTML template '{template}'. "
-            f"Supported templates: {supported}"
+            f"Unsupported HTML template '{template}'. Supported templates: {supported}"
         )
 
     output_path = Path(output or "dift_report.html")
@@ -626,11 +625,7 @@ def _safe_frequency_shifts(shifts: dict[str, float]) -> str:
     if not shifts:
         return ""
 
-    return ", ".join(
-        f"{_safe(value)}: {shift:.2%}"
-        for value, shift in shifts.items()
-    )
-
+    return ", ".join(f"{_safe(value)}: {shift:.2%}" for value, shift in shifts.items())
 
 
 def _safe_pct(value: float | None) -> str:
@@ -638,7 +633,6 @@ def _safe_pct(value: float | None) -> str:
         return ""
 
     return f"{value:.2%}"
-
 
 
 def _safe(value: Any) -> str:

@@ -179,6 +179,8 @@ dift old.csv new.csv --config examples/config_sample.yaml
 ## Example YAML Config
 
 ```yaml
+old_dataset: "examples/old.csv"
+new_dataset: "examples/new.csv"
 key: customer_id
 threshold: 0.1
 report: html
@@ -189,6 +191,8 @@ output_dir: reports/
 ## Example TOML Config
 
 ```toml
+old_dataset = "examples/old.csv"
+new_dataset = "examples/new.csv"
 key = "customer_id"
 threshold = 0.1
 report = "html"
@@ -200,6 +204,8 @@ output_dir = "reports/"
 
 ```json
 {
+  "old_dataset": "examples/old.csv",
+  "new_dataset": "examples/new.csv",
   "key": "customer_id",
   "threshold": 0.1,
   "report": "html",
@@ -374,6 +380,11 @@ dift batch \
   --old-dir data/old \
   --new-dir data/new \
   --stop-on-error
+old_dataset: "examples/old.csv"
+new_dataset: "examples/new.csv"
+key: "customer_id"
+threshold: 0.05
+report: "html"  
 ```
 
 ---
@@ -473,6 +484,11 @@ reports/
     └── products/
         └── history.jsonl
 ```
+### Configuration Priority
+Dift follows a strict priority chain to give you maximum flexibility:
+1. **CLI Arguments** (Highest priority, overrides everything)
+2. **Configuration File** (YAML, TOML, or JSON)
+3. **Internal Defaults** (Threshold: 0.1, Report: console)
 
 ---
 
@@ -560,6 +576,10 @@ python -m dift.cli --help
 dift examples/old.csv examples/new.csv --key customer_id
 ```
 
+If your paths are defined in the config, just run:
+```bash
+dift --config examples/config_sample.yaml
+```
 ---
 
 ## Detect Numeric Drift
@@ -869,6 +889,7 @@ mypy dift
 * [x] YAML configuration support
 * [x] TOML configuration support
 * [x] JSON configuration support
+* [x] Dataset path support in configuration files  
 
 #### Saved Comparison Profiles
 
