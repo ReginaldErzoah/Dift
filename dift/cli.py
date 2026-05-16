@@ -25,6 +25,7 @@ from dift.reports.csv_report import render_csv
 from dift.reports.excel_report import render_excel
 from dift.reports.html_report import render_html
 from dift.reports.json_report import render_json
+from dift.thresholds import resolve_threshold_config
 
 compare_app = typer.Typer(
     no_args_is_help=True,
@@ -99,11 +100,15 @@ def run_comparison(
 ) -> None:
     config_data = load_config(config) if config else {}
 
+    threshold_config = resolve_threshold_config(
+        config_data=config_data,
+        cli_threshold=threshold,
+        default_threshold=DEFAULT_THRESHOLD,
+    )
+    numeric_threshold = threshold_config.numeric
+
     if key is None:
         key = config_data.get("key", key)
-
-    if threshold == DEFAULT_THRESHOLD:
-        threshold = float(config_data.get("threshold", threshold))
 
     if report == DEFAULT_REPORT:
         report_str = config_data.get("report")
@@ -181,7 +186,8 @@ def run_comparison(
         old_dataset,
         new_dataset,
         key=key,
-        threshold=threshold,
+        threshold=numeric_threshold,
+        threshold_config=threshold_config,
     )
 
     runtime_seconds = round(perf_counter() - started_at, 4)
@@ -190,7 +196,7 @@ def run_comparison(
     diff_report.metadata.old_source = old_dataset
     diff_report.metadata.new_source = new_dataset
     diff_report.metadata.key = key
-    diff_report.metadata.threshold = threshold
+    diff_report.metadata.threshold = numeric_threshold
     diff_report.metadata.report_format = report.value
     diff_report.metadata.template = template if report == ReportFormat.html else None
     diff_report.metadata.runtime_seconds = runtime_seconds
@@ -201,7 +207,7 @@ def run_comparison(
             old_dataset=old_dataset,
             new_dataset=new_dataset,
             key=key,
-            threshold=threshold,
+            threshold=numeric_threshold,
             report_format=report.value,
             history_dir=history_dir,
         )

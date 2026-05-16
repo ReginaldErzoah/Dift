@@ -35,7 +35,7 @@ class ThresholdConfig(BaseModel):
 
 
 def resolve_threshold_config(
-    config_data: dict,
+    config_data: dict[str, object],
     cli_threshold: float,
     default_threshold: float,
 ) -> ThresholdConfig:
