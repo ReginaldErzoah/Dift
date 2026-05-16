@@ -1528,7 +1528,7 @@ mypy dift
 
 #### CLI Automation Workflows
 
-* Non-interactive CLI support
+* [x] Non-interactive CLI support
 * [x] Automation-friendly exit codes
 * Pipeline integration support
 
