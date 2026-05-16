@@ -94,11 +94,12 @@ def run_comparison(
     output_dir: str | None,
     template: str,
     config: str | None = None,
+    env: str | None = None,
     save_history: bool = False,
     history_dir: str | None = None,
     strict_exit_codes: bool = False,
 ) -> None:
-    config_data = load_config(config) if config else {}
+    config_data = load_config(config, env=env) if config else {}
 
     threshold_config = resolve_threshold_config(
         config_data=config_data,
@@ -258,6 +259,11 @@ def main(
     output: str | None = typer.Option(None, "--output", "-o"),
     output_dir: str | None = typer.Option(None, "--output-dir"),
     config: str | None = typer.Option(None, "--config", "-c"),
+    env: str | None = typer.Option(
+        None,
+        "--env",
+        help="Environment name to load from config file.",
+    ),
     template: str = typer.Option(DEFAULT_TEMPLATE, "--template"),
     save_history: bool = typer.Option(
         False,
@@ -286,6 +292,7 @@ def main(
             output_dir=output_dir,
             template=template,
             config=config,
+            env=env,
             save_history=save_history,
             history_dir=history_dir,
             strict_exit_codes=strict_exit_codes,
