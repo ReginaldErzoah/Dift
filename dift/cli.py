@@ -60,6 +60,7 @@ DEFAULT_THRESHOLD = 0.1
 DEFAULT_REPORT = ReportFormat.console
 DEFAULT_TEMPLATE = "default"
 
+
 def run_comparison(
     old_dataset: str | None,
     new_dataset: str | None,
@@ -88,7 +89,15 @@ def run_comparison(
                 report = ReportFormat(report_str)
             except ValueError:
                 warning(f"Invalid report format '{report_str}' in config. Keeping default.")
-    missing_files: list[str] = []
+
+    if output is None:
+        output = config_data.get("output")
+
+    if output_dir is None:
+        output_dir = config_data.get("output_dir")
+
+    if template == DEFAULT_TEMPLATE:
+        template = config_data.get("template", template)
 
     old_dataset = old_dataset or config_data.get("old_dataset")
     new_dataset = new_dataset or config_data.get("new_dataset")
@@ -100,6 +109,8 @@ def run_comparison(
         warning("  dift old.csv new.csv")
         warning("  dift --config config.yaml")
         raise typer.Exit(code=1)
+
+    missing_files: list[str] = []
 
     if not os.path.exists(old_dataset):
         missing_files.append(old_dataset)
@@ -119,6 +130,12 @@ def run_comparison(
     if output and output_dir:
         error("Error: Use either --output or --output-dir, not both.")
         raise typer.Exit(code=1)
+
+    if output:
+        output_parent = os.path.dirname(output)
+
+        if output_parent:
+            os.makedirs(output_parent, exist_ok=True)
 
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)
