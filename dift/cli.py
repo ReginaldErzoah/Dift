@@ -60,20 +60,46 @@ DEFAULT_THRESHOLD = 0.1
 DEFAULT_REPORT = ReportFormat.console
 DEFAULT_TEMPLATE = "default"
 
-
 def run_comparison(
-    old_dataset: str,
-    new_dataset: str,
+    old_dataset: str | None,
+    new_dataset: str | None,
     key: str | None,
     threshold: float,
     report: ReportFormat,
     output: str | None,
     output_dir: str | None,
     template: str,
+    config: str | None = None,
     save_history: bool = False,
     history_dir: str | None = None,
 ) -> None:
+    config_data = load_config(config) if config else {}
+
+    if key is None:
+        key = config_data.get("key", key)
+
+    if threshold == DEFAULT_THRESHOLD:
+        threshold = float(config_data.get("threshold", threshold))
+
+    if report == DEFAULT_REPORT:
+        report_str = config_data.get("report")
+        if report_str:
+            try:
+                report = ReportFormat(report_str)
+            except ValueError:
+                warning(f"Invalid report format '{report_str}' in config. Keeping default.")
     missing_files: list[str] = []
+
+    old_dataset = old_dataset or config_data.get("old_dataset")
+    new_dataset = new_dataset or config_data.get("new_dataset")
+
+    if not old_dataset or not new_dataset:
+        error("Error: Missing dataset paths.")
+        console.print("Please provide paths as arguments or via a config file.")
+        warning("\nExample:")
+        warning("  dift old.csv new.csv")
+        warning("  dift --config config.yaml")
+        raise typer.Exit(code=1)
 
     if not os.path.exists(old_dataset):
         missing_files.append(old_dataset)
@@ -161,8 +187,8 @@ def run_comparison(
 
 @compare_app.command()
 def main(
-    old_dataset: str = typer.Argument(..., help="Path to the old dataset."),
-    new_dataset: str = typer.Argument(..., help="Path to the new dataset."),
+    old_dataset: str | None = typer.Argument(None, help="Path to the old dataset."),
+    new_dataset: str | None = typer.Argument(None, help="Path to the new dataset."),
     key: str | None = typer.Option(None, "--key", "-k"),
     threshold: float = typer.Option(DEFAULT_THRESHOLD, "--threshold", "-t"),
     report: ReportFormat = typer.Option(DEFAULT_REPORT, "--report", "-r"),
@@ -181,32 +207,6 @@ def main(
         help="Directory to save comparison history.",
     ),
 ) -> None:
-    config_data = load_config(config) if config else {}
-
-    if key is None:
-        key = config_data.get("key")
-
-    if threshold == DEFAULT_THRESHOLD:
-        threshold = float(config_data.get("threshold", threshold))
-
-    if report == DEFAULT_REPORT:
-        report_str = config_data.get("report")
-
-        if report_str:
-            try:
-                report = ReportFormat(report_str)
-            except ValueError:
-                warning(f"Invalid report format '{report_str}' in config. Keeping default.")
-
-    if output is None:
-        output = config_data.get("output")
-
-    if output_dir is None:
-        output_dir = config_data.get("output_dir")
-
-    if template == DEFAULT_TEMPLATE:
-        template = config_data.get("template", template)
-
     try:
         run_comparison(
             old_dataset=old_dataset,
@@ -217,6 +217,7 @@ def main(
             output=output,
             output_dir=output_dir,
             template=template,
+            config=config,
             save_history=save_history,
             history_dir=history_dir,
         )

@@ -138,26 +138,10 @@ def render_console(report: DiffReport) -> None:
         console.print(f"[dim]{report.row_diff.note}[/dim]")
 
     duplicate = report.quality_diff.duplicate_diff
-    null_spikes = [
-        diff
-        for diff in report.quality_diff.null_diffs
-        if diff.is_spike
-    ]
-    numeric_drifts = [
-        diff
-        for diff in report.numeric_diff
-        if diff.is_drifted
-    ]
-    outlier_spikes = [
-        diff
-        for diff in report.outlier_diff
-        if diff.is_spike
-    ]
-    categorical_shifts = [
-        diff
-        for diff in report.categorical_diff
-        if diff.is_shifted
-    ]
+    null_spikes = [diff for diff in report.quality_diff.null_diffs if diff.is_spike]
+    numeric_drifts = [diff for diff in report.numeric_diff if diff.is_drifted]
+    outlier_spikes = [diff for diff in report.outlier_diff if diff.is_spike]
+    categorical_shifts = [diff for diff in report.categorical_diff if diff.is_shifted]
 
     if (
         duplicate.is_spike

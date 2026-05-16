@@ -10,7 +10,9 @@ class RowDiffError(ValueError):
     """Raised when row-level comparison cannot be performed."""
 
 
-def compare_rows(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None) -> RowDiff:
+def compare_rows(
+    old: pl.DataFrame, new: pl.DataFrame, key: str | None = None
+) -> RowDiff:
     """Compare rows, optionally by a primary key column."""
     if key is None:
         return RowDiff(
@@ -29,8 +31,12 @@ def compare_rows(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None) -
 
     shared_columns = sorted((set(old.columns) & set(new.columns)) - {key})
 
-    old_hashed = old.select([pl.col(key), row_hash_expr(shared_columns).alias("_dift_hash")])
-    new_hashed = new.select([pl.col(key), row_hash_expr(shared_columns).alias("_dift_hash")])
+    old_hashed = old.select(
+        [pl.col(key), row_hash_expr(shared_columns).alias("_dift_hash")]
+    )
+    new_hashed = new.select(
+        [pl.col(key), row_hash_expr(shared_columns).alias("_dift_hash")]
+    )
 
     old_keys = old_hashed.select(key).unique()
     new_keys = new_hashed.select(key).unique()
@@ -39,8 +45,12 @@ def compare_rows(old: pl.DataFrame, new: pl.DataFrame, key: str | None = None) -
     added_rows = new_keys.join(old_keys, on=key, how="anti").height
 
     joined = old_hashed.join(new_hashed, on=key, how="inner", suffix="_new")
-    changed_rows = joined.filter(pl.col("_dift_hash") != pl.col("_dift_hash_new")).height
-    unchanged_rows = joined.filter(pl.col("_dift_hash") == pl.col("_dift_hash_new")).height
+    changed_rows = joined.filter(
+        pl.col("_dift_hash") != pl.col("_dift_hash_new")
+    ).height
+    unchanged_rows = joined.filter(
+        pl.col("_dift_hash") == pl.col("_dift_hash_new")
+    ).height
 
     return RowDiff(
         key=key,

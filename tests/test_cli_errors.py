@@ -21,7 +21,9 @@ def test_cli_fails_for_missing_dataset(sample_csv_files):
 
     assert result.returncode != 0
     combined_output = result.stdout + result.stderr
-    assert "not found" in combined_output.lower() or "missing" in combined_output.lower()
+    assert (
+        "not found" in combined_output.lower() or "missing" in combined_output.lower()
+    )
 
 
 def test_cli_fails_for_missing_key(sample_csv_files):

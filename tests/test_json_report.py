@@ -44,7 +44,7 @@ def test_render_json_structure():
     payload = render_json(report)
     data = json.loads(payload)
 
-    #New structure (aliases)
+    # New structure (aliases)
     assert "metadata" in data
     assert "summary" in data
     assert "schema" in data
@@ -53,7 +53,7 @@ def test_render_json_structure():
     assert "numeric" in data
     assert "categorical" in data
 
-    #Old names should NOT appear
+    # Old names should NOT appear
     assert "schema_diff" not in data
     assert "row_diff" not in data
     assert "quality_diff" not in data

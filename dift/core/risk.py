@@ -125,5 +125,5 @@ def _stats_risk_score(report: DiffReport) -> int:
             score += 15
         else:
             score += 5
-            
+
     return min(score, 40)

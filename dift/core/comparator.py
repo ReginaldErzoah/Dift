@@ -23,11 +23,11 @@ def compare_datasets(
     row_diff = compare_rows(old, new, key=key)
     quality_diff = compare_quality(old, new, key=key)
     stats_diff = compare_stats(
-    old,
-    new,
-    threshold=threshold,
-    key=key,
-)
+        old,
+        new,
+        threshold=threshold,
+        key=key,
+    )
 
     report = DiffReport(
         summary=Summary(
