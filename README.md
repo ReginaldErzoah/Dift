@@ -179,13 +179,11 @@ dift old.csv new.csv --config examples/config_sample.yaml
 ## Example YAML Config
 
 ```yaml
-old_dataset: "examples/old.csv"
+old_dataset: "example/old.csv"
 new_dataset: "examples/new.csv"
-key: customer_id
-threshold: 0.1
-report: html
-template: dark
-output_dir: reports/
+key: "customer_id"
+threshold: 0.05
+report: "html"
 ```
 
 ## Example TOML Config
@@ -195,9 +193,7 @@ old_dataset = "examples/old.csv"
 new_dataset = "examples/new.csv"
 key = "customer_id"
 threshold = 0.1
-report = "html"
-template = "dark"
-output_dir = "reports/"
+report = "json"
 ```
 
 ## Example JSON Config
@@ -207,10 +203,8 @@ output_dir = "reports/"
   "old_dataset": "examples/old.csv",
   "new_dataset": "examples/new.csv",
   "key": "customer_id",
-  "threshold": 0.1,
-  "report": "html",
-  "template": "dark",
-  "output_dir": "reports/"
+  "threshold": 0.2,
+  "report": "csv"
 }
 ```
 ---
