@@ -983,20 +983,8 @@ dift prod.csv candidate.csv \
 | `2` | High-risk drift detected |
 | `3` | Runtime error, invalid input, or failed comparison |
 
----
 
 This allows Dift to automatically fail pipelines when risky dataset changes are detected.
-
-Useful for:
-
-* GitHub Actions
-* GitLab CI
-* Jenkins
-* Airflow
-* cron jobs
-* ETL validation
-* deployment safety checks
-* scheduled data quality monitoring
 
 ---
 
@@ -1025,6 +1013,83 @@ This means Dift detected a high-risk dataset change.
 Strict exit codes are optional.
 
 Without `--strict-exit-codes`, Dift preserves the original behavior and exits successfully when comparisons complete.
+
+---
+
+## Non-Interactive CLI Support
+
+Dift supports automation-friendly execution for CI/CD pipelines, cron jobs, Airflow, Jenkins, GitHub Actions, and scheduled workflows.
+
+### Quiet Mode
+
+Suppress non-error output:
+
+```bash
+dift old.csv new.csv \
+  --key id \
+  --quiet
+```
+
+This is useful for:
+
+* cron jobs
+* CI/CD pipelines
+* scheduled validation workflows
+* automated monitoring
+
+Errors will still be displayed.
+
+---
+
+### Disable Colored Output
+
+Disable ANSI terminal colors for cleaner logs:
+
+```bash
+dift old.csv new.csv \
+  --key id \
+  --no-color
+```
+
+Useful for:
+
+* log aggregation systems
+* CI logs
+* plain-text terminals
+* automation tools
+
+---
+
+### Fully Automation-Friendly Example
+
+```bash
+dift old.csv new.csv \
+  --key id \
+  --strict-exit-codes \
+  --quiet \
+  --no-color
+```
+
+This combination provides:
+
+* predictable exit codes
+* machine-friendly output
+* clean CI logs
+* non-interactive execution behavior
+
+---
+
+### Scheduled Workflow Example
+
+```bash
+dift schedule cron nightly-check
+```
+
+Example output:
+
+```cron
+0 2 * * * dift profile run nightly-check --history --strict-exit-codes --quiet --no-color
+```
 
 ---
 
