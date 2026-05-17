@@ -1,7 +1,7 @@
 # Dift
 
 <p align="left">
-  <img src="assets/dift-logo.png" width="400" alt="Dift Logo">
+  <img src="https://raw.githubusercontent.com/ReginaldErzoah/Dift/main/assets/dift-logo.png" width="400" alt="Dift Logo">
 </p>
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
