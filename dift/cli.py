@@ -7,6 +7,7 @@ from enum import Enum
 from pathlib import Path
 from time import perf_counter
 
+import click
 import typer
 from rich.console import Console
 
@@ -34,6 +35,17 @@ from dift.schedules import (
     load_schedules,
 )
 from dift.thresholds import resolve_threshold_config
+
+
+class CustomUsageCommand(typer.core.TyperCommand):
+    """Customize the main help usage line for beginner-friendly CLI docs."""
+
+    def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        formatter.write_usage(
+            ctx.command_path,
+            "[OLD_DATASET] [NEW_DATASET] [OPTIONS]",
+        )
+
 
 compare_app = typer.Typer(
     no_args_is_help=True,
@@ -274,7 +286,7 @@ def run_comparison(
         raise typer.Exit(code=risk_exit_code(diff_report.summary.risk_level))
 
 
-@compare_app.command()
+@compare_app.command(cls=CustomUsageCommand)
 def main(
     old_dataset: str | None = typer.Argument(None, help="Path to the old dataset."),
     new_dataset: str | None = typer.Argument(None, help="Path to the new dataset."),
