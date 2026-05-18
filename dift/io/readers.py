@@ -4,7 +4,23 @@ from pathlib import Path
 
 import polars as pl
 
-SUPPORTED_EXTENSIONS = {".csv", ".parquet", ".xlsx", ".xls", ".json"}
+from dift.io.duckdb_reader import (
+    is_duckdb_uri,
+    parse_duckdb_uri,
+    read_duckdb_table,
+)
+
+SUPPORTED_EXTENSIONS = {
+    ".csv",
+    ".parquet",
+    ".xlsx",
+    ".xls",
+    ".json",
+}
+
+SUPPORTED_SOURCE_TYPES = sorted(
+    list(SUPPORTED_EXTENSIONS) + ["duckdb:///database.duckdb:table"]
+)
 
 
 class DatasetReadError(ValueError):
@@ -12,7 +28,17 @@ class DatasetReadError(ValueError):
 
 
 def read_dataset(path: str | Path) -> pl.DataFrame:
-    """Read a local CSV, Parquet, Excel, or JSON dataset into a Polars DataFrame."""
+    """Read a local dataset or DuckDB table into a Polars DataFrame."""
+    path_str = str(path)
+
+    if is_duckdb_uri(path_str):
+        try:
+            database_path, table_name = parse_duckdb_uri(path_str)
+            return read_duckdb_table(database_path, table_name)
+
+        except Exception as exc:
+            raise DatasetReadError(f"Failed to read DuckDB dataset: {path_str}") from exc
+
     dataset_path = Path(path)
 
     if not dataset_path.exists():
@@ -34,5 +60,5 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
 
     raise DatasetReadError(
         f"Unsupported dataset type '{suffix}'. "
-        f"Supported types: {sorted(SUPPORTED_EXTENSIONS)}"
+        f"Supported types: {SUPPORTED_SOURCE_TYPES}"
     )

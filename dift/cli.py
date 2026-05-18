@@ -15,6 +15,7 @@ from dift.batch import find_dataset_pairs
 from dift.core.comparator import compare_datasets
 from dift.history import clear_history, load_history, save_history_record
 from dift.io.config_loader import load_config
+from dift.io.duckdb_reader import is_duckdb_uri, parse_duckdb_uri
 from dift.profiles import (
     create_profile,
     delete_profile,
@@ -177,11 +178,22 @@ def run_comparison(
 
     missing_files: list[str] = []
 
-    if not os.path.exists(old_dataset):
-        missing_files.append(old_dataset)
+    for dataset in [old_dataset, new_dataset]:
+        if dataset is None:
+            continue
 
-    if not os.path.exists(new_dataset):
-        missing_files.append(new_dataset)
+        if is_duckdb_uri(dataset):
+            try:
+                database_path, _ = parse_duckdb_uri(dataset)
+
+                if not os.path.exists(database_path):
+                    missing_files.append(database_path)
+
+            except ValueError:
+                missing_files.append(dataset)
+
+        elif not os.path.exists(dataset):
+            missing_files.append(dataset)
 
     if missing_files:
         for file in missing_files:
