@@ -20,6 +20,8 @@ SQL_URI_PREFIXES: Final[tuple[str, ...]] = (
     "mysql+pymysql://",
     "redshift+psycopg2://",
     "redshift+redshift_connector://",
+    "snowflake://",
+    "snowflake+snowflake://",
     "mssql://",
 )
 
@@ -46,6 +48,7 @@ def parse_sql_table_uri(uri: str) -> tuple[str, str]:
         postgres://user:pass@host:5432/dbname:table_name
         mysql+pymysql://user:pass@host:3306/dbname:table_name
         redshift+redshift_connector://user:pass@host:5439/dbname:table_name
+        snowflake://user:pass@account/db/schema?warehouse=compute_wh:table_name
 
     Returns:
         tuple(connection_string, table_name)
@@ -160,6 +163,12 @@ def _driver_help(connection_string: str) -> str:
         return (
             "Redshift support requires a Redshift-compatible SQLAlchemy driver. "
             "Install one with: pip install sqlalchemy-redshift redshift-connector"
+        )
+
+    if connection_string.startswith(("snowflake://", "snowflake+snowflake://")):
+        return (
+            "Snowflake support requires the Snowflake SQLAlchemy driver. "
+            "Install it with: pip install snowflake-sqlalchemy"
         )
 
     return (

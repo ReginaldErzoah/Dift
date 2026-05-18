@@ -12,11 +12,24 @@ sqlalchemy = pytest.importorskip("sqlalchemy")
 
 def test_is_sql_uri():
     assert is_sql_uri("sqlite:///examples/test.db:customers")
+    assert is_sql_uri("postgres://user:pass@localhost:5432/db:customers")
     assert is_sql_uri("postgresql://user:pass@localhost:5432/db:customers")
     assert is_sql_uri("postgresql+psycopg://user:pass@localhost:5432/db:customers")
     assert is_sql_uri("postgresql+psycopg2://user:pass@localhost:5432/db:customers")
     assert is_sql_uri("mysql://user:pass@localhost:3306/db:customers")
     assert is_sql_uri("mysql+pymysql://user:pass@localhost:3306/db:customers")
+    assert is_sql_uri(
+        "redshift+redshift_connector://user:pass@cluster.region.redshift.amazonaws.com:5439/dev:orders"
+    )
+    assert is_sql_uri(
+        "redshift+psycopg2://user:pass@cluster.region.redshift.amazonaws.com:5439/dev:orders"
+    )
+    assert is_sql_uri(
+        "snowflake://user:pass@account/sales_db/public?warehouse=compute_wh:orders"
+    )
+    assert is_sql_uri(
+        "snowflake+snowflake://user:pass@account/sales_db/public?warehouse=compute_wh:orders"
+    )
     assert is_sql_uri("mssql://user:pass@localhost:1433/db:customers")
     assert not is_sql_uri("examples/old.csv")
 
@@ -46,6 +59,28 @@ def test_parse_sql_table_uri_postgresql():
 
     assert connection_string == "postgresql://user:password@localhost:5432/sales_db"
     assert table_name == "customers"
+
+
+def test_parse_sql_table_uri_redshift():
+    connection_string, table_name = parse_sql_table_uri(
+        "redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders"
+    )
+
+    assert connection_string == (
+        "redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev"
+    )
+    assert table_name == "orders"
+
+
+def test_parse_sql_table_uri_snowflake():
+    connection_string, table_name = parse_sql_table_uri(
+        "snowflake://user:password@account/sales_db/public?warehouse=compute_wh:orders"
+    )
+
+    assert connection_string == (
+        "snowflake://user:password@account/sales_db/public?warehouse=compute_wh"
+    )
+    assert table_name == "orders"
 
 
 def test_parse_sql_table_uri_rejects_invalid_uri():
