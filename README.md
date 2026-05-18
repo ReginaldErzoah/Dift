@@ -1569,11 +1569,11 @@ mypy dift
 
 #### SQL Database Integration
 
-* Direct database-to-database comparison
-* Table-to-table comparison support
-* Query-based dataset comparison
-* Connection string support
-* CLI database input support
+* [x] Direct database-to-database comparison
+* [x] Table-to-table comparison support
+* [x] Query-based dataset comparison
+* [x] Connection string support
+* [x] CLI database input support
 
 #### PostgreSQL Connector
 
