@@ -1147,6 +1147,84 @@ duckdb:///data/warehouse.duckdb:orders
 
 ---
 
+
+# BigQuery Support
+
+Dift supports comparing datasets directly from Google BigQuery.
+
+This enables cloud warehouse validation, analytical comparisons, and SQL-driven data quality workflows.
+
+## Compare BigQuery Tables
+
+```bash
+dift bigquery://my-project.analytics.customers_old \
+     bigquery://my-project.analytics.customers_new \
+     --key customer_id
+```
+
+## URI Format
+
+```text
+bigquery://project.dataset.table
+```
+
+## Example
+
+```text
+bigquery://acme-analytics.sales.orders
+```
+
+## Authentication
+
+Dift uses standard Google Cloud authentication.
+
+Set your service account credentials:
+
+### Linux / macOS
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account.json"
+```
+
+### Windows Git Bash
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="C:/path/to/service-account.json"
+```
+
+## Install Dependencies
+
+```bash
+pip install google-cloud-bigquery db-dtypes
+```
+
+## Works With
+
+* existing risk scoring
+* HTML reports
+* Excel reports
+* JSON reports
+* CSV reports
+* drift detection
+* quality validation
+
+## Common Use Cases
+
+* cloud warehouse validation
+* production dataset monitoring
+* analytics QA workflows
+* cross-environment data comparison
+* SQL-driven data quality checks
+
+## Notes
+
+* BigQuery access requires valid Google Cloud credentials.
+* BigQuery billing and permissions are managed through Google Cloud.
+* BigQuery comparisons use the existing Dift comparison engine and reports.
+
+
+---
+
 ## Requirements
 
 * Python 3.10+
