@@ -4,6 +4,7 @@ from pathlib import Path
 
 import polars as pl
 
+from dift.io.bigquery_reader import is_bigquery_uri, read_bigquery_table
 from dift.io.duckdb_reader import (
     is_duckdb_uri,
     parse_duckdb_uri,
@@ -19,7 +20,11 @@ SUPPORTED_EXTENSIONS = {
 }
 
 SUPPORTED_SOURCE_TYPES = sorted(
-    list(SUPPORTED_EXTENSIONS) + ["duckdb:///database.duckdb:table"]
+    list(SUPPORTED_EXTENSIONS)
+    + [
+        "duckdb:///database.duckdb:table",
+        "bigquery://project.dataset.table",
+    ]
 )
 
 
@@ -28,7 +33,7 @@ class DatasetReadError(ValueError):
 
 
 def read_dataset(path: str | Path) -> pl.DataFrame:
-    """Read a local dataset or DuckDB table into a Polars DataFrame."""
+    """Read a local dataset, DuckDB table, or BigQuery table into a Polars DataFrame."""
     path_str = str(path)
 
     if is_duckdb_uri(path_str):
@@ -38,6 +43,13 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
 
         except Exception as exc:
             raise DatasetReadError(f"Failed to read DuckDB dataset: {path_str}") from exc
+
+    if is_bigquery_uri(path_str):
+        try:
+            return read_bigquery_table(path_str)
+
+        except Exception as exc:
+            raise DatasetReadError(f"Failed to read BigQuery dataset: {path_str}") from exc
 
     dataset_path = Path(path)
 
