@@ -595,8 +595,8 @@ Dift automatically matches files by filename.
 
 Example:
 
-* `old/customers.csv` ↔ `new/customers.csv`
-* `old/orders.csv` ↔ `new/orders.csv`
+* `old/customers.csv` <--> `new/customers.csv`
+* `old/orders.csv` <--> `new/orders.csv`
 
 ---
 
