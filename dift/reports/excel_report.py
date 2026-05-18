@@ -1,12 +1,41 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from dift.reports.models import DiffReport
+
+HEADER_FILL = PatternFill("solid", fgColor="1F2937")
+HEADER_FONT = Font(color="FFFFFF", bold=True)
+
+TITLE_FONT = Font(size=16, bold=True, color="111827")
+SECTION_FONT = Font(size=12, bold=True, color="111827")
+LABEL_FONT = Font(bold=True, color="374151")
+
+LOW_FILL = PatternFill("solid", fgColor="DCFCE7")
+MEDIUM_FILL = PatternFill("solid", fgColor="FEF3C7")
+HIGH_FILL = PatternFill("solid", fgColor="FEE2E2")
+
+LOW_FONT = Font(color="166534", bold=True)
+MEDIUM_FONT = Font(color="92400E", bold=True)
+HIGH_FONT = Font(color="991B1B", bold=True)
+
+LIGHT_FILL = PatternFill("solid", fgColor="F9FAFB")
+SECTION_FILL = PatternFill("solid", fgColor="E5E7EB")
+
+THIN_BORDER = Border(
+    left=Side(style="thin", color="D1D5DB"),
+    right=Side(style="thin", color="D1D5DB"),
+    top=Side(style="thin", color="D1D5DB"),
+    bottom=Side(style="thin", color="D1D5DB"),
+)
+
+CENTER = Alignment(horizontal="center", vertical="center", wrap_text=True)
+LEFT = Alignment(horizontal="left", vertical="top", wrap_text=True)
 
 
 def render_excel(report: DiffReport, output: str | None = None) -> Path:
@@ -34,38 +63,57 @@ def render_excel(report: DiffReport, output: str | None = None) -> Path:
 
 
 def _add_summary_sheet(ws, report: DiffReport) -> None:
-    rows = [
-        ["Metric", "Value"],
-        ["tool", report.metadata.tool],
-        ["version", report.metadata.version],
-        ["report_type", report.metadata.report_type],
-        ["generated_at", report.metadata.generated_at],
-        ["old_source", report.metadata.old_source],
-        ["new_source", report.metadata.new_source],
-        ["key", report.metadata.key],
-        ["threshold", report.metadata.threshold],
-        ["report_format", report.metadata.report_format],
-        ["template", report.metadata.template],
-        ["runtime_seconds", report.metadata.runtime_seconds],
-        [],
-        ["old_rows", report.summary.old_rows],
-        ["new_rows", report.summary.new_rows],
-        ["row_delta", report.summary.row_delta],
-        ["risk_level", report.summary.risk_level],
-    ]
+    ws.append(["Dift Dataset Diff Report"])
+    ws.append([])
 
-    for row in rows:
-        ws.append(row)
+    ws.append(["Report Metadata"])
+    ws.append(["Metric", "Value"])
+    ws.append(["tool", report.metadata.tool])
+    ws.append(["version", report.metadata.version])
+    ws.append(["report_type", report.metadata.report_type])
+    ws.append(["generated_at", report.metadata.generated_at])
+    ws.append(["old_source", report.metadata.old_source])
+    ws.append(["new_source", report.metadata.new_source])
+    ws.append(["key", report.metadata.key])
+    ws.append(["threshold", report.metadata.threshold])
+    ws.append(["report_format", report.metadata.report_format])
+    ws.append(["template", report.metadata.template])
+    ws.append(["runtime_seconds", report.metadata.runtime_seconds])
 
-    _style_header(ws)
+    ws.append([])
+    ws.append(["Dataset Summary"])
+    ws.append(["Metric", "Value"])
+    ws.append(["old_rows", report.summary.old_rows])
+    ws.append(["new_rows", report.summary.new_rows])
+    ws.append(["row_delta", report.summary.row_delta])
+    ws.append(["old_columns", report.summary.old_columns])
+    ws.append(["new_columns", report.summary.new_columns])
+    ws.append(["column_delta", report.summary.column_delta])
+    ws.append(["risk_level", report.summary.risk_level])
+
+    ws["A1"].font = TITLE_FONT
+    ws["A1"].fill = LIGHT_FILL
+
+    _style_section_row(ws, 3)
+    _style_header_row(ws, 4)
+
+    _style_section_row(ws, 17)
+    _style_header_row(ws, 18)
+
+    _style_metric_column(ws)
+    _style_risk_cells(ws)
+    _style_delta_cells(ws)
+    _apply_table_borders(ws)
     _auto_size_columns(ws)
-    ws.freeze_panes = "A2"
+
+    ws.freeze_panes = "A4"
 
 
 def _add_quality_sheet(wb: Workbook, report: DiffReport) -> None:
     ws = wb.create_sheet("Quality Diff")
 
-    rows = [
+    ws.append(["Null Changes"])
+    ws.append(
         [
             "Column",
             "Old Nulls",
@@ -76,10 +124,10 @@ def _add_quality_sheet(wb: Workbook, report: DiffReport) -> None:
             "Spike",
             "Severity",
         ]
-    ]
+    )
 
     for item in report.quality_diff.null_diffs:
-        rows.append(
+        ws.append(
             [
                 item.column,
                 item.old_nulls,
@@ -92,36 +140,43 @@ def _add_quality_sheet(wb: Workbook, report: DiffReport) -> None:
             ]
         )
 
+    if not report.quality_diff.null_diffs:
+        ws.append(["No null changes detected."])
+
     duplicate = report.quality_diff.duplicate_diff
 
-    rows.extend(
-        [
-            [],
-            ["Duplicate Metric", "Value"],
-            ["Old duplicates", duplicate.old_duplicates],
-            ["New duplicates", duplicate.new_duplicates],
-            ["Delta duplicates", duplicate.delta_duplicates],
-            ["Old duplicate %", duplicate.old_duplicate_pct],
-            ["New duplicate %", duplicate.new_duplicate_pct],
-            ["Delta duplicate %", duplicate.delta_duplicate_pct],
-            ["Duplicate basis", duplicate.duplicate_basis],
-            ["Spike", "Yes" if duplicate.is_spike else "No"],
-            ["Severity", duplicate.severity],
-        ]
-    )
+    start_row = ws.max_row + 2
+    ws.append([])
+    ws.append(["Duplicate Changes"])
+    ws.append(["Duplicate Metric", "Value"])
+    ws.append(["Old duplicates", duplicate.old_duplicates])
+    ws.append(["New duplicates", duplicate.new_duplicates])
+    ws.append(["Delta duplicates", duplicate.delta_duplicates])
+    ws.append(["Old duplicate %", duplicate.old_duplicate_pct])
+    ws.append(["New duplicate %", duplicate.new_duplicate_pct])
+    ws.append(["Delta duplicate %", duplicate.delta_duplicate_pct])
+    ws.append(["Duplicate basis", duplicate.duplicate_basis])
+    ws.append(["Spike", "Yes" if duplicate.is_spike else "No"])
+    ws.append(["Severity", duplicate.severity])
 
-    for row in rows:
-        ws.append(row)
+    _style_section_row(ws, 1)
+    _style_header_row(ws, 2)
+    _style_section_row(ws, start_row)
+    _style_header_row(ws, start_row + 1)
 
-    _style_header(ws)
+    _style_severity_cells(ws)
+    _style_spike_cells(ws)
+    _style_delta_cells(ws)
+    _apply_table_borders(ws)
     _auto_size_columns(ws)
-    ws.freeze_panes = "A2"
+
+    ws.freeze_panes = "A3"
 
 
 def _add_numeric_sheet(wb: Workbook, report: DiffReport) -> None:
     ws = wb.create_sheet("Numeric Drift")
 
-    rows = [
+    ws.append(
         [
             "Column",
             "Old Mean",
@@ -138,10 +193,10 @@ def _add_numeric_sheet(wb: Workbook, report: DiffReport) -> None:
             "Drifted",
             "Severity",
         ]
-    ]
+    )
 
     for item in report.numeric_diff:
-        rows.append(
+        ws.append(
             [
                 item.column,
                 item.old_mean,
@@ -160,18 +215,23 @@ def _add_numeric_sheet(wb: Workbook, report: DiffReport) -> None:
             ]
         )
 
-    for row in rows:
-        ws.append(row)
+    if not report.numeric_diff:
+        ws.append(["No numeric drift detected."])
 
-    _style_header(ws)
+    _style_header_row(ws, 1)
+    _style_severity_cells(ws)
+    _style_spike_cells(ws)
+    _highlight_yes_rows(ws, "Drifted")
+    _apply_table_borders(ws)
     _auto_size_columns(ws)
+
     ws.freeze_panes = "A2"
 
 
 def _add_outlier_sheet(wb: Workbook, report: DiffReport) -> None:
     ws = wb.create_sheet("Outlier Diff")
 
-    rows = [
+    ws.append(
         [
             "Column",
             "Method",
@@ -186,10 +246,10 @@ def _add_outlier_sheet(wb: Workbook, report: DiffReport) -> None:
             "Spike",
             "Severity",
         ]
-    ]
+    )
 
     for item in report.outlier_diff:
-        rows.append(
+        ws.append(
             [
                 item.column,
                 item.method,
@@ -206,18 +266,23 @@ def _add_outlier_sheet(wb: Workbook, report: DiffReport) -> None:
             ]
         )
 
-    for row in rows:
-        ws.append(row)
+    if not report.outlier_diff:
+        ws.append(["No outlier changes detected."])
 
-    _style_header(ws)
+    _style_header_row(ws, 1)
+    _style_severity_cells(ws)
+    _style_spike_cells(ws)
+    _highlight_yes_rows(ws, "Spike")
+    _apply_table_borders(ws)
     _auto_size_columns(ws)
+
     ws.freeze_panes = "A2"
 
 
 def _add_categorical_sheet(wb: Workbook, report: DiffReport) -> None:
     ws = wb.create_sheet("Categorical Diff")
 
-    rows = [
+    ws.append(
         [
             "Column",
             "Values Added",
@@ -227,10 +292,10 @@ def _add_categorical_sheet(wb: Workbook, report: DiffReport) -> None:
             "Shifted",
             "Severity",
         ]
-    ]
+    )
 
     for item in report.categorical_diff:
-        rows.append(
+        ws.append(
             [
                 item.column,
                 ", ".join(item.values_added),
@@ -242,11 +307,16 @@ def _add_categorical_sheet(wb: Workbook, report: DiffReport) -> None:
             ]
         )
 
-    for row in rows:
-        ws.append(row)
+    if not report.categorical_diff:
+        ws.append(["No categorical changes detected."])
 
-    _style_header(ws)
+    _style_header_row(ws, 1)
+    _style_severity_cells(ws)
+    _style_spike_cells(ws)
+    _highlight_yes_rows(ws, "Shifted")
+    _apply_table_borders(ws)
     _auto_size_columns(ws)
+
     ws.freeze_panes = "A2"
 
 
@@ -257,13 +327,123 @@ def _format_frequency_shifts(shifts: dict[str, float]) -> str:
     return ", ".join(f"{value}: {shift:.2%}" for value, shift in shifts.items())
 
 
-def _style_header(ws) -> None:
-    header_fill = PatternFill("solid", fgColor="1F2937")
-    header_font = Font(color="FFFFFF", bold=True)
+def _style_header_row(ws, row_number: int) -> None:
+    for cell in ws[row_number]:
+        if cell.value is None:
+            continue
+
+        cell.fill = HEADER_FILL
+        cell.font = HEADER_FONT
+        cell.alignment = CENTER
+        cell.border = THIN_BORDER
+
+
+def _style_section_row(ws, row_number: int) -> None:
+    for cell in ws[row_number]:
+        cell.fill = SECTION_FILL
+        cell.font = SECTION_FONT
+        cell.alignment = LEFT
+        cell.border = THIN_BORDER
+
+
+def _style_metric_column(ws) -> None:
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row):
+        first_cell = row[0]
+        if first_cell.value and first_cell.value not in {
+            "Metric",
+            "Value",
+            "Report Metadata",
+            "Dataset Summary",
+            "Dift Dataset Diff Report",
+        }:
+            first_cell.font = LABEL_FONT
+
+
+def _style_risk_cells(ws) -> None:
+    for row in ws.iter_rows():
+        for cell in row:
+            value = _normalize(cell.value)
+
+            if value in {"low", "medium", "high"}:
+                _apply_severity_style(cell, value)
+
+
+def _style_severity_cells(ws) -> None:
+    for row in ws.iter_rows():
+        for cell in row:
+            value = _normalize(cell.value)
+
+            if value in {"low", "medium", "high"}:
+                _apply_severity_style(cell, value)
+
+
+def _style_spike_cells(ws) -> None:
+    for row in ws.iter_rows():
+        for cell in row:
+            value = _normalize(cell.value)
+
+            if value == "yes":
+                cell.fill = HIGH_FILL
+                cell.font = HIGH_FONT
+
+            elif value == "no":
+                cell.fill = LOW_FILL
+                cell.font = LOW_FONT
+
+
+def _style_delta_cells(ws) -> None:
+    for row in ws.iter_rows():
+        label = _normalize(row[0].value)
+
+        if "delta" not in label:
+            continue
+
+        for cell in row[1:]:
+            if isinstance(cell.value, int | float) and cell.value != 0:
+                cell.fill = MEDIUM_FILL
+                cell.font = MEDIUM_FONT
+
+
+def _highlight_yes_rows(ws, column_name: str) -> None:
+    target_col = None
 
     for cell in ws[1]:
-        cell.fill = header_fill
-        cell.font = header_font
+        if _normalize(cell.value) == _normalize(column_name):
+            target_col = cell.column
+            break
+
+    if target_col is None:
+        return
+
+    for row_number in range(2, ws.max_row + 1):
+        cell = ws.cell(row=row_number, column=target_col)
+
+        if _normalize(cell.value) == "yes":
+            for row_cell in ws[row_number]:
+                if row_cell.fill == PatternFill(fill_type=None):
+                    row_cell.fill = HIGH_FILL
+
+
+def _apply_severity_style(cell, value: str) -> None:
+    if value == "high":
+        cell.fill = HIGH_FILL
+        cell.font = HIGH_FONT
+    elif value == "medium":
+        cell.fill = MEDIUM_FILL
+        cell.font = MEDIUM_FONT
+    elif value == "low":
+        cell.fill = LOW_FILL
+        cell.font = LOW_FONT
+
+
+def _apply_table_borders(ws) -> None:
+    for row in ws.iter_rows():
+        for cell in row:
+            if cell.value is None:
+                continue
+
+            cell.border = THIN_BORDER
+            cell.alignment = LEFT
 
 
 def _auto_size_columns(ws) -> None:
@@ -275,4 +455,11 @@ def _auto_size_columns(ws) -> None:
             value = "" if cell.value is None else str(cell.value)
             max_length = max(max_length, len(value))
 
-        ws.column_dimensions[column_letter].width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = min(max_length + 4, 60)
+
+
+def _normalize(value: Any) -> str:
+    if value is None:
+        return ""
+
+    return str(value).strip().lower()
