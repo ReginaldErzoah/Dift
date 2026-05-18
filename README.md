@@ -1236,6 +1236,8 @@ Supported workflows include:
 * database-to-file comparison
 * SQL-backed drift detection
 * warehouse and ETL validation
+* migration verification
+* analytics quality assurance
 
 ## Compare SQL Tables
 
@@ -1247,7 +1249,19 @@ dift sqlite:///examples/old.db:customers_old \
      --key customer_id
 ```
 
+SQLite is useful for lightweight local testing and embedded analytical workflows.
+
+---
+
 ### PostgreSQL
+
+Install PostgreSQL driver:
+
+```bash
+pip install psycopg2-binary
+```
+
+Compare PostgreSQL tables:
 
 ```bash
 dift postgresql://user:password@localhost:5432/sales_db:customers_old \
@@ -1255,13 +1269,43 @@ dift postgresql://user:password@localhost:5432/sales_db:customers_old \
      --key customer_id
 ```
 
+Alternative PostgreSQL driver example:
+
+```bash
+dift postgresql+psycopg://user:password@localhost:5432/sales_db:customers_old \
+     postgresql+psycopg://user:password@localhost:5432/sales_db:customers_new \
+     --key customer_id
+```
+
+PostgreSQL support is useful for:
+
+* production ETL validation
+* warehouse consistency checks
+* analytics engineering workflows
+* CI/CD data quality validation
+* staging vs production comparison
+
+---
+
 ### MySQL
+
+Install MySQL driver:
+
+```bash
+pip install pymysql
+```
+
+Compare MySQL tables:
 
 ```bash
 dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
      mysql+pymysql://user:password@localhost:3306/sales_db:customers_new \
      --key customer_id
 ```
+
+MySQL support enables direct database-native comparison workflows without intermediate exports.
+
+---
 
 ## URI Format
 
@@ -1273,9 +1317,14 @@ Examples:
 
 ```text
 sqlite:///examples/data.db:customers
+
 postgresql://user:password@localhost:5432/mydb:customers
+postgresql+psycopg://user:password@localhost:5432/mydb:customers
+
 mysql+pymysql://user:password@localhost:3306/mydb:customers
 ```
+
+---
 
 ## Install Dependencies
 
@@ -1292,33 +1341,13 @@ pip install psycopg2-binary   # PostgreSQL
 pip install pymysql           # MySQL
 ```
 
-## Works With
-
-* schema comparison
-* row comparison
-* numeric drift detection
-* categorical drift detection
-* outlier detection
-* risk scoring
-* JSON reports
-* CSV reports
-* Excel reports
-* HTML reports
-
-## Common Use Cases
-
-* ETL validation
-* staging vs production comparison
-* analytics QA
-* warehouse validation
-* CI/CD data checks
-* migration verification
-* database quality monitoring
+---
 
 ## Notes
 
 * SQLite database files must exist locally.
 * PostgreSQL and MySQL require valid credentials and reachable database servers.
+* PostgreSQL supports standard SQLAlchemy PostgreSQL drivers including `psycopg` and `psycopg2`.
 * SQL comparisons use the existing Dift comparison engine and reporting system.
 * SQL support is powered by SQLAlchemy.
 
