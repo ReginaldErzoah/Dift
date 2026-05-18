@@ -1332,6 +1332,42 @@ Useful for:
 
 ---
 
+### Amazon Redshift
+
+Install Redshift dependencies:
+
+```bash
+pip install sqlalchemy-redshift redshift-connector
+```
+
+Compare Redshift tables:
+
+```bash
+dift redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
+     redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
+     --key order_id
+```
+
+Alternative Redshift driver example:
+
+```bash
+dift redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
+     redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
+     --key order_id
+```
+
+Redshift support is useful for:
+
+* warehouse validation
+* analytics QA
+* production data checks
+* ETL reconciliation
+* staging vs production comparison
+* large-scale analytical workflows
+* cloud warehouse quality monitoring
+
+---
+
 ## URI Format
 
 ```text
@@ -1348,6 +1384,9 @@ postgresql+psycopg://user:password@localhost:5432/mydb:customers
 postgresql+psycopg2://user:password@localhost:5432/mydb:customers
 
 mysql+pymysql://user:password@localhost:3306/mydb:customers
+
+redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders
+redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders
 ```
 
 ---
@@ -1365,6 +1404,12 @@ Database-specific drivers:
 ```bash
 pip install psycopg2-binary   # PostgreSQL
 pip install pymysql           # MySQL
+```
+
+Redshift dependencies:
+
+```bash
+pip install sqlalchemy-redshift redshift-connector
 ```
 
 Optional PostgreSQL alternative driver:
@@ -1414,12 +1459,12 @@ SQL database datasets work with the existing Dift comparison engine and reportin
 ## Notes
 
 * SQLite database files must exist locally.
-* PostgreSQL and MySQL require valid credentials and reachable database servers.
+* PostgreSQL, MySQL, and Redshift require valid credentials and reachable database servers.
 * PostgreSQL supports standard SQLAlchemy PostgreSQL drivers including `psycopg` and `psycopg2`.
+* Redshift support works through SQLAlchemy-compatible Redshift drivers.
 * SQL comparisons use the existing Dift comparison engine and reporting system.
 * SQL support is powered by SQLAlchemy.
 * Database query results are loaded into Polars DataFrames before comparison.
-
 
 ---
 

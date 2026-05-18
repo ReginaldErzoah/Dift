@@ -18,6 +18,8 @@ SQL_URI_PREFIXES: Final[tuple[str, ...]] = (
     "postgresql+psycopg2://",
     "mysql://",
     "mysql+pymysql://",
+    "redshift+psycopg2://",
+    "redshift+redshift_connector://",
     "mssql://",
 )
 
@@ -43,6 +45,7 @@ def parse_sql_table_uri(uri: str) -> tuple[str, str]:
         postgresql://user:pass@host:5432/dbname:table_name
         postgres://user:pass@host:5432/dbname:table_name
         mysql+pymysql://user:pass@host:3306/dbname:table_name
+        redshift+redshift_connector://user:pass@host:5439/dbname:table_name
 
     Returns:
         tuple(connection_string, table_name)
@@ -116,6 +119,7 @@ def _quote_table_name(table_name: str) -> str:
     Supports:
         customers
         public.customers
+        analytics.public.customers
     """
     return ".".join(_quote_identifier(part) for part in table_name.split("."))
 
@@ -148,6 +152,14 @@ def _driver_help(connection_string: str) -> str:
         return (
             "MySQL support requires a MySQL driver. "
             "Install it with: pip install pymysql"
+        )
+
+    if connection_string.startswith(
+        ("redshift+psycopg2://", "redshift+redshift_connector://")
+    ):
+        return (
+            "Redshift support requires a Redshift-compatible SQLAlchemy driver. "
+            "Install one with: pip install sqlalchemy-redshift redshift-connector"
         )
 
     return (
