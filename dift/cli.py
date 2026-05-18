@@ -14,8 +14,10 @@ from rich.console import Console
 from dift.batch import find_dataset_pairs
 from dift.core.comparator import compare_datasets
 from dift.history import clear_history, load_history, save_history_record
+from dift.io.bigquery_reader import is_bigquery_uri
 from dift.io.config_loader import load_config
 from dift.io.duckdb_reader import is_duckdb_uri, parse_duckdb_uri
+from dift.io.sql_reader import is_sql_uri, parse_sql_table_uri
 from dift.profiles import (
     create_profile,
     delete_profile,
@@ -188,6 +190,22 @@ def run_comparison(
 
                 if not os.path.exists(database_path):
                     missing_files.append(database_path)
+
+            except ValueError:
+                missing_files.append(dataset)
+
+        elif is_bigquery_uri(dataset):
+            continue
+
+        elif is_sql_uri(dataset):
+            try:
+                connection_string, _ = parse_sql_table_uri(dataset)
+
+                if connection_string.startswith("sqlite:///"):
+                    sqlite_path = connection_string.removeprefix("sqlite:///")
+
+                    if not os.path.exists(sqlite_path):
+                        missing_files.append(sqlite_path)
 
             except ValueError:
                 missing_files.append(dataset)
