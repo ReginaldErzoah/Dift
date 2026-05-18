@@ -1232,16 +1232,25 @@ This enables database-native validation workflows without exporting tables to CS
 Supported workflows include:
 
 * table-to-table comparison
+* query-to-query comparison
 * database-to-database comparison
 * database-to-file comparison
 * SQL-backed drift detection
 * warehouse and ETL validation
 * migration verification
 * analytics quality assurance
+* CI/CD data validation
+* production data trust workflows
+
+---
 
 ## Compare SQL Tables
 
 ### SQLite
+
+SQLite support enables lightweight local database comparison workflows.
+
+Compare SQLite tables directly:
 
 ```bash
 dift sqlite:///examples/old.db:customers_old \
@@ -1249,7 +1258,13 @@ dift sqlite:///examples/old.db:customers_old \
      --key customer_id
 ```
 
-SQLite is useful for lightweight local testing and embedded analytical workflows.
+SQLite is useful for:
+
+* lightweight local testing
+* embedded analytics
+* file-based database comparison
+* CI testing workflows
+* portable validation pipelines
 
 ---
 
@@ -1284,6 +1299,8 @@ PostgreSQL support is useful for:
 * analytics engineering workflows
 * CI/CD data quality validation
 * staging vs production comparison
+* migration validation
+* operational data verification
 
 ---
 
@@ -1305,6 +1322,14 @@ dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
 
 MySQL support enables direct database-native comparison workflows without intermediate exports.
 
+Useful for:
+
+* operational database validation
+* business reporting QA
+* ETL verification
+* transactional system comparison
+* migration checks
+
 ---
 
 ## URI Format
@@ -1320,6 +1345,7 @@ sqlite:///examples/data.db:customers
 
 postgresql://user:password@localhost:5432/mydb:customers
 postgresql+psycopg://user:password@localhost:5432/mydb:customers
+postgresql+psycopg2://user:password@localhost:5432/mydb:customers
 
 mysql+pymysql://user:password@localhost:3306/mydb:customers
 ```
@@ -1341,6 +1367,48 @@ pip install psycopg2-binary   # PostgreSQL
 pip install pymysql           # MySQL
 ```
 
+Optional PostgreSQL alternative driver:
+
+```bash
+pip install psycopg
+```
+
+---
+
+## Supported Workflows
+
+SQL database datasets work with the existing Dift comparison engine and reporting system, including:
+
+* schema comparison
+* row comparison
+* numeric drift detection
+* categorical drift detection
+* outlier detection
+* null spike detection
+* duplicate spike detection
+* risk scoring
+* JSON reports
+* CSV reports
+* Excel reports
+* HTML reports
+* history tracking
+* automation workflows
+
+---
+
+## Common Use Cases
+
+* ETL validation
+* staging vs production comparison
+* analytics QA
+* warehouse validation
+* CI/CD data checks
+* migration verification
+* database quality monitoring
+* drift monitoring
+* business reporting validation
+* reconciliation workflows
+
 ---
 
 ## Notes
@@ -1350,6 +1418,7 @@ pip install pymysql           # MySQL
 * PostgreSQL supports standard SQLAlchemy PostgreSQL drivers including `psycopg` and `psycopg2`.
 * SQL comparisons use the existing Dift comparison engine and reporting system.
 * SQL support is powered by SQLAlchemy.
+* Database query results are loaded into Polars DataFrames before comparison.
 
 
 ---
@@ -1706,22 +1775,22 @@ mypy dift
 
 #### PostgreSQL Connector
 
-* PostgreSQL table reader
-* Schema inference support
-* Query execution support
-* Secure connection handling
+* [x] PostgreSQL table reader
+* [x] Schema inference support
+* [x] Query execution support
+* [x] Secure connection handling
 
 #### MySQL Connector
 
-* MySQL table reader
-* Query-based comparisons
-* Type compatibility handling
+* [x] MySQL table reader
+* [x] Query-based comparisons
+* [x] Type compatibility handling
 
 #### SQLite Connector
 
-* SQLite local database support
-* Lightweight comparison workflows
-* File-based database comparison
+* [x] SQLite local database support
+* [x] Lightweight comparison workflows
+* [x] File-based database comparison
 
 #### DuckDB Support
 
