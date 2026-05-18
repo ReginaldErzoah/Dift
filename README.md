@@ -1093,7 +1093,6 @@ Example output:
 
 ---
 
----
 
 # DuckDB Support
 
@@ -1221,6 +1220,63 @@ pip install google-cloud-bigquery db-dtypes
 * BigQuery access requires valid Google Cloud credentials.
 * BigQuery billing and permissions are managed through Google Cloud.
 * BigQuery comparisons use the existing Dift comparison engine and reports.
+
+---
+
+# SQL Database Support
+
+Dift can compare tables from SQL databases using SQLAlchemy connection strings.
+
+This is useful for validating database migrations, checking staging vs production tables, and comparing database-backed datasets.
+
+## Compare SQL Tables
+
+```bash
+dift sqlite:///examples/old.db:customers_old \
+     sqlite:///examples/new.db:customers_new \
+     --key customer_id
+```
+
+## URI Format
+
+```text
+connection_string:table_name
+```
+
+Examples:
+
+```text
+sqlite:///examples/data.db:customers
+postgresql://user:password@localhost:5432/mydb:customers
+mysql://user:password@localhost:3306/mydb:customers
+```
+
+## Install Dependencies
+
+```bash
+pip install sqlalchemy
+```
+
+Database-specific drivers may also be required:
+
+```bash
+pip install psycopg2-binary   # PostgreSQL
+pip install pymysql           # MySQL
+```
+
+## Works With
+
+* existing row comparison
+* schema comparison
+* drift detection
+* risk scoring
+* JSON, CSV, Excel, and HTML reports
+
+## Notes
+
+* SQLite database files must exist locally.
+* PostgreSQL and MySQL require valid connection strings and credentials.
+* SQL comparisons use the existing Dift comparison engine and reports.
 
 
 ---
