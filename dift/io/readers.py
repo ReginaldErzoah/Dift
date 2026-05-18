@@ -10,6 +10,11 @@ from dift.io.duckdb_reader import (
     parse_duckdb_uri,
     read_duckdb_table,
 )
+from dift.io.sql_reader import (
+    is_sql_uri,
+    parse_sql_table_uri,
+    read_sql_table,
+)
 
 SUPPORTED_EXTENSIONS = {
     ".csv",
@@ -24,6 +29,9 @@ SUPPORTED_SOURCE_TYPES = sorted(
     + [
         "duckdb:///database.duckdb:table",
         "bigquery://project.dataset.table",
+        "sqlite:///database.db:table",
+        "postgresql://user:password@host:5432/database:table",
+        "mysql://user:password@host:3306/database:table",
     ]
 )
 
@@ -33,23 +41,43 @@ class DatasetReadError(ValueError):
 
 
 def read_dataset(path: str | Path) -> pl.DataFrame:
-    """Read a local dataset, DuckDB table, or BigQuery table into a Polars DataFrame."""
+    """
+    Read a local dataset, DuckDB table,
+    BigQuery table, or SQL table into a Polars DataFrame.
+    """
+
     path_str = str(path)
 
     if is_duckdb_uri(path_str):
         try:
             database_path, table_name = parse_duckdb_uri(path_str)
+
             return read_duckdb_table(database_path, table_name)
 
         except Exception as exc:
-            raise DatasetReadError(f"Failed to read DuckDB dataset: {path_str}") from exc
+            raise DatasetReadError(
+                f"Failed to read DuckDB dataset: {path_str}"
+            ) from exc
 
     if is_bigquery_uri(path_str):
         try:
             return read_bigquery_table(path_str)
 
         except Exception as exc:
-            raise DatasetReadError(f"Failed to read BigQuery dataset: {path_str}") from exc
+            raise DatasetReadError(
+                f"Failed to read BigQuery dataset: {path_str}"
+            ) from exc
+
+    if is_sql_uri(path_str):
+        try:
+            connection_string, table_name = parse_sql_table_uri(path_str)
+
+            return read_sql_table(connection_string, table_name)
+
+        except Exception as exc:
+            raise DatasetReadError(
+                f"Failed to read SQL dataset: {path_str}"
+            ) from exc
 
     dataset_path = Path(path)
 
