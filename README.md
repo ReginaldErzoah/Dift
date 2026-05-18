@@ -1518,9 +1518,9 @@ mypy dift
 
 #### DuckDB Support
 
-* Native DuckDB integration
-* Analytical dataset support
-* Parquet interoperability
+* [x] Native DuckDB integration
+* [x] Analytical dataset support
+* [x] Parquet interoperability
 
 
 ### Data Warehouse Support
