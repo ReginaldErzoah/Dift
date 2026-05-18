@@ -1093,6 +1093,60 @@ Example output:
 
 ---
 
+---
+
+# DuckDB Support
+
+Dift supports comparing datasets directly from DuckDB databases.
+
+This enables warehouse-style comparisons, SQL-based validation, and Parquet-backed analytical workflows.
+
+## Compare DuckDB Tables
+
+```bash
+dift duckdb:///examples/warehouse.duckdb:customers_old \
+     duckdb:///examples/warehouse.duckdb:customers_new \
+     --key customer_id
+```
+
+## URI Format
+
+```text
+duckdb:///path/to/database.duckdb:table_name
+```
+
+## Example
+
+```text
+duckdb:///data/warehouse.duckdb:orders
+```
+
+## Works With
+
+* existing risk scoring
+* HTML reports
+* Excel reports
+* JSON reports
+* CSV reports
+* drift detection
+* quality validation
+
+## Common Use Cases
+
+* local analytics warehouses
+* Parquet validation workflows
+* SQL-based dataset comparison
+* batch data quality checks
+
+## Notes
+
+* DuckDB database files must exist locally.
+* Remote DuckDB connections are not currently supported.
+* Table names may be case-sensitive depending on configuration.
+* DuckDB comparisons use the existing Dift comparison engine and reports.
+
+---
+
 ## Requirements
 
 * Python 3.10+
@@ -1548,17 +1602,17 @@ mypy dift
 
 #### Better Excel Formatting
 
-* Severity color coding
-* Conditional formatting
-* Improved worksheet layouts
-* Better readability styling
+* [x] Severity color coding
+* [x] Conditional formatting
+* [x] Improved worksheet layouts
+* [x] Better readability styling
 
 #### Better HTML Reports
 
-* Drift highlighting
-* Severity badges
-* Improved visual summaries
-* Responsive layouts
+* [x] Drift highlighting
+* [x] Severity badges
+* [x] Improved visual summaries
+* [x] Responsive layouts
 
 #### Report Metadata Expansion
 
