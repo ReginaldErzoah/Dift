@@ -1225,15 +1225,41 @@ pip install google-cloud-bigquery db-dtypes
 
 # SQL Database Support
 
-Dift can compare tables from SQL databases using SQLAlchemy connection strings.
+Dift supports comparing datasets directly from SQL databases using SQLAlchemy-compatible connection strings.
 
-This is useful for validating database migrations, checking staging vs production tables, and comparing database-backed datasets.
+This enables database-native validation workflows without exporting tables to CSV or other intermediate formats.
+
+Supported workflows include:
+
+* table-to-table comparison
+* database-to-database comparison
+* database-to-file comparison
+* SQL-backed drift detection
+* warehouse and ETL validation
 
 ## Compare SQL Tables
+
+### SQLite
 
 ```bash
 dift sqlite:///examples/old.db:customers_old \
      sqlite:///examples/new.db:customers_new \
+     --key customer_id
+```
+
+### PostgreSQL
+
+```bash
+dift postgresql://user:password@localhost:5432/sales_db:customers_old \
+     postgresql://user:password@localhost:5432/sales_db:customers_new \
+     --key customer_id
+```
+
+### MySQL
+
+```bash
+dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
+     mysql+pymysql://user:password@localhost:3306/sales_db:customers_new \
      --key customer_id
 ```
 
@@ -1248,16 +1274,18 @@ Examples:
 ```text
 sqlite:///examples/data.db:customers
 postgresql://user:password@localhost:5432/mydb:customers
-mysql://user:password@localhost:3306/mydb:customers
+mysql+pymysql://user:password@localhost:3306/mydb:customers
 ```
 
 ## Install Dependencies
+
+Core SQL support:
 
 ```bash
 pip install sqlalchemy
 ```
 
-Database-specific drivers may also be required:
+Database-specific drivers:
 
 ```bash
 pip install psycopg2-binary   # PostgreSQL
@@ -1266,17 +1294,33 @@ pip install pymysql           # MySQL
 
 ## Works With
 
-* existing row comparison
 * schema comparison
-* drift detection
+* row comparison
+* numeric drift detection
+* categorical drift detection
+* outlier detection
 * risk scoring
-* JSON, CSV, Excel, and HTML reports
+* JSON reports
+* CSV reports
+* Excel reports
+* HTML reports
+
+## Common Use Cases
+
+* ETL validation
+* staging vs production comparison
+* analytics QA
+* warehouse validation
+* CI/CD data checks
+* migration verification
+* database quality monitoring
 
 ## Notes
 
 * SQLite database files must exist locally.
-* PostgreSQL and MySQL require valid connection strings and credentials.
-* SQL comparisons use the existing Dift comparison engine and reports.
+* PostgreSQL and MySQL require valid credentials and reachable database servers.
+* SQL comparisons use the existing Dift comparison engine and reporting system.
+* SQL support is powered by SQLAlchemy.
 
 
 ---

@@ -13,11 +13,15 @@ sqlalchemy = pytest.importorskip("sqlalchemy")
 def test_is_sql_uri():
     assert is_sql_uri("sqlite:///examples/test.db:customers")
     assert is_sql_uri("postgresql://user:pass@localhost:5432/db:customers")
+    assert is_sql_uri("postgresql+psycopg://user:pass@localhost:5432/db:customers")
+    assert is_sql_uri("postgresql+psycopg2://user:pass@localhost:5432/db:customers")
     assert is_sql_uri("mysql://user:pass@localhost:3306/db:customers")
+    assert is_sql_uri("mysql+pymysql://user:pass@localhost:3306/db:customers")
+    assert is_sql_uri("mssql://user:pass@localhost:1433/db:customers")
     assert not is_sql_uri("examples/old.csv")
 
 
-def test_parse_sql_table_uri():
+def test_parse_sql_table_uri_sqlite():
     connection_string, table_name = parse_sql_table_uri(
         "sqlite:///examples/test.db:customers"
     )
@@ -26,9 +30,32 @@ def test_parse_sql_table_uri():
     assert table_name == "customers"
 
 
+def test_parse_sql_table_uri_mysql():
+    connection_string, table_name = parse_sql_table_uri(
+        "mysql+pymysql://user:password@localhost:3306/sales:orders"
+    )
+
+    assert connection_string == "mysql+pymysql://user:password@localhost:3306/sales"
+    assert table_name == "orders"
+
+
+def test_parse_sql_table_uri_postgresql():
+    connection_string, table_name = parse_sql_table_uri(
+        "postgresql://user:password@localhost:5432/sales_db:customers"
+    )
+
+    assert connection_string == "postgresql://user:password@localhost:5432/sales_db"
+    assert table_name == "customers"
+
+
 def test_parse_sql_table_uri_rejects_invalid_uri():
     with pytest.raises(ValueError):
         parse_sql_table_uri("examples/test.db:customers")
+
+
+def test_parse_sql_table_uri_rejects_missing_table_name():
+    with pytest.raises(ValueError):
+        parse_sql_table_uri("sqlite:///examples/test.db:")
 
 
 def test_read_sql_table_sqlite(tmp_path):
