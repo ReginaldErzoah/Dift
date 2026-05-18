@@ -1223,148 +1223,18 @@ pip install google-cloud-bigquery db-dtypes
 
 ---
 
-# SQL Database Support
+# SQL & Data Warehouse Support
 
-Dift supports comparing datasets directly from SQL databases using SQLAlchemy-compatible connection strings.
-
-This enables database-native validation workflows without exporting tables to CSV or other intermediate formats.
+Dift supports direct SQL database comparison using SQLAlchemy-compatible connection strings.
 
 Supported workflows include:
 
 * table-to-table comparison
-* query-to-query comparison
+* query-based comparison
 * database-to-database comparison
 * database-to-file comparison
-* SQL-backed drift detection
-* warehouse and ETL validation
-* migration verification
-* analytics quality assurance
-* CI/CD data validation
-* production data trust workflows
-
----
-
-## Compare SQL Tables
-
-### SQLite
-
-SQLite support enables lightweight local database comparison workflows.
-
-Compare SQLite tables directly:
-
-```bash
-dift sqlite:///examples/old.db:customers_old \
-     sqlite:///examples/new.db:customers_new \
-     --key customer_id
-```
-
-SQLite is useful for:
-
-* lightweight local testing
-* embedded analytics
-* file-based database comparison
-* CI testing workflows
-* portable validation pipelines
-
----
-
-### PostgreSQL
-
-Install PostgreSQL driver:
-
-```bash
-pip install psycopg2-binary
-```
-
-Compare PostgreSQL tables:
-
-```bash
-dift postgresql://user:password@localhost:5432/sales_db:customers_old \
-     postgresql://user:password@localhost:5432/sales_db:customers_new \
-     --key customer_id
-```
-
-Alternative PostgreSQL driver example:
-
-```bash
-dift postgresql+psycopg://user:password@localhost:5432/sales_db:customers_old \
-     postgresql+psycopg://user:password@localhost:5432/sales_db:customers_new \
-     --key customer_id
-```
-
-PostgreSQL support is useful for:
-
-* production ETL validation
-* warehouse consistency checks
-* analytics engineering workflows
-* CI/CD data quality validation
-* staging vs production comparison
-* migration validation
-* operational data verification
-
----
-
-### MySQL
-
-Install MySQL driver:
-
-```bash
-pip install pymysql
-```
-
-Compare MySQL tables:
-
-```bash
-dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
-     mysql+pymysql://user:password@localhost:3306/sales_db:customers_new \
-     --key customer_id
-```
-
-MySQL support enables direct database-native comparison workflows without intermediate exports.
-
-Useful for:
-
-* operational database validation
-* business reporting QA
-* ETL verification
-* transactional system comparison
-* migration checks
-
----
-
-### Amazon Redshift
-
-Install Redshift dependencies:
-
-```bash
-pip install sqlalchemy-redshift redshift-connector
-```
-
-Compare Redshift tables:
-
-```bash
-dift redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
-     redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
-     --key order_id
-```
-
-Alternative Redshift driver example:
-
-```bash
-dift redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
-     redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
-     --key order_id
-```
-
-Redshift support is useful for:
-
-* warehouse validation
-* analytics QA
-* production data checks
-* ETL reconciliation
-* staging vs production comparison
-* large-scale analytical workflows
-* cloud warehouse quality monitoring
+* ETL and warehouse validation
+* drift detection and risk scoring
 
 ---
 
@@ -1381,90 +1251,148 @@ sqlite:///examples/data.db:customers
 
 postgresql://user:password@localhost:5432/mydb:customers
 postgresql+psycopg://user:password@localhost:5432/mydb:customers
-postgresql+psycopg2://user:password@localhost:5432/mydb:customers
 
 mysql+pymysql://user:password@localhost:3306/mydb:customers
 
 redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders
-redshift+psycopg2://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders
+
+snowflake://user:password@account/db/schema?warehouse=compute_wh:orders
 ```
 
 ---
 
-## Install Dependencies
+## SQLite
 
-Core SQL support:
-
-```bash
-pip install sqlalchemy
-```
-
-Database-specific drivers:
+Lightweight local database comparison.
 
 ```bash
-pip install psycopg2-binary   # PostgreSQL
-pip install pymysql           # MySQL
+dift sqlite:///examples/old.db:customers_old \
+     sqlite:///examples/new.db:customers_new \
+     --key customer_id
 ```
 
-Redshift dependencies:
+---
+
+## PostgreSQL
+
+Install driver:
+
+```bash
+pip install psycopg2-binary
+```
+
+Compare tables:
+
+```bash
+dift postgresql://user:password@localhost:5432/sales_db:customers_old \
+     postgresql://user:password@localhost:5432/sales_db:customers_new \
+     --key customer_id
+```
+
+Alternative driver:
+
+```bash
+dift postgresql+psycopg://user:password@localhost:5432/sales_db:customers_old \
+     postgresql+psycopg://user:password@localhost:5432/sales_db:customers_new \
+     --key customer_id
+```
+
+---
+
+## MySQL
+
+Install driver:
+
+```bash
+pip install pymysql
+```
+
+Compare tables:
+
+```bash
+dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
+     mysql+pymysql://user:password@localhost:3306/sales_db:customers_new \
+     --key customer_id
+```
+
+---
+
+## Amazon Redshift
+
+Install dependencies:
 
 ```bash
 pip install sqlalchemy-redshift redshift-connector
 ```
 
-Optional PostgreSQL alternative driver:
+Compare tables:
 
 ```bash
-pip install psycopg
+dift redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
+     redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
+     --key order_id
 ```
 
 ---
 
-## Supported Workflows
+## Snowflake
 
-SQL database datasets work with the existing Dift comparison engine and reporting system, including:
+Install dependencies:
+
+```bash
+pip install snowflake-sqlalchemy
+```
+
+Compare tables:
+
+```bash
+dift snowflake://user:password@account/db/schema?warehouse=compute_wh:orders_old \
+     snowflake://user:password@account/db/schema?warehouse=compute_wh:orders_new \
+     --key order_id
+```
+
+---
+
+## Install Core SQL Support
+
+```bash
+pip install sqlalchemy
+```
+
+Optional drivers:
+
+```bash
+pip install psycopg2-binary
+pip install pymysql
+pip install sqlalchemy-redshift redshift-connector
+pip install snowflake-sqlalchemy
+```
+
+---
+
+## Supported Features
+
+SQL datasets work with:
 
 * schema comparison
 * row comparison
-* numeric drift detection
-* categorical drift detection
-* outlier detection
-* null spike detection
-* duplicate spike detection
+* drift detection
+* null and duplicate spike detection
 * risk scoring
 * JSON reports
 * CSV reports
 * Excel reports
 * HTML reports
-* history tracking
-* automation workflows
-
----
-
-## Common Use Cases
-
-* ETL validation
-* staging vs production comparison
-* analytics QA
-* warehouse validation
-* CI/CD data checks
-* migration verification
-* database quality monitoring
-* drift monitoring
-* business reporting validation
-* reconciliation workflows
 
 ---
 
 ## Notes
 
 * SQLite database files must exist locally.
-* PostgreSQL, MySQL, and Redshift require valid credentials and reachable database servers.
-* PostgreSQL supports standard SQLAlchemy PostgreSQL drivers including `psycopg` and `psycopg2`.
-* Redshift support works through SQLAlchemy-compatible Redshift drivers.
-* SQL comparisons use the existing Dift comparison engine and reporting system.
+* PostgreSQL, MySQL, Redshift, and Snowflake require valid credentials and reachable servers.
 * SQL support is powered by SQLAlchemy.
-* Database query results are loaded into Polars DataFrames before comparison.
+* Query results are loaded into Polars DataFrames before comparison.
+* SQL comparisons use the existing Dift comparison engine and reporting system.
 
 ---
 
