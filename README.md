@@ -1533,9 +1533,9 @@ mypy dift
 
 #### BigQuery Connector
 
-* BigQuery dataset comparison
-* Service account authentication
-* Query-based workflows
+* [x] BigQuery dataset comparison
+* [x] Service account authentication
+* [x] Query-based workflows
 
 #### Redshift Connector
 
