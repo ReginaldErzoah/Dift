@@ -31,7 +31,9 @@ SUPPORTED_SOURCE_TYPES = sorted(
         "bigquery://project.dataset.table",
         "sqlite:///database.db:table",
         "postgresql://user:password@host:5432/database:table",
-        "mysql://user:password@host:3306/database:table",
+        "mysql+pymysql://user:password@host:3306/database:table",
+        "redshift+redshift_connector://user:password@host:5439/database:table",
+        "snowflake://user:password@account/database/schema?warehouse=name:table",
     ]
 )
 
@@ -51,8 +53,10 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
     if is_duckdb_uri(path_str):
         try:
             database_path, table_name = parse_duckdb_uri(path_str)
-
             return read_duckdb_table(database_path, table_name)
+
+        except ImportError as exc:
+            raise DatasetReadError(str(exc)) from exc
 
         except Exception as exc:
             raise DatasetReadError(
@@ -63,6 +67,9 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         try:
             return read_bigquery_table(path_str)
 
+        except ImportError as exc:
+            raise DatasetReadError(str(exc)) from exc
+
         except Exception as exc:
             raise DatasetReadError(
                 f"Failed to read BigQuery dataset: {path_str}"
@@ -71,12 +78,24 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
     if is_sql_uri(path_str):
         try:
             connection_string, table_name = parse_sql_table_uri(path_str)
-
             return read_sql_table(connection_string, table_name)
+
+        except ImportError as exc:
+            raise DatasetReadError(str(exc)) from exc
+
+        except ValueError as exc:
+            message = str(exc)
+
+            if "support requires" in message or "Install" in message:
+                raise DatasetReadError(message) from exc
+
+            raise DatasetReadError(
+                f"Failed to read SQL dataset: {path_str}. {message}"
+            ) from exc
 
         except Exception as exc:
             raise DatasetReadError(
-                f"Failed to read SQL dataset: {path_str}"
+                f"Failed to read SQL dataset: {path_str}. {exc}"
             ) from exc
 
     dataset_path = Path(path)
