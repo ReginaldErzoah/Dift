@@ -9,6 +9,7 @@ from dift.io.bigquery_reader import BigQueryReader, is_bigquery_uri
 from dift.io.duckdb_reader import DuckDBReader, is_duckdb_uri
 from dift.io.registry import ReaderRegistry
 from dift.io.sql_reader import SQLReader, is_sql_uri
+from dift.io.plugins import load_plugin_readers, register_plugin_readers
 
 SUPPORTED_EXTENSIONS = {
     ".csv",
@@ -95,10 +96,17 @@ class LocalFileReader(BaseReader):
 def create_default_registry() -> ReaderRegistry:
     """Create the default Dift reader registry."""
     registry = ReaderRegistry()
+
     registry.register(DuckDBReader())
     registry.register(BigQueryReader())
     registry.register(SQLReader())
     registry.register(LocalFileReader())
+
+    register_plugin_readers(
+        registry=registry,
+        readers=load_plugin_readers(),
+    )
+
     return registry
 
 
