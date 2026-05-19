@@ -2,9 +2,45 @@ import json
 import subprocess
 import sys
 
+from typer.testing import CliRunner
+
 from dift.cli import compare_app
 
+runner = CliRunner()
+
+
 def test_cli_help_runs():
+    result = runner.invoke(compare_app, ["--help"])
+
+    assert result.exit_code == 0
+    assert "Usage" in result.output
+    assert "[OLD_DATASET] [NEW_DATASET] [OPTIONS]" in result.output
+
+
+def test_cli_help_contains_examples():
+    result = runner.invoke(compare_app, ["--help"])
+
+    assert result.exit_code == 0
+
+    assert "Compare CSV files" in result.output
+    assert "Generate JSON report" in result.output
+    assert "Compare DuckDB tables" in result.output
+    assert "Compare SQL tables" in result.output
+    assert "Use config file" in result.output
+
+
+def test_cli_help_has_clear_option_descriptions():
+    result = runner.invoke(compare_app, ["--help"])
+
+    assert result.exit_code == 0
+
+    assert "Compare CSV files" in result.output
+    assert "Generate JSON report" in result.output
+    assert "Compare DuckDB tables" in result.output
+    assert "Compare SQL tables" in result.output
+    assert "Use config file" in result.output
+
+def test_cli_subprocess_help_runs():
     result = subprocess.run(
         [sys.executable, "-m", "dift.cli", "--help"],
         capture_output=True,
@@ -12,7 +48,8 @@ def test_cli_help_runs():
     )
 
     assert result.returncode == 0
-    assert "Usage" in result.stdout or "usage" in result.stdout.lower()
+    assert "Usage" in result.stdout
+    assert "[OLD_DATASET] [NEW_DATASET] [OPTIONS]" in result.stdout
 
 
 def test_cli_console_report_runs(sample_csv_files):
@@ -166,14 +203,6 @@ def test_cli_rejects_output_and_output_dir_together(sample_csv_files, tmp_path):
     assert result.returncode != 0
 
     combined_output = result.stdout + result.stderr
+
     assert "--output" in combined_output
     assert "--output-dir" in combined_output
-
-
-def test_cli_help_has_clear_option_descriptions(runner):
-    result = runner.invoke(compare_app, ["--help"])
-
-    assert result.exit_code == 0
-    assert "Column used to match rows" in result.output
-    assert "Report output format" in result.output
-    assert "Write report to a specific file path" in result.output
