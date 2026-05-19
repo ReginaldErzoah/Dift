@@ -112,7 +112,7 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         return pl.read_parquet(dataset_path)
 
     if suffix in {".xlsx", ".xls"}:
-        return pl.read_excel(dataset_path, engine="fastexcel")
+        return pl.read_excel(dataset_path, engine="calamine")
 
     if suffix == ".json":
         return pl.read_json(dataset_path)

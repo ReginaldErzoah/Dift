@@ -178,7 +178,7 @@ def test_report_generation_consistency(equivalent_sources, tmp_path):
     sqlite_json = json.loads(render_json(sqlite_report))
 
     assert csv_json["summary"] == sqlite_json["summary"]
-    assert csv_json["row_diff"] == sqlite_json["row_diff"]
+    assert csv_json["rows"] == sqlite_json["rows"]
 
     csv_summary = render_csv(csv_report)
     sqlite_summary = render_csv(sqlite_report)
