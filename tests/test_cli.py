@@ -2,6 +2,7 @@ import json
 import subprocess
 import sys
 
+from dift.cli import compare_app
 
 def test_cli_help_runs():
     result = subprocess.run(
@@ -167,3 +168,12 @@ def test_cli_rejects_output_and_output_dir_together(sample_csv_files, tmp_path):
     combined_output = result.stdout + result.stderr
     assert "--output" in combined_output
     assert "--output-dir" in combined_output
+
+
+def test_cli_help_has_clear_option_descriptions(runner):
+    result = runner.invoke(compare_app, ["--help"])
+
+    assert result.exit_code == 0
+    assert "Column used to match rows" in result.output
+    assert "Report output format" in result.output
+    assert "Write report to a specific file path" in result.output

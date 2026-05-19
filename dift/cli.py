@@ -40,7 +40,22 @@ from dift.schedules import (
 from dift.thresholds import resolve_threshold_config
 
 
-HELP_EXAMPLES = """
+class CustomUsageCommand(typer.core.TyperCommand):
+    """Customize the main help usage line for beginner-friendly CLI docs."""
+
+    def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        formatter.write_usage(
+            ctx.command_path,
+            "[OLD_DATASET] [NEW_DATASET] [OPTIONS]",
+        )
+
+
+compare_app = typer.Typer(
+    no_args_is_help=True,
+    help=f"""
+Dift compares datasets, databases, and warehouse tables to detect
+schema changes, row changes, quality issues, drift, and risk.
+
 Examples:
 
   Compare CSV files:
@@ -49,7 +64,7 @@ Examples:
   Generate JSON report:
     dift old.csv new.csv --report json --output report.json
 
-  Generate HTML report with template:
+  Generate HTML report:
     dift old.csv new.csv --report html --template dark --output report.html
 
   Compare DuckDB tables:
@@ -64,27 +79,9 @@ Examples:
 
   Use config file:
     dift --config config.yaml --env production
-"""
-
-
-class CustomUsageCommand(typer.core.TyperCommand):
-    """Customize the main help usage line for beginner-friendly CLI docs."""
-
-    def format_usage(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
-        formatter.write_usage(
-            ctx.command_path,
-            "[OLD_DATASET] [NEW_DATASET] [OPTIONS]",
-        )
-
-
-compare_app = typer.Typer(
-    no_args_is_help=True,
-    help=(
-        "Dift compares datasets, databases, and warehouse tables to detect "
-        "schema changes, row changes, quality issues, drift, and risk."
-    ),
-    epilog=HELP_EXAMPLES,
+""",
 )
+
 
 profile_app = typer.Typer(help="Manage saved comparison profiles.")
 batch_app = typer.Typer(help="Run batch dataset comparisons.")
