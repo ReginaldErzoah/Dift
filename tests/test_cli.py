@@ -40,6 +40,7 @@ def test_cli_help_has_clear_option_descriptions():
     assert "Compare SQL tables" in result.output
     assert "Use config file" in result.output
 
+
 def test_cli_subprocess_help_runs():
     result = subprocess.run(
         [sys.executable, "-m", "dift.cli", "--help"],
@@ -50,6 +51,59 @@ def test_cli_subprocess_help_runs():
     assert result.returncode == 0
     assert "Usage" in result.stdout
     assert "[OLD_DATASET] [NEW_DATASET] [OPTIONS]" in result.stdout
+
+
+def test_cli_verbose_outputs_progress_messages(sample_csv_files):
+    old_csv, new_csv = sample_csv_files
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dift.cli",
+            str(old_csv),
+            str(new_csv),
+            "--key",
+            "customer_id",
+            "--verbose",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+
+    assert "Validating inputs" in result.stdout
+    assert "Checking dataset sources" in result.stdout
+    assert "Loading datasets and running comparison" in result.stdout
+    assert "Comparison completed" in result.stdout
+    assert "Generating console report" in result.stdout
+    assert "Report generation completed" in result.stdout
+
+
+def test_cli_quiet_suppresses_verbose_progress(sample_csv_files):
+    old_csv, new_csv = sample_csv_files
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "dift.cli",
+            str(old_csv),
+            str(new_csv),
+            "--key",
+            "customer_id",
+            "--verbose",
+            "--quiet",
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+
+    assert "Validating inputs" not in result.stdout
+    assert "Loading datasets and running comparison" not in result.stdout
 
 
 def test_cli_console_report_runs(sample_csv_files):

@@ -87,6 +87,11 @@ def success(msg: str) -> None:
         console.print(f"[green]{msg}[/green]")
 
 
+def progress(msg: str, verbose: bool = False) -> None:
+    if verbose and not QUIET_MODE:
+        console.print(f"[cyan]{msg}[/cyan]")
+
+
 def warning(msg: str) -> None:
     if not QUIET_MODE:
         console.print(f"[yellow]{msg}[/yellow]")
@@ -145,8 +150,11 @@ def run_comparison(
     strict_exit_codes: bool = False,
     quiet: bool = False,
     no_color: bool = False,
+    verbose: bool = False,
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
+
+    progress("Validating inputs...", verbose=verbose)
 
     try:
         validate_config_path(config)
@@ -156,6 +164,9 @@ def run_comparison(
         raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
     try:
+        if config:
+            progress(f"Loading config file: {config}", verbose=verbose)
+
         config_data = load_config(config, env=env) if config else {}
 
     except Exception as exc:
@@ -207,6 +218,8 @@ def run_comparison(
 
     old_dataset = old_dataset or config_data.get("old_dataset")
     new_dataset = new_dataset or config_data.get("new_dataset")
+
+    progress("Checking dataset sources...", verbose=verbose)
 
     if not old_dataset or not new_dataset:
         error("Error: Missing dataset paths.")
@@ -283,6 +296,8 @@ def run_comparison(
     started_at = perf_counter()
     generated_at = datetime.now(UTC).isoformat()
 
+    progress("Loading datasets and running comparison...", verbose=verbose)
+
     diff_report = compare_datasets(
         old_dataset,
         new_dataset,
@@ -293,6 +308,8 @@ def run_comparison(
 
     runtime_seconds = round(perf_counter() - started_at, 4)
 
+    progress("Comparison completed.", verbose=verbose)
+
     diff_report.metadata.generated_at = generated_at
     diff_report.metadata.old_source = old_dataset
     diff_report.metadata.new_source = new_dataset
@@ -301,6 +318,8 @@ def run_comparison(
     diff_report.metadata.report_format = report.value
     diff_report.metadata.template = template if report == ReportFormat.html else None
     diff_report.metadata.runtime_seconds = runtime_seconds
+
+    progress(f"Generating {report.value} report...", verbose=verbose)
 
     if save_history:
         history_path = save_history_record(
@@ -345,6 +364,8 @@ def run_comparison(
     else:
         if not quiet:
             render_console(diff_report)
+
+    progress("Report generation completed.", verbose=verbose)
 
     if strict_exit_codes:
         raise typer.Exit(code=risk_exit_code(diff_report.summary.risk_level))
@@ -459,6 +480,12 @@ def main(
         "--no-color",
         help="Disable colored terminal output.",
     ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show progress messages for loading, comparison, and report generation.",
+    ),
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
 
@@ -479,6 +506,7 @@ def main(
             strict_exit_codes=strict_exit_codes,
             quiet=quiet,
             no_color=no_color,
+            verbose=verbose,
         )
 
     except typer.Exit:
@@ -528,6 +556,12 @@ def batch_run(
         "--no-color",
         help="Disable colored terminal output.",
     ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show progress messages for each batch comparison.",
+    ),
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
 
@@ -573,6 +607,7 @@ def batch_run(
                     strict_exit_codes=strict_exit_codes,
                     quiet=quiet,
                     no_color=no_color,
+                    verbose=verbose,
                 )
 
             except typer.Exit as exc:
@@ -805,6 +840,12 @@ def profile_run(
         "--no-color",
         help="Disable colored terminal output.",
     ),
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show progress messages for the profile comparison.",
+    ),
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
 
@@ -846,6 +887,7 @@ def profile_run(
             strict_exit_codes=strict_exit_codes,
             quiet=quiet,
             no_color=no_color,
+            verbose=verbose,
         )
 
     except typer.Exit:
@@ -996,6 +1038,7 @@ def schedule_run(
             strict_exit_codes=bool(schedule.get("strict_exit_codes", True)),
             quiet=bool(schedule.get("quiet", True)) if quiet is None else quiet,
             no_color=bool(schedule.get("no_color", True)) if no_color is None else no_color,
+            verbose=False,
         )
 
     except typer.Exit:
