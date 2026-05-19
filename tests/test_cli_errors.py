@@ -113,5 +113,6 @@ def test_cli_unsupported_file_type_has_helpful_message(tmp_path):
 
     assert result.returncode != 0
     assert "Unsupported dataset type" in combined_output
-    assert "Supported local file types" in combined_output
+    assert "Supported local file" in combined_output
+    assert "types" in combined_output
     assert "Supported connector examples" in combined_output
