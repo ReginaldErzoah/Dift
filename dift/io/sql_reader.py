@@ -4,6 +4,8 @@ from typing import Final
 
 import polars as pl
 
+from dift.io.base_reader import BaseReader
+
 try:
     import sqlalchemy as sa
 except ImportError:
@@ -33,6 +35,23 @@ def _require_sqlalchemy() -> None:
             "Install it with:\n"
             "  pip install sqlalchemy"
         )
+
+
+class SQLReader(BaseReader):
+    """SQLAlchemy-compatible dataset reader."""
+
+    name = "sql"
+
+    supports_tables = True
+    supports_queries = True
+    supports_streaming = False
+
+    def can_handle(self, source: str) -> bool:
+        return is_sql_uri(source)
+
+    def read(self, source: str) -> pl.DataFrame:
+        connection_string, table_name = parse_sql_table_uri(source)
+        return read_sql_table(connection_string, table_name)
 
 
 def is_sql_uri(value: str) -> bool:
