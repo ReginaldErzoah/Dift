@@ -40,6 +40,33 @@ from dift.schedules import (
 from dift.thresholds import resolve_threshold_config
 
 
+HELP_EXAMPLES = """
+Examples:
+
+  Compare CSV files:
+    dift old.csv new.csv --key customer_id
+
+  Generate JSON report:
+    dift old.csv new.csv --report json --output report.json
+
+  Generate HTML report with template:
+    dift old.csv new.csv --report html --template dark --output report.html
+
+  Compare DuckDB tables:
+    dift duckdb:///examples/warehouse.duckdb:customers_old \\
+         duckdb:///examples/warehouse.duckdb:customers_new \\
+         --key customer_id
+
+  Compare SQL tables:
+    dift sqlite:///examples/old.db:customers_old \\
+         sqlite:///examples/new.db:customers_new \\
+         --key customer_id
+
+  Use config file:
+    dift --config config.yaml --env production
+"""
+
+
 class CustomUsageCommand(typer.core.TyperCommand):
     """Customize the main help usage line for beginner-friendly CLI docs."""
 
@@ -52,7 +79,11 @@ class CustomUsageCommand(typer.core.TyperCommand):
 
 compare_app = typer.Typer(
     no_args_is_help=True,
-    help="Dift - data comparison & quality check tool for datasets.",
+    help=(
+        "Dift compares datasets, databases, and warehouse tables to detect "
+        "schema changes, row changes, quality issues, drift, and risk."
+    ),
+    epilog=HELP_EXAMPLES,
 )
 
 profile_app = typer.Typer(help="Manage saved comparison profiles.")
@@ -318,20 +349,59 @@ def run_comparison(
 
 @compare_app.command(cls=CustomUsageCommand)
 def main(
-    old_dataset: str | None = typer.Argument(None, help="Path to the old dataset."),
-    new_dataset: str | None = typer.Argument(None, help="Path to the new dataset."),
-    key: str | None = typer.Option(None, "--key", "-k"),
-    threshold: float = typer.Option(DEFAULT_THRESHOLD, "--threshold", "-t"),
-    report: ReportFormat = typer.Option(DEFAULT_REPORT, "--report", "-r"),
-    output: str | None = typer.Option(None, "--output", "-o"),
-    output_dir: str | None = typer.Option(None, "--output-dir"),
-    config: str | None = typer.Option(None, "--config", "-c"),
+    old_dataset: str | None = typer.Argument(
+        None,
+        help="Original dataset, table, or connector URI.",
+    ),
+    new_dataset: str | None = typer.Argument(
+        None,
+        help="New dataset, table, or connector URI.",
+    ),
+    key: str | None = typer.Option(
+        None,
+        "--key",
+        "-k",
+        help="Column used to match rows across datasets, for example customer_id.",
+    ),
+    threshold: float = typer.Option(
+        DEFAULT_THRESHOLD,
+        "--threshold",
+        "-t",
+        help="Drift sensitivity threshold. Lower values are more sensitive.",
+    ),
+    report: ReportFormat = typer.Option(
+        DEFAULT_REPORT,
+        "--report",
+        "-r",
+        help="Report output format.",
+    ),
+    output: str | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Write report to a specific file path.",
+    ),
+    output_dir: str | None = typer.Option(
+        None,
+        "--output-dir",
+        help="Write report to a directory with an auto-generated filename.",
+    ),
+    config: str | None = typer.Option(
+        None,
+        "--config",
+        "-c",
+        help="Path to a JSON, YAML, or TOML config file.",
+    ),
     env: str | None = typer.Option(
         None,
         "--env",
         help="Environment name to load from config file.",
     ),
-    template: str = typer.Option(DEFAULT_TEMPLATE, "--template"),
+    template: str = typer.Option(
+        DEFAULT_TEMPLATE,
+        "--template",
+        help="HTML template to use: default, clean, compact, enterprise, or dark.",
+    ),
     save_history: bool = typer.Option(
         False,
         "--history",
