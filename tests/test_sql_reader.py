@@ -93,6 +93,27 @@ def test_parse_sql_table_uri_rejects_missing_table_name():
         parse_sql_table_uri("sqlite:///examples/test.db:")
 
 
+def test_parse_sql_table_uri_invalid_uri_has_helpful_message():
+    with pytest.raises(ValueError) as exc:
+        parse_sql_table_uri("invalid_uri")
+
+    message = str(exc.value)
+
+    assert "Invalid SQL URI" in message
+    assert "sqlite:///database.db:table" in message
+    assert "postgresql://" in message
+
+
+def test_parse_sql_table_uri_missing_table_has_helpful_message():
+    with pytest.raises(ValueError) as exc:
+        parse_sql_table_uri("sqlite:///example.db:")
+
+    message = str(exc.value)
+
+    assert "Table name is missing" in message
+    assert "connection_string:table_name" in message
+
+
 def test_read_sql_table_sqlite(tmp_path):
     db_path = tmp_path / "customers.db"
     connection_string = f"sqlite:///{db_path}"
@@ -147,3 +168,44 @@ def test_read_sql_table_invalid_table_raises(tmp_path):
 
     with pytest.raises(ValueError):
         read_sql_table(connection_string, "missing_table")
+
+
+def test_read_sql_table_invalid_table_has_helpful_message(tmp_path):
+    db_path = tmp_path / "customers.db"
+    connection_string = f"sqlite:///{db_path}"
+
+    engine = sqlalchemy.create_engine(connection_string)
+
+    with engine.begin() as conn:
+        conn.exec_driver_sql("CREATE TABLE customers (customer_id INTEGER)")
+
+    with pytest.raises(ValueError) as exc:
+        read_sql_table(connection_string, "missing_table")
+
+    message = str(exc.value)
+
+    assert "Failed to read SQL table" in message
+    assert "table existence" in message
+    assert "database server availability" in message
+
+
+def test_read_sql_query_invalid_query_has_helpful_message(tmp_path):
+    db_path = tmp_path / "customers.db"
+    connection_string = f"sqlite:///{db_path}"
+
+    engine = sqlalchemy.create_engine(connection_string)
+
+    with engine.begin() as conn:
+        conn.exec_driver_sql("CREATE TABLE customers (customer_id INTEGER)")
+
+    with pytest.raises(ValueError) as exc:
+        read_sql_query(
+            connection_string,
+            "SELECT * FROM missing_table",
+        )
+
+    message = str(exc.value)
+
+    assert "Failed to execute SQL query" in message
+    assert "SQL query syntax" in message
+    assert "table existence" in message

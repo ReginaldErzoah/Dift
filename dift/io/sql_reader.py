@@ -29,12 +29,14 @@ SQL_URI_PREFIXES: Final[tuple[str, ...]] = (
 def _require_sqlalchemy() -> None:
     if sa is None:
         raise ImportError(
-            "SQL database support requires SQLAlchemy. "
-            "Install it with: pip install sqlalchemy"
+            "SQL database support requires SQLAlchemy.\n"
+            "Install it with:\n"
+            "  pip install sqlalchemy"
         )
 
 
 def is_sql_uri(value: str) -> bool:
+    """Return True if the value looks like a supported SQL connector URI."""
     return value.startswith(SQL_URI_PREFIXES)
 
 
@@ -55,21 +57,41 @@ def parse_sql_table_uri(uri: str) -> tuple[str, str]:
     """
 
     if not is_sql_uri(uri):
-        raise ValueError("Invalid SQL URI.")
+        raise ValueError(
+            "Invalid SQL URI.\n"
+            "Expected examples:\n"
+            "  sqlite:///database.db:table\n"
+            "  postgresql://user:password@host:5432/database:table\n"
+            "  mysql+pymysql://user:password@host:3306/database:table"
+        )
 
     if ":" not in uri:
         raise ValueError(
-            "Invalid SQL table URI. Expected format: "
-            "connection_string:table_name"
+            "Invalid SQL table URI.\n"
+            "Expected format:\n"
+            "  connection_string:table_name\n"
+            "Examples:\n"
+            "  sqlite:///database.db:customers\n"
+            "  postgresql://user:password@host:5432/sales:orders"
         )
 
     connection_string, table_name = uri.rsplit(":", 1)
 
     if not connection_string:
-        raise ValueError("Invalid SQL table URI. Connection string is missing.")
+        raise ValueError(
+            "Invalid SQL table URI. Connection string is missing.\n"
+            "Expected format:\n"
+            "  connection_string:table_name"
+        )
 
     if not table_name:
-        raise ValueError("Invalid SQL table URI. Table name is missing.")
+        raise ValueError(
+            "Invalid SQL table URI. Table name is missing.\n"
+            "Expected format:\n"
+            "  connection_string:table_name\n"
+            "Example:\n"
+            "  sqlite:///database.db:customers"
+        )
 
     return connection_string, table_name
 
@@ -92,7 +114,12 @@ def read_sql_table(connection_string: str, table_name: str) -> pl.DataFrame:
     except Exception as exc:
         raise ValueError(
             f"Failed to read SQL table '{table_name}' "
-            f"using connection '{connection_string}'."
+            f"using connection '{connection_string}'.\n"
+            "Check:\n"
+            "  - database credentials\n"
+            "  - connection string format\n"
+            "  - table existence\n"
+            "  - database server availability"
         ) from exc
 
 
@@ -111,7 +138,12 @@ def read_sql_query(connection_string: str, query: str) -> pl.DataFrame:
 
     except Exception as exc:
         raise ValueError(
-            f"Failed to execute SQL query using connection '{connection_string}'."
+            f"Failed to execute SQL query using connection '{connection_string}'.\n"
+            "Check:\n"
+            "  - SQL query syntax\n"
+            "  - table existence\n"
+            "  - database credentials\n"
+            "  - database server availability"
         ) from exc
 
 
@@ -135,43 +167,49 @@ def _quote_identifier(identifier: str) -> str:
 def _driver_help(connection_string: str) -> str:
     if connection_string.startswith(("postgres://", "postgresql://")):
         return (
-            "PostgreSQL support requires a PostgreSQL driver. "
-            "Install one with: pip install psycopg2-binary"
+            "PostgreSQL support requires a PostgreSQL driver.\n"
+            "Install one with:\n"
+            "  pip install psycopg2-binary"
         )
 
     if connection_string.startswith("postgresql+psycopg://"):
         return (
-            "PostgreSQL support requires psycopg. "
-            "Install it with: pip install psycopg"
+            "PostgreSQL support requires psycopg.\n"
+            "Install it with:\n"
+            "  pip install psycopg"
         )
 
     if connection_string.startswith("postgresql+psycopg2://"):
         return (
-            "PostgreSQL support requires psycopg2. "
-            "Install it with: pip install psycopg2-binary"
+            "PostgreSQL support requires psycopg2.\n"
+            "Install it with:\n"
+            "  pip install psycopg2-binary"
         )
 
     if connection_string.startswith(("mysql://", "mysql+pymysql://")):
         return (
-            "MySQL support requires a MySQL driver. "
-            "Install it with: pip install pymysql"
+            "MySQL support requires a MySQL driver.\n"
+            "Install it with:\n"
+            "  pip install pymysql"
         )
 
     if connection_string.startswith(
         ("redshift+psycopg2://", "redshift+redshift_connector://")
     ):
         return (
-            "Redshift support requires a Redshift-compatible SQLAlchemy driver. "
-            "Install one with: pip install sqlalchemy-redshift redshift-connector"
+            "Redshift support requires a Redshift-compatible SQLAlchemy driver.\n"
+            "Install one with:\n"
+            "  pip install sqlalchemy-redshift redshift-connector"
         )
 
     if connection_string.startswith(("snowflake://", "snowflake+snowflake://")):
         return (
-            "Snowflake support requires the Snowflake SQLAlchemy driver. "
-            "Install it with: pip install snowflake-sqlalchemy"
+            "Snowflake support requires the Snowflake SQLAlchemy driver.\n"
+            "Install it with:\n"
+            "  pip install snowflake-sqlalchemy"
         )
 
     return (
-        "This SQL database requires a compatible SQLAlchemy driver. "
+        "This SQL database requires a compatible SQLAlchemy driver.\n"
         "Install the appropriate database driver and try again."
     )
