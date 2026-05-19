@@ -1871,7 +1871,6 @@ mypy dift
 * [x] Threshold metadata
 
 
-
 ### Developer Experience
 
 #### Testing Improvements
