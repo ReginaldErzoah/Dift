@@ -17,7 +17,7 @@ def register_plugin_readers(
     """
     for reader in readers:
         registry.register(reader)
-
+        
 
 def load_plugin_readers() -> list[BaseReader]:
     """
