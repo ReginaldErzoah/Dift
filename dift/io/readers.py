@@ -138,6 +138,10 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         "Supported connector examples:\n"
         "  duckdb:///database.duckdb:table\n"
         "  sqlite:///database.db:table\n"
+        "  postgresql://user:password@host:5432/database:table\n"
+        "  mysql+pymysql://user:password@host:3306/database:table\n"
+        "  redshift+redshift_connector://user:password@host:5439/database:table\n"
+        "  snowflake://user:password@account/database/schema?warehouse=name:table\n"
         "  bigquery://project.dataset.table\n"
         "For database inputs, use a supported connector URI."
     )

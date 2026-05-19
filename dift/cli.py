@@ -150,16 +150,19 @@ def run_comparison(
 
     try:
         validate_config_path(config)
-        validate_output_options(output, output_dir)
-
-        if report == ReportFormat.html:
-            validate_html_template(template)
 
     except ValidationError as exc:
         error(f"Error: {exc}")
         raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
-    config_data = load_config(config, env=env) if config else {}
+    try:
+        config_data = load_config(config, env=env) if config else {}
+
+    except Exception as exc:
+        error(f"Error: Failed to load config file '{config}'.")
+        warning("Tip:")
+        warning("Check that the config file exists, is valid, and matches the expected format.")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
     threshold_config = resolve_threshold_config(
         config_data=config_data,
@@ -191,6 +194,16 @@ def run_comparison(
 
     if template == DEFAULT_TEMPLATE:
         template = config_data.get("template", template)
+
+    try:
+        validate_output_options(output, output_dir)
+
+        if report == ReportFormat.html:
+            validate_html_template(template)
+
+    except ValidationError as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
     old_dataset = old_dataset or config_data.get("old_dataset")
     new_dataset = new_dataset or config_data.get("new_dataset")
