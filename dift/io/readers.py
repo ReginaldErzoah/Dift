@@ -58,9 +58,14 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         except ImportError as exc:
             raise DatasetReadError(str(exc)) from exc
 
+        except ValueError as exc:
+            raise DatasetReadError(
+                f"Failed to read DuckDB dataset: {path_str}. {exc}"
+            ) from exc
+
         except Exception as exc:
             raise DatasetReadError(
-                f"Failed to read DuckDB dataset: {path_str}"
+                f"Failed to read DuckDB dataset: {path_str}. {exc}"
             ) from exc
 
     if is_bigquery_uri(path_str):
@@ -70,9 +75,14 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         except ImportError as exc:
             raise DatasetReadError(str(exc)) from exc
 
+        except ValueError as exc:
+            raise DatasetReadError(
+                f"Failed to read BigQuery dataset: {path_str}. {exc}"
+            ) from exc
+
         except Exception as exc:
             raise DatasetReadError(
-                f"Failed to read BigQuery dataset: {path_str}"
+                f"Failed to read BigQuery dataset: {path_str}. {exc}"
             ) from exc
 
     if is_sql_uri(path_str):
@@ -101,7 +111,12 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
     dataset_path = Path(path)
 
     if not dataset_path.exists():
-        raise DatasetReadError(f"Dataset not found: {dataset_path}")
+        raise DatasetReadError(
+            f"Dataset not found: {dataset_path}\n"
+            "Check that the file path is correct.\n"
+            "Example:\n"
+            "  dift examples/old.csv examples/new.csv"
+        )
 
     suffix = dataset_path.suffix.lower()
 
@@ -118,6 +133,11 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
         return pl.read_json(dataset_path)
 
     raise DatasetReadError(
-        f"Unsupported dataset type '{suffix}'. "
-        f"Supported types: {SUPPORTED_SOURCE_TYPES}"
+        f"Unsupported dataset type '{suffix}'.\n"
+        f"Supported local file types: {', '.join(sorted(SUPPORTED_EXTENSIONS))}\n"
+        "Supported connector examples:\n"
+        "  duckdb:///database.duckdb:table\n"
+        "  sqlite:///database.db:table\n"
+        "  bigquery://project.dataset.table\n"
+        "For database inputs, use a supported connector URI."
     )

@@ -38,6 +38,12 @@ from dift.schedules import (
     load_schedules,
 )
 from dift.thresholds import resolve_threshold_config
+from dift.utils.validation import (
+    ValidationError,
+    validate_config_path,
+    validate_html_template,
+    validate_output_options,
+)
 
 
 class CustomUsageCommand(typer.core.TyperCommand):
@@ -142,6 +148,17 @@ def run_comparison(
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
 
+    try:
+        validate_config_path(config)
+        validate_output_options(output, output_dir)
+
+        if report == ReportFormat.html:
+            validate_html_template(template)
+
+    except ValidationError as exc:
+        error(f"Error: {exc}")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
     config_data = load_config(config, env=env) if config else {}
 
     threshold_config = resolve_threshold_config(
@@ -160,7 +177,11 @@ def run_comparison(
             try:
                 report = ReportFormat(report_str)
             except ValueError:
-                warning(f"Invalid report format '{report_str}' in config. Keeping default.")
+                error(
+                    f"Error: Invalid report format '{report_str}' in config.\n"
+                    "Supported report formats: console, json, csv, excel, html"
+                )
+                raise typer.Exit(code=ERROR_EXIT_CODE)
 
     if output is None:
         output = config_data.get("output")
@@ -224,10 +245,6 @@ def run_comparison(
             warning("Tip:")
             warning(f"Use examples/{name} or provide a full path.\n")
 
-        raise typer.Exit(code=ERROR_EXIT_CODE)
-
-    if output and output_dir:
-        error("Error: Use either --output or --output-dir, not both.")
         raise typer.Exit(code=ERROR_EXIT_CODE)
 
     if output:
