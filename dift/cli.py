@@ -52,34 +52,10 @@ class CustomUsageCommand(typer.core.TyperCommand):
 
 compare_app = typer.Typer(
     no_args_is_help=True,
-    help=f"""
-Dift compares datasets, databases, and warehouse tables to detect
-schema changes, row changes, quality issues, drift, and risk.
-
-Examples:
-
-  Compare CSV files:
-    dift old.csv new.csv --key customer_id
-
-  Generate JSON report:
-    dift old.csv new.csv --report json --output report.json
-
-  Generate HTML report:
-    dift old.csv new.csv --report html --template dark --output report.html
-
-  Compare DuckDB tables:
-    dift duckdb:///examples/warehouse.duckdb:customers_old \\
-         duckdb:///examples/warehouse.duckdb:customers_new \\
-         --key customer_id
-
-  Compare SQL tables:
-    dift sqlite:///examples/old.db:customers_old \\
-         sqlite:///examples/new.db:customers_new \\
-         --key customer_id
-
-  Use config file:
-    dift --config config.yaml --env production
-""",
+    help=(
+        "Compare datasets, databases, and warehouse tables for schema changes, "
+        "row changes, quality issues, drift, and risk."
+    ),
 )
 
 
@@ -344,7 +320,36 @@ def run_comparison(
         raise typer.Exit(code=risk_exit_code(diff_report.summary.risk_level))
 
 
-@compare_app.command(cls=CustomUsageCommand)
+@compare_app.command(
+    cls=CustomUsageCommand,
+    help="""
+Compare datasets, databases, and warehouse tables.
+
+Examples:
+
+  Compare CSV files:
+    dift old.csv new.csv --key customer_id
+
+  Generate JSON report:
+    dift old.csv new.csv --report json --output report.json
+
+  Generate HTML report:
+    dift old.csv new.csv --report html --template dark --output report.html
+
+  Compare DuckDB tables:
+    dift duckdb:///examples/warehouse.duckdb:customers_old \\
+         duckdb:///examples/warehouse.duckdb:customers_new \\
+         --key customer_id
+
+  Compare SQL tables:
+    dift sqlite:///examples/old.db:customers_old \\
+         sqlite:///examples/new.db:customers_new \\
+         --key customer_id
+
+  Use config file:
+    dift --config config.yaml --env production
+""",
+)
 def main(
     old_dataset: str | None = typer.Argument(
         None,
