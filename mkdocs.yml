@@ -1,4 +1,5 @@
 site_name: Dift
+site_url: https://reginalderzoah.github.io/Dift/
 site_description: Open-source dataset comparison, drift detection, and data trust validation platform.
 site_author: Reginald Erzoah
 repo_url: https://github.com/ReginaldErzoah/Dift

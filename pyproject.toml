@@ -93,7 +93,7 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/ReginaldErzoah/Dift"
 Repository = "https://github.com/ReginaldErzoah/Dift"
-Documentation = "https://github.com/ReginaldErzoah/Dift/tree/main/docs"
+Documentation = "https://reginalderzoah.github.io/Dift/"
 Issues = "https://github.com/ReginaldErzoah/Dift/issues"
 
 [project.scripts]

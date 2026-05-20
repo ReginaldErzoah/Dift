@@ -28,6 +28,13 @@ Dift supports:
 
 ---
 
+# Documentation
+
+Full documentation is available here:
+
+https://reginalderzoah.github.io/Dift/
+
+
 # Why Dift?
 
 Bad data silently breaks:
@@ -394,40 +401,6 @@ examples/
 
 ---
 
-# Documentation
-
-Full documentation now lives in the `docs/` directory.
-
-## Getting Started
-
-- `docs/getting-started/installation.md`
-- `docs/getting-started/quickstart.md`
-
-## Core Guides
-
-- `docs/configuration.md`
-- `docs/reports.md`
-- `docs/automation.md`
-- `docs/examples.md`
-
-## Connectors
-
-- `docs/connectors/sql.md`
-- `docs/connectors/duckdb.md`
-- `docs/connectors/bigquery.md`
-
-## Developer Documentation
-
-- `docs/developer/architecture.md`
-- `docs/developer/plugin-preparation.md`
-- `docs/developer/reader-registry.md`
-- `docs/developer/testing.md`
-
-## Release Notes
-
-- `docs/releases/index.md`
-
----
 
 # Project Structure
 
