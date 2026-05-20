@@ -35,7 +35,7 @@ Dift development focuses on:
 
 ---
 
-# v0.1.0 — Foundation Release
+# v0.1.0 - Foundation Release
 
 Initial public release focused on core comparison workflows.
 
@@ -69,7 +69,7 @@ Initial public release focused on core comparison workflows.
 
 ---
 
-# v0.2.1 — Reporting & Validation Improvements
+# v0.2.1 - Reporting & Validation Improvements
 
 Focused on usability, reporting quality, and validation consistency.
 
@@ -100,7 +100,7 @@ Focused on usability, reporting quality, and validation consistency.
 
 ---
 
-# v0.3.0 — Reusable Workflow System
+# v0.3.0 - Reusable Workflow System
 
 Focused on configuration-driven workflows and reusable validation systems.
 
@@ -148,7 +148,7 @@ Focused on configuration-driven workflows and reusable validation systems.
 
 ---
 
-# v0.5.0 — Drift Intelligence & Automation
+# v0.5.0 - Drift Intelligence & Automation
 
 Major expansion into drift detection and automation workflows.
 
@@ -242,7 +242,7 @@ Major expansion into drift detection and automation workflows.
 
 ---
 
-# v0.6.0 — Connectors & Extensible Architecture
+# v0.6.0 - Connectors & Extensible Architecture
 
 Major architectural release introducing database and warehouse workflows.
 
@@ -350,7 +350,7 @@ Major architectural release introducing database and warehouse workflows.
 
 ---
 
-# v0.7.0 — Scale & Performance
+# v0.7.0 - Scale & Performance
 
 Focused on scalability and advanced statistical analysis.
 
@@ -407,7 +407,7 @@ Focused on scalability and advanced statistical analysis.
 
 ---
 
-# v0.8.0 — ML & Observability
+# v0.8.0 - ML & Observability
 
 Focused on ML workflows, governance, and observability.
 
@@ -454,7 +454,7 @@ Focused on ML workflows, governance, and observability.
 
 ---
 
-# v0.9.0 — Collaboration & Platform Integrations
+# v0.9.0 - Collaboration & Platform Integrations
 
 Focused on ecosystem integration and collaborative workflows.
 
@@ -501,7 +501,7 @@ Focused on ecosystem integration and collaborative workflows.
 
 ---
 
-# v1.0.0 — Enterprise Platform
+# v1.0.0 - Enterprise Platform
 
 Focused on platform maturity, stability, and ecosystem expansion.
 
