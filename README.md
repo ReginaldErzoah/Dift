@@ -34,6 +34,7 @@ Full documentation is available here:
 
 https://reginalderzoah.github.io/Dift/
 
+---
 
 # Why Dift?
 
