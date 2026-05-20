@@ -190,12 +190,12 @@ def run_comparison(
         if report_str:
             try:
                 report = ReportFormat(report_str)
-            except ValueError:
+            except ValueError as exc:
                 error(
                     f"Error: Invalid report format '{report_str}' in config.\n"
                     "Supported report formats: console, json, csv, excel, html"
                 )
-                raise typer.Exit(code=ERROR_EXIT_CODE)
+                raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
     if output is None:
         output = config_data.get("output")
