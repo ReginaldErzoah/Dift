@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class ReportMetadata(BaseModel):
     tool: str = "dift"
-    version: str = "0.5.0"
+    version: str = "0.6.0"
     report_type: str = "dataset_diff"
 
     generated_at: str | None = None

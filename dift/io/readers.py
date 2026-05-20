@@ -7,9 +7,9 @@ import polars as pl
 from dift.io.base_reader import BaseReader
 from dift.io.bigquery_reader import BigQueryReader, is_bigquery_uri
 from dift.io.duckdb_reader import DuckDBReader, is_duckdb_uri
+from dift.io.plugins import load_plugin_readers, register_plugin_readers
 from dift.io.registry import ReaderRegistry
 from dift.io.sql_reader import SQLReader, is_sql_uri
-from dift.io.plugins import load_plugin_readers, register_plugin_readers
 
 SUPPORTED_EXTENSIONS = {
     ".csv",

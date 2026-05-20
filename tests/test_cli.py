@@ -171,7 +171,7 @@ def test_cli_json_report_writes_file(sample_csv_files, tmp_path):
     assert "categorical_diff" not in report
 
     assert report["metadata"]["tool"] == "dift"
-    assert report["metadata"]["version"] == "0.5.0"
+    assert report["metadata"]["version"] == "0.6.0"
     assert report["metadata"]["report_type"] == "dataset_diff"
 
 

@@ -14,7 +14,6 @@ from dift.io.sql_reader import (
     read_sql_table,
 )
 
-
 # =========================================================
 # Snowflake Mock Tests
 # =========================================================
@@ -78,10 +77,10 @@ def test_snowflake_query_failure(mock_create_engine):
 def test_snowflake_missing_driver_error():
     with pytest.raises(DatasetReadError):
         read_dataset(
-            (
+            
                 "snowflake://user:password@account/db/schema"
                 "?warehouse=compute_wh:orders"
-            )
+            
         )
 
 
@@ -92,10 +91,10 @@ def test_snowflake_missing_driver_error():
 
 def test_redshift_uri_parsing():
     connection_string, table_name = parse_sql_table_uri(
-        (
+        
             "redshift+redshift_connector://"
             "user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders"
-        )
+        
     )
 
     assert connection_string.startswith("redshift+")
@@ -121,10 +120,10 @@ def test_redshift_connection_failure(mock_create_engine):
 def test_redshift_missing_driver_error():
     with pytest.raises(DatasetReadError):
         read_dataset(
-            (
+            
                 "redshift+redshift_connector://"
                 "user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders"
-            )
+            
         )
 
 
