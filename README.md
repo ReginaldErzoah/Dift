@@ -6,63 +6,53 @@
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-0.5.0-orange)
+![Version](https://img.shields.io/badge/version-0.6.0-orange)
 
-Dift is an open-source CLI platform for dataset comparison, drift detection, and data trust validation.
+Dift is an open-source platform for dataset comparison, drift detection, and automated data trust validation.
 
 It helps data teams instantly understand:
 
-* what changed
-* why it matters
-* whether the new data is safe to trust
+- what changed
+- why it matters
+- whether new data is safe to trust
+
+Dift supports:
+
+- local datasets
+- SQL databases
+- analytical warehouses
+- drift analysis
+- automation workflows
+- historical validation
+- reusable comparison systems
 
 ---
 
-# What's New in v0.5.0
+# Why Dift?
 
-Dift v0.5.0 introduces advanced drift analysis, outlier detection, reusable configurations, saved comparison profiles, improved reporting, and stronger dataset risk analysis.
+Bad data silently breaks:
 
-## New Features
+- dashboards
+- ETL pipelines
+- analytics workflows
+- ML models
+- warehouse transformations
+- business decisions
 
-* Numeric drift detection
-* Advanced categorical drift analysis
-* Outlier detection using IQR analysis
-* Outlier severity classification
-* Outlier risk scoring
-* Frequency distribution shift detection
-* Numeric drift reporting across all report formats
-* Improved Excel reporting
-* Improved HTML reporting
-* Better CSV drift summaries
-* Enhanced weighted risk scoring
-* Improved warning system
-* Better drift visibility in console reports
+Dift helps teams detect risky dataset changes before they propagate into production systems.
 
 ---
 
-## Why Dift?
+# Key Features
 
-Bad data breaks:
+## Dataset Comparison
 
-* dashboards
-* reports
-* ETL pipelines
-* analytics workflows
-* ML models
-* business decisions
-
-Dift helps teams catch risky data changes before they cause damage.
-
----
-
-# Features (v0.5.0)
-
-## Supported Formats
-
-* CSV
-* Parquet
-* Excel (`.xlsx`, `.xls`)
-* JSON
+- Schema comparison
+- Row-level comparison
+- Null analysis
+- Duplicate analysis
+- Risk scoring
+- Drift analysis
 
 ---
 
@@ -70,537 +60,232 @@ Dift helps teams catch risky data changes before they cause damage.
 
 ### Numeric Drift
 
-* Mean shift detection
-* Standard deviation drift
-* Range shift detection
-* Configurable drift thresholds
-* Severity classification
+- Mean shift detection
+- Standard deviation drift
+- Range shift analysis
+- Severity classification
 
 ### Categorical Drift
 
-* New categorical value detection
-* Removed categorical value detection
-* Frequency distribution shifts
-* Severity classification
+- New value detection
+- Removed value detection
+- Frequency shift analysis
+- Severity scoring
 
 ### Outlier Detection
 
-* IQR outlier detection
-* Outlier spike detection
-* Outlier percentage tracking
-* Risk integration
+- IQR outlier analysis
+- Outlier spike detection
+- Risk integration
 
 ---
 
-# Output Options
+# Supported Dataset Sources
 
-* Rich CLI report
-* JSON report
-* CSV summary report
-* Excel workbook report
-* HTML dashboard-style report
+## Local Files
+
+- CSV
+- Parquet
+- Excel (`.xlsx`, `.xls`)
+- JSON
+
+## Databases & Warehouses
+
+- SQLite
+- PostgreSQL
+- MySQL
+- DuckDB
+- BigQuery
+- Redshift
+- Snowflake
 
 ---
 
-## HTML Templates
+# Reporting
 
-Customize your HTML reports:
+Dift supports:
 
-```bash
-dift old.csv new.csv --report html --template clean
-```
+- Rich CLI reports
+- JSON reports
+- CSV reports
+- Excel reports
+- HTML reports
+
+---
+
+# HTML Templates
 
 Available templates:
 
-* `default`
-* `clean`
-* `compact`
-* `enterprise`
-* `dark`
-
----
-
-## Numeric Drift Thresholds
-
-Control drift sensitivity using `--threshold`.
-
-Default threshold:
-
-```bash
-0.1
-```
+- default
+- clean
+- compact
+- enterprise
+- dark
 
 Example:
 
 ```bash
-dift old.csv new.csv --key id --threshold 0.2
+dift old.csv new.csv \
+  --report html \
+  --template dark
 ```
-
-This helps detect silent numeric drift in:
-
-* ML datasets
-* ETL pipelines
-* analytics tables
-* production data feeds
 
 ---
 
-## Output Directory Support
+# Automation Features
 
-Save reports to a directory without specifying filenames:
-
-```bash
-dift old.csv new.csv --report json --output-dir reports/
-```
-
-Auto-generated filenames:
-
-* `dift_report.json`
-* `dift_report.csv`
-* `dift_report.xlsx`
-* `dift_report.html`
+- Scheduled comparisons
+- Batch dataset comparison
+- Comparison history
+- Reusable profiles
+- Environment-based configs
+- Automation-friendly exit codes
+- Non-interactive execution
 
 ---
 
-# Configuration System
+# Installation
 
-Dift supports reusable configuration files for cleaner and reproducible workflows.
+## Install
 
 ```bash
-dift old.csv new.csv --config examples/config_sample.yaml
+pip install dift-cli
 ```
 
-## Supported Formats
-
-* YAML (`.yaml`, `.yml`)
-* TOML (`.toml`)
-* JSON (`.json`)
-
-## Example YAML Config
-
-```yaml
-old_dataset: "example/old.csv"
-new_dataset: "examples/new.csv"
-key: "customer_id"
-threshold: 0.05
-report: "html"
-```
-
-## Example TOML Config
-
-```toml
-old_dataset = "examples/old.csv"
-new_dataset = "examples/new.csv"
-key = "customer_id"
-threshold = 0.1
-report = "json"
-```
-
-## Example JSON Config
-
-```json
-{
-  "old_dataset": "examples/old.csv",
-  "new_dataset": "examples/new.csv",
-  "key": "customer_id",
-  "threshold": 0.2,
-  "report": "csv"
-}
-```
 ---
 
-## Dataset Paths in Config Files
-
-Dift can also load dataset paths directly from config files.
-
-This means you can run a comparison without typing the old and new dataset paths in the terminal every time.
+## Upgrade
 
 ```bash
-dift --config examples/config_with_datasets.yaml
+pip install --upgrade dift-cli
 ```
 
-### YAML Example
+---
 
-```yaml
-old_dataset: examples/old.csv
-new_dataset: examples/new.csv
-key: customer_id
-threshold: 0.2
-report: html
-output: reports/config_report.html
+# Optional Connector Dependencies
+
+## SQL Support
+
+```bash
+pip install sqlalchemy
 ```
 
-### CLI Override Example
+## PostgreSQL
 
-CLI arguments still override config values.
+```bash
+pip install psycopg2-binary
+```
+
+## MySQL
+
+```bash
+pip install pymysql
+```
+
+## Redshift
+
+```bash
+pip install sqlalchemy-redshift redshift-connector
+```
+
+## Snowflake
+
+```bash
+pip install snowflake-sqlalchemy
+```
+
+## BigQuery
+
+```bash
+pip install google-cloud-bigquery db-dtypes
+```
+
+## DuckDB
+
+```bash
+pip install duckdb
+```
+
+---
+
+# Quick Start
+
+## Compare CSV Files
+
+```bash
+dift examples/old.csv examples/new.csv \
+  --key customer_id
+```
+
+---
+
+## Generate JSON Report
+
+```bash
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report json \
+  --output report.json
+```
+
+---
+
+## Generate HTML Report
+
+```bash
+dift examples/old.csv examples/new.csv \
+  --key customer_id \
+  --report html \
+  --template enterprise \
+  --output report.html
+```
+
+---
+
+## Detect Numeric Drift
 
 ```bash
 dift examples/old_drift.csv examples/new_drift.csv \
-  --config examples/config_with_datasets.yaml \
-  --report json \
-  --output override_report.json
-```
-
-In this case, Dift uses:
-
-* datasets from the CLI
-* report/output from the CLI
-* remaining values from the config file
-
-
----
-
-# Reusable Threshold Configurations
-
-Dift supports reusable threshold policies for advanced drift detection workflows.
-
-Threshold configurations help teams:
-
-* standardize drift sensitivity
-* customize validation rules
-* apply column-specific policies
-* reuse validation settings across environments
-
----
-
-## Global Threshold Configuration
-
-```yaml
-thresholds:
-  numeric: 0.1
-  categorical: 0.2
-  outlier: 0.15
-```
-
----
-
-## Column-Level Threshold Overrides
-
-```yaml
-thresholds:
-  numeric: 0.1
-  categorical: 0.2
-  outlier: 0.15
-
-  columns:
-    revenue:
-      numeric: 0.05
-      outlier: 0.1
-
-    segment:
-      categorical: 0.3
-```
-
----
-
-## Full Threshold Config Example
-
-```yaml
-old_dataset: examples/old.csv
-new_dataset: examples/new.csv
-
-key: customer_id
-report: html
-output: reports/threshold_report.html
-
-thresholds:
-  numeric: 0.1
-  categorical: 0.2
-  outlier: 0.15
-
-  columns:
-    revenue:
-      numeric: 0.05
-      outlier: 0.1
-
-    status:
-      categorical: 0.3
-```
-
----
-
-## Run Using Threshold Configs
-
-```bash
-dift --config examples/config_thresholds.yaml
-```
-
----
-
-## CLI Threshold Override
-
-CLI thresholds still override global numeric thresholds for backward compatibility.
-
-```bash
-dift --config examples/config_thresholds.yaml --threshold 0.5
-```
-
-This overrides:
-
-```yaml
-thresholds:
-  numeric: 0.1
-```
-
-But preserves:
-
-* categorical thresholds
-* outlier thresholds
-* column-level overrides
-
----
-
-## Supported Threshold Types
-
-| Threshold Type | Purpose                   |
-| -------------- | ------------------------- |
-| numeric        | Numeric drift detection   |
-| categorical    | Frequency shift detection |
-| outlier        | Outlier spike detection   |
-| columns        | Column-specific overrides |
-
----
-
-## Example Use Cases
-
-### Sensitive Revenue Monitoring
-
-```yaml
-columns:
-  revenue:
-    numeric: 0.02
-```
-
-Detect even small revenue drift changes.
-
----
-
-### Relaxed Categorical Drift
-
-```yaml
-columns:
-  segment:
-    categorical: 0.4
-```
-
-Reduce noise for highly variable categorical fields.
-
----
-
-### Strict Outlier Detection
-
-```yaml
-columns:
-  transactions:
-    outlier: 0.05
-```
-
-Catch abnormal spikes aggressively.
-
----
-
-# Environment-Based Configurations
-
-Dift supports reusable environment-specific configurations for development, staging, and production workflows.
-
-This helps teams maintain different comparison settings across environments while keeping configs clean and reusable.
-
----
-
-## Select an Environment
-
-```bash
-dift --config examples/config_env.yaml --env development
-```
-
----
-
-## Example Environment Config
-
-### YAML
-
-```yaml
-key: customer_id
-report: html
-output: reports/env_report.html
-
-environments:
-  development:
-    old_dataset: examples/old.csv
-    new_dataset: examples/new.csv
-    threshold: 0.2
-
-  staging:
-    old_dataset: staging_old.csv
-    new_dataset: staging_new.csv
-    threshold: 0.15
-
-  production:
-    old_dataset: ${OLD_DATASET}
-    new_dataset: ${NEW_DATASET}
-    threshold: 0.1
-```
-
----
-
-## Environment Variable Support
-
-Dift supports environment variable interpolation inside config files.
-
-Example:
-
-```yaml
-old_dataset: ${OLD_DATASET}
-new_dataset: ${NEW_DATASET}
-```
-
-Set variables before running Dift.
-
-### Git Bash / Linux / Mac
-
-```bash
-export OLD_DATASET=examples/old.csv
-export NEW_DATASET=examples/new.csv
-```
-
-### PowerShell
-
-```powershell
-$env:OLD_DATASET="examples/old.csv"
-$env:NEW_DATASET="examples/new.csv"
-```
-
-Then run:
-
-```bash
-dift --config examples/config_env.yaml --env production
-```
-
----
-
-## Missing Environment Variables
-
-If a required environment variable is missing, Dift shows a helpful error.
-
-Example:
-
-```text
-Error: Missing environment variable 'OLD_DATASET'
-```
-
----
-
-## Environment Workflow Benefits
-
-Environment configs help support:
-
-* development workflows
-* staging validation
-* production deployment checks
-* CI/CD pipelines
-* secret management preparation
-* reusable automation workflows
-
----
-
-# Saved Comparison Profiles
-
-Dift supports reusable saved comparison profiles.
-
-Profiles help automate recurring dataset checks and validation workflows.
-
-## Create a Profile
-
-```bash
-dift profile create nightly-check \
-  --old examples/old.csv \
-  --new examples/new.csv \
-  --key customer_id \
-  --report html \
+  --key id \
   --threshold 0.1
 ```
 
-## Run a Profile
+---
+
+# Database & Warehouse Examples
+
+## PostgreSQL
 
 ```bash
-dift profile run nightly-check
-```
-
-## List Profiles
-
-```bash
-dift profile list
-```
-
-## Show Profile Details
-
-```bash
-dift profile show nightly-check
-```
-
-## Delete a Profile
-
-```bash
-dift profile delete nightly-check
+dift postgresql://user:password@localhost:5432/sales_db:customers_old \
+     postgresql://user:password@localhost:5432/sales_db:customers_new \
+     --key customer_id
 ```
 
 ---
 
-# Configuration Priority
+## DuckDB
 
-Dift resolves settings using:
-
-```text
-CLI arguments > Saved Profiles > Config Files > Defaults
+```bash
+dift duckdb:///warehouse.duckdb:orders_old \
+     duckdb:///warehouse.duckdb:orders_new \
+     --key order_id
 ```
 
-This makes Dift flexible for:
+---
 
-* automation
-* CI/CD pipelines
-* scheduled validations
-* reusable workflows
+## BigQuery
+
+```bash
+dift bigquery://analytics.sales.orders_old \
+     bigquery://analytics.sales.orders_new \
+     --key order_id
+```
 
 ---
 
-# Batch Dataset Comparison
-
-Dift supports batch comparison workflows for validating multiple dataset pairs in one command.
-
-This is useful for:
-
-* ETL validation pipelines
-* scheduled dataset monitoring
-* multi-table warehouse checks
-* automated regression testing
-
----
-
-## Folder Structure Example
-
-```text
-data/
-├── old/
-│   ├── customers.csv
-│   ├── orders.csv
-│   └── products.csv
-│
-└── new/
-    ├── customers.csv
-    ├── orders.csv
-    └── products.csv
-````
-
-Dift automatically matches files by filename.
-
-Example:
-
-* `old/customers.csv` <--> `new/customers.csv`
-* `old/orders.csv` <--> `new/orders.csv`
-
----
-
-## Run Batch Comparison
+# Batch Comparison
 
 ```bash
 dift batch \
@@ -611,989 +296,83 @@ dift batch \
 
 ---
 
-## Generate Batch HTML Reports
+# Scheduled Workflows
+
+## Create Profile
 
 ```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --key id \
-  --report html \
-  --output-dir reports/batch
+dift profile create nightly-check \
+  --old examples/old.csv \
+  --new examples/new.csv \
+  --key customer_id
 ```
 
-Example output structure:
-
-```text
-reports/
-└── batch/
-    ├── customers/
-    │   └── dift_report.html
-    ├── orders/
-    │   └── dift_report.html
-    └── products/
-        └── dift_report.html
-```
-
----
-
-## Batch CSV Reports
+## Run Profile
 
 ```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --report csv \
-  --output-dir reports/csv
+dift profile run nightly-check
 ```
 
----
-
-## Continue On Error
-
-By default, Dift continues running other comparisons even if one fails.
+## Generate Cron Schedule
 
 ```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --continue-on-error
-```
-
-Stop immediately on first failure:
-
-```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --stop-on-error
-old_dataset: "examples/old.csv"
-new_dataset: "examples/new.csv"
-key: "customer_id"
-threshold: 0.05
-report: "html"  
+dift schedule cron nightly-check
 ```
 
 ---
 
 # Comparison History
 
-Dift supports persistent comparison history tracking.
-
-This helps teams monitor:
-
-* dataset drift over time
-* recurring quality issues
-* historical risk changes
-* long-term data trust trends
-
----
-
-## Save Comparison History
+Enable persistent history tracking:
 
 ```bash
 dift examples/old.csv examples/new.csv \
-  --key customer_id \
   --history
-````
-
-By default, history is saved to:
-
-```text
-.dift/history/history.jsonl
 ```
 
 ---
 
-## Custom History Directory
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --history \
-  --history-dir reports/history
-```
-
----
-
-## View Saved History
-
-```bash
-dift history list
-```
-
-Example output:
-
-```text
-1. 2026-05-15T12:30:00Z | risk=medium | old.csv -> new.csv
-2. 2026-05-16T08:10:00Z | risk=high | prod.csv -> staging.csv
-```
-
----
-
-## Show Detailed History Record
-
-```bash
-dift history show 1
-```
-
----
-
-## Clear History
-
-```bash
-dift history clear
-```
-
----
-
-## Batch Comparison History
-
-Save history during batch workflows:
-
-```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --history \
-  --history-dir reports/batch-history
-```
-
-Example structure:
-
-```text
-reports/
-└── batch-history/
-    ├── customers/
-    │   └── history.jsonl
-    ├── orders/
-    │   └── history.jsonl
-    └── products/
-        └── history.jsonl
-```
-### Configuration Priority
-Dift follows a strict priority chain to give you maximum flexibility:
-1. **CLI Arguments** (Highest priority, overrides everything)
-2. **Configuration File** (YAML, TOML, or JSON)
-3. **Internal Defaults** (Threshold: 0.1, Report: console)
-
----
-
-## Scheduled Comparisons
-
-Dift supports reusable scheduled comparison workflows for automation, monitoring, CI/CD pipelines, and recurring data quality checks.
-
-This makes it easy to:
-
-* run nightly drift checks
-* automate production dataset validation
-* integrate with cron jobs
-* schedule profile-based comparisons
-* build monitoring workflows
-
----
-
-# Create a Reusable Profile
-
-First create a comparison profile:
-
-```bash
-dift profile create nightly-check \
-  --old examples/old.csv \
-  --new examples/new.csv \
-  --key customer_id \
-  --report html \
-  --output reports/nightly.html
-```
-
-This saves all comparison settings into a reusable profile.
-
----
-
-# Generate a Cron Schedule
-
-Generate a cron-ready command:
-
-```bash
-dift schedule cron nightly-check
-```
-
-Example output:
-
-```cron
-0 2 * * * dift profile run nightly-check --history --strict-exit-codes
-```
-
-This means:
-
-* run every day
-* at 2:00 AM
-* save comparison history
-* use automation-friendly exit codes
-
----
-
-# Custom Schedule Times
-
-Generate a custom cron schedule:
-
-```bash
-dift schedule cron nightly-check \
-  --hour 5 \
-  --minute 30
-```
-
-Output:
-
-```cron
-30 5 * * * dift profile run nightly-check --history --strict-exit-codes
-```
-
-Runs daily at 5:30 AM.
-
----
-
-# Save Scheduled Jobs
-
-Create a named schedule:
-
-```bash
-dift schedule create daily-check \
-  --profile nightly-check \
-  --cron "0 2 * * *"
-```
-
----
-
-# List Saved Schedules
-
-```bash
-dift schedule list
-```
-
-Example:
-
-```text
-- daily-check
-```
-
----
-
-# Show Schedule Details
-
-```bash
-dift schedule show daily-check
-```
-
-Example output:
-
-```json
-{
-  "profile": "nightly-check",
-  "cron": "0 2 * * *"
-}
-```
-
----
-
-# Run a Schedule Manually
-
-You can manually trigger a saved schedule:
-
-```bash
-dift schedule run daily-check
-```
-
-This runs the associated profile immediately.
-
----
-
-# Delete a Schedule
-
-```bash
-dift schedule delete daily-check
-```
-
----
-
-# Example Cron Integration (Linux/macOS)
-
-Open your crontab:
-
-```bash
-crontab -e
-```
-
-Add:
-
-```cron
-0 2 * * * dift profile run nightly-check --history --strict-exit-codes
-```
-
----
-
-# Example Windows Task Scheduler
-
-Use the generated command:
-
-```bash
-dift profile run nightly-check --history --strict-exit-codes
-```
-
-inside:
-
-* Windows Task Scheduler
-* Jenkins
-* GitHub Actions
-* Airflow
-* Prefect
-* Dagster
-* CI/CD pipelines
-
----
-
-# Automation-Friendly Exit Codes
-
-Dift supports optional risk-based exit codes for automation workflows.
-
-By default, Dift exits with:
-
-```text
-0
-```
-
-when comparisons complete successfully.
-
-Enable strict automation behavior with:
-
-```bash
-dift prod.csv candidate.csv \
-  --key id \
-  --strict-exit-codes
-```
-
----
-
-## Exit Code Mapping
-
-| Exit Code | Meaning |
-|---|---|
-| `0` | Low-risk comparison |
-| `1` | Medium-risk drift detected |
-| `2` | High-risk drift detected |
-| `3` | Runtime error, invalid input, or failed comparison |
-
-
-This allows Dift to automatically fail pipelines when risky dataset changes are detected.
-
----
-
-## Example
+# Automation-Friendly Execution
 
 ```bash
 dift prod.csv staging.csv \
-  --key customer_id \
-  --strict-exit-codes
-
-echo $?
-```
-
-Example output:
-
-```text
-2
-```
-
-This means Dift detected a high-risk dataset change.
-
----
-
-## Backward Compatibility
-
-Strict exit codes are optional.
-
-Without `--strict-exit-codes`, Dift preserves the original behavior and exits successfully when comparisons complete.
-
----
-
-## Non-Interactive CLI Support
-
-Dift supports automation-friendly execution for CI/CD pipelines, cron jobs, Airflow, Jenkins, GitHub Actions, and scheduled workflows.
-
-### Quiet Mode
-
-Suppress non-error output:
-
-```bash
-dift old.csv new.csv \
-  --key id \
-  --quiet
-```
-
-This is useful for:
-
-* cron jobs
-* CI/CD pipelines
-* scheduled validation workflows
-* automated monitoring
-
-Errors will still be displayed.
-
----
-
-### Disable Colored Output
-
-Disable ANSI terminal colors for cleaner logs:
-
-```bash
-dift old.csv new.csv \
-  --key id \
-  --no-color
-```
-
-Useful for:
-
-* log aggregation systems
-* CI logs
-* plain-text terminals
-* automation tools
-
----
-
-### Fully Automation-Friendly Example
-
-```bash
-dift old.csv new.csv \
-  --key id \
   --strict-exit-codes \
   --quiet \
   --no-color
 ```
 
-This combination provides:
-
-* predictable exit codes
-* machine-friendly output
-* clean CI logs
-* non-interactive execution behavior
-
 ---
 
-### Scheduled Workflow Example
+# Configuration Support
 
-```bash
-dift schedule cron nightly-check
-```
+Supported config formats:
 
-Example output:
+- YAML
+- TOML
+- JSON
 
-```cron
-0 2 * * * dift profile run nightly-check --history --strict-exit-codes --quiet --no-color
-```
+Run using config:
 
----
-
-
-# DuckDB Support
-
-Dift supports comparing datasets directly from DuckDB databases.
-
-This enables warehouse-style comparisons, SQL-based validation, and Parquet-backed analytical workflows.
-
-## Compare DuckDB Tables
-
-```bash
-dift duckdb:///examples/warehouse.duckdb:customers_old \
-     duckdb:///examples/warehouse.duckdb:customers_new \
-     --key customer_id
-```
-
-## URI Format
-
-```text
-duckdb:///path/to/database.duckdb:table_name
-```
-
-## Example
-
-```text
-duckdb:///data/warehouse.duckdb:orders
-```
-
-## Works With
-
-* existing risk scoring
-* HTML reports
-* Excel reports
-* JSON reports
-* CSV reports
-* drift detection
-* quality validation
-
-## Common Use Cases
-
-* local analytics warehouses
-* Parquet validation workflows
-* SQL-based dataset comparison
-* batch data quality checks
-
-## Notes
-
-* DuckDB database files must exist locally.
-* Remote DuckDB connections are not currently supported.
-* Table names may be case-sensitive depending on configuration.
-* DuckDB comparisons use the existing Dift comparison engine and reports.
-
----
-
-
-# BigQuery Support
-
-Dift supports comparing datasets directly from Google BigQuery.
-
-This enables cloud warehouse validation, analytical comparisons, and SQL-driven data quality workflows.
-
-## Compare BigQuery Tables
-
-```bash
-dift bigquery://my-project.analytics.customers_old \
-     bigquery://my-project.analytics.customers_new \
-     --key customer_id
-```
-
-## URI Format
-
-```text
-bigquery://project.dataset.table
-```
-
-## Example
-
-```text
-bigquery://acme-analytics.sales.orders
-```
-
-## Authentication
-
-Dift uses standard Google Cloud authentication.
-
-Set your service account credentials:
-
-### Linux / macOS
-
-```bash
-export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account.json"
-```
-
-### Windows Git Bash
-
-```bash
-export GOOGLE_APPLICATION_CREDENTIALS="C:/path/to/service-account.json"
-```
-
-## Install Dependencies
-
-```bash
-pip install google-cloud-bigquery db-dtypes
-```
-
-## Works With
-
-* existing risk scoring
-* HTML reports
-* Excel reports
-* JSON reports
-* CSV reports
-* drift detection
-* quality validation
-
-## Common Use Cases
-
-* cloud warehouse validation
-* production dataset monitoring
-* analytics QA workflows
-* cross-environment data comparison
-* SQL-driven data quality checks
-
-## Notes
-
-* BigQuery access requires valid Google Cloud credentials.
-* BigQuery billing and permissions are managed through Google Cloud.
-* BigQuery comparisons use the existing Dift comparison engine and reports.
-
----
-
-# SQL & Data Warehouse Support
-
-Dift supports direct SQL database comparison using SQLAlchemy-compatible connection strings.
-
-Supported workflows include:
-
-* table-to-table comparison
-* query-based comparison
-* database-to-database comparison
-* database-to-file comparison
-* ETL and warehouse validation
-* drift detection and risk scoring
-
----
-
-## URI Format
-
-```text
-connection_string:table_name
-```
-
-Examples:
-
-```text
-sqlite:///examples/data.db:customers
-
-postgresql://user:password@localhost:5432/mydb:customers
-postgresql+psycopg://user:password@localhost:5432/mydb:customers
-
-mysql+pymysql://user:password@localhost:3306/mydb:customers
-
-redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders
-
-snowflake://user:password@account/db/schema?warehouse=compute_wh:orders
-```
-
----
-
-## SQLite
-
-Lightweight local database comparison.
-
-```bash
-dift sqlite:///examples/old.db:customers_old \
-     sqlite:///examples/new.db:customers_new \
-     --key customer_id
-```
-
----
-
-## PostgreSQL
-
-Install driver:
-
-```bash
-pip install psycopg2-binary
-```
-
-Compare tables:
-
-```bash
-dift postgresql://user:password@localhost:5432/sales_db:customers_old \
-     postgresql://user:password@localhost:5432/sales_db:customers_new \
-     --key customer_id
-```
-
-Alternative driver:
-
-```bash
-dift postgresql+psycopg://user:password@localhost:5432/sales_db:customers_old \
-     postgresql+psycopg://user:password@localhost:5432/sales_db:customers_new \
-     --key customer_id
-```
-
----
-
-## MySQL
-
-Install driver:
-
-```bash
-pip install pymysql
-```
-
-Compare tables:
-
-```bash
-dift mysql+pymysql://user:password@localhost:3306/sales_db:customers_old \
-     mysql+pymysql://user:password@localhost:3306/sales_db:customers_new \
-     --key customer_id
-```
-
----
-
-## Amazon Redshift
-
-Install dependencies:
-
-```bash
-pip install sqlalchemy-redshift redshift-connector
-```
-
-Compare tables:
-
-```bash
-dift redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_old \
-     redshift+redshift_connector://user:password@cluster.region.redshift.amazonaws.com:5439/dev:orders_new \
-     --key order_id
-```
-
----
-
-## Snowflake
-
-Install dependencies:
-
-```bash
-pip install snowflake-sqlalchemy
-```
-
-Compare tables:
-
-```bash
-dift snowflake://user:password@account/db/schema?warehouse=compute_wh:orders_old \
-     snowflake://user:password@account/db/schema?warehouse=compute_wh:orders_new \
-     --key order_id
-```
-
----
-
-## Install Core SQL Support
-
-```bash
-pip install sqlalchemy
-```
-
-Optional drivers:
-
-```bash
-pip install psycopg2-binary
-pip install pymysql
-pip install sqlalchemy-redshift redshift-connector
-pip install snowflake-sqlalchemy
-```
-
----
-
-## Supported Features
-
-SQL datasets work with:
-
-* schema comparison
-* row comparison
-* drift detection
-* null and duplicate spike detection
-* risk scoring
-* JSON reports
-* CSV reports
-* Excel reports
-* HTML reports
-
----
-
-## Notes
-
-* SQLite database files must exist locally.
-* PostgreSQL, MySQL, Redshift, and Snowflake require valid credentials and reachable servers.
-* SQL support is powered by SQLAlchemy.
-* Query results are loaded into Polars DataFrames before comparison.
-* SQL comparisons use the existing Dift comparison engine and reporting system.
-
----
-
-## Requirements
-
-* Python 3.10+
-
----
-
-## Quick Install
-
-```bash
-pip install dift-cli
-```
-
-Then run:
-
-```bash
-dift --help
-```
-
----
-
-## Quick Update (Latest version: 0.5.0)
-
-```bash
-pip install --upgrade dift-cli
-```
-
----
-
-## Cross Platform Setup
-
-### Windows (Git Bash)
-
-```bash
-python -m venv .venv
-source .venv/Scripts/activate
-pip install dift-cli
-```
-
-### Windows (PowerShell)
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install dift-cli
-```
-
-### Mac / Linux
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install dift-cli
-```
-
-### pipx (Recommended)
-
-```bash
-pipx install dift-cli
-```
-
----
-
-## Verify Install
-
-```bash
-dift --help
-```
-
-or
-
-```bash
-python -m dift.cli --help
-```
-
----
-
-# Quick Start
-
-## Compare CSV Files
-
-```bash
-dift examples/old.csv examples/new.csv --key customer_id
-```
-
-If your paths are defined in the config, just run:
 ```bash
 dift --config examples/config_sample.yaml
 ```
----
-
-## Detect Numeric Drift
-
-```bash
-dift examples/old_drift.csv examples/new_drift.csv --key id --threshold 0.1
-```
 
 ---
 
-# Generate Reports
-
-## JSON
+# Environment-Based Configs
 
 ```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --report json \
-  --output report.json
+dift --config examples/config_env.yaml \
+  --env production
 ```
 
-## CSV
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --report csv \
-  --output report.csv
-```
-
-## Excel
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --report excel \
-  --output report.xlsx
-```
-
-## HTML
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --report html \
-  --output report.html
-```
-
-## HTML with Template
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --key customer_id \
-  --report html \
-  --template dark \
-  --output report.html
-```
-
----
-
-# Run using Config Files
-
-```bash
-dift examples/old.csv examples/new.csv \
-  --config examples/config_sample.yaml
-```
-
----
-
-# Run using Saved Profiles
-
-```bash
-dift profile run nightly-check
-```
-## Run Batch Dataset Comparison
-
-```bash
-dift batch \
-  --old-dir data/old \
-  --new-dir data/new \
-  --key customer_id
-````
----
-
-# Example Output
-
-```text
-╭─────────────────────────╮
-│ Dift Dataset Comparison │
-│ Risk Level: MEDIUM      │
-╰─────────────────────────╯
-
-Warnings
-
-Numeric drift:
-'revenue'
-mean shift 900.00%
-(high, threshold 0.1)
-
-Outlier spike:
-'revenue' increased by 100.00%
-(high)
-
-Categorical shift:
-'segment' max frequency shift 60.00%
-(high)
-```
 ---
 
 # Example Files
+
+Most examples use files located in the project's `examples/` directory.
+
+Example structure:
 
 ```text
 examples/
@@ -1608,74 +387,47 @@ examples/
 ├── old_drift.csv
 ├── new_drift.csv
 ├── config_sample.yaml
-├── config_sample.toml
-├── config_sample.json
 ├── config_thresholds.yaml
 ├── config_env.yaml
-├── config_with_datasets.yaml
-├── config_with_datasets.toml
-└── config_with_datasets.json
+└── warehouse.duckdb
 ```
 
 ---
 
-# Use Cases
+# Documentation
 
-## ETL Validation
+Full documentation now lives in the `docs/` directory.
 
-```bash
-dift before.csv after.csv
-```
+## Getting Started
 
-## ML Dataset Drift
+- `docs/getting-started/installation.md`
+- `docs/getting-started/quickstart.md`
 
-```bash
-dift train_v1.csv train_v2.csv
-```
+## Core Guides
 
-## Production vs Staging
+- `docs/configuration.md`
+- `docs/reports.md`
+- `docs/automation.md`
+- `docs/examples.md`
 
-```bash
-dift prod.csv staging.csv --key id
-```
+## Connectors
 
-## Silent Data Drift Detection
+- `docs/connectors/sql.md`
+- `docs/connectors/duckdb.md`
+- `docs/connectors/bigquery.md`
 
-```bash
-dift train_v1.csv train_v2.csv --threshold 0.1
-```
+## Developer Documentation
 
-## Automated Validation Workflow
+- `docs/developer/architecture.md`
+- `docs/developer/plugin-preparation.md`
+- `docs/developer/reader-registry.md`
+- `docs/developer/testing.md`
 
-```bash
-dift profile run nightly-check
-```
+## Release Notes
 
-
-## Multi-Table ETL Validation
-
-```bash
-dift batch \
-  --old-dir warehouse_snapshot_1 \
-  --new-dir warehouse_snapshot_2 \
-  --report html \
-  --output-dir reports/
-```
-
-
-## Historical Drift Monitoring
-
-```bash
-dift prod.csv staging.csv \
-  --key customer_id \
-  --history
-```
-
-Track how risk and drift evolve across repeated comparison runs.
-
+- `docs/releases/index.md`
 
 ---
-
 
 # Project Structure
 
@@ -1683,32 +435,34 @@ Track how risk and drift evolve across repeated comparison runs.
 dift/
 ├── cli.py
 ├── core/
-│   ├── comparator.py
-│   ├── schema_diff.py
-│   ├── row_diff.py
-│   ├── quality_diff.py
-│   ├── stats_diff.py
-│   └── risk.py
 ├── io/
-│   ├── config_loader.py
-|   └── readers.py
+│   ├── readers.py
+│   ├── registry.py
+│   ├── sql_reader.py
+│   ├── duckdb_reader.py
+│   ├── bigquery_reader.py
+│   └── base_reader.py
 ├── reports/
-│   ├── console_report.py
-│   ├── json_report.py
-│   ├── csv_report.py
-│   ├── excel_report.py
-│   ├── html_report.py
-│   └── models.py
 ├── profiles.py
-├── batch.py
-├── thresholds.py
 ├── schedules.py
 ├── history.py
 └── utils/
 
+docs/
 tests/
 examples/
 ```
+
+---
+
+# Developer Features
+
+- Connector registry architecture
+- Shared reader interfaces
+- Plugin preparation architecture
+- Modular connector system
+- Extensible reporting system
+- Warehouse-ready workflows
 
 ---
 
@@ -1718,13 +472,17 @@ examples/
 pytest
 ```
 
-Lint:
+---
+
+# Linting
 
 ```bash
 ruff check .
 ```
 
-Type checking:
+---
+
+# Type Checking
 
 ```bash
 mypy dift
@@ -1734,167 +492,28 @@ mypy dift
 
 # Roadmap
 
-## v0.6.0
+Upcoming areas of focus include:
 
-### Database Support
+- streaming comparisons
+- distributed execution
+- MongoDB support
+- ML feature drift analysis
+- observability dashboards
+- alerting workflows
+- native Airflow integration
+- plugin ecosystem
+- Python SDK
+- Web UI dashboard
 
-#### SQL Database Integration
+See:
 
-* [x] Direct database-to-database comparison
-* [x] Table-to-table comparison support
-* [x] Query-based dataset comparison
-* [x] Connection string support
-* [x] CLI database input support
-
-#### PostgreSQL Connector
-
-* [x] PostgreSQL table reader
-* [x] Schema inference support
-* [x] Query execution support
-* [x] Secure connection handling
-
-#### MySQL Connector
-
-* [x] MySQL table reader
-* [x] Query-based comparisons
-* [x] Type compatibility handling
-
-#### SQLite Connector
-
-* [x] SQLite local database support
-* [x] Lightweight comparison workflows
-* [x] File-based database comparison
-
-#### DuckDB Support
-
-* [x] Native DuckDB integration
-* [x] Analytical dataset support
-* [x] Parquet interoperability
-
-
-### Data Warehouse Support
-
-#### Snowflake Connector
-
-* Snowflake authentication support
-* Warehouse query execution
-* Large-scale dataset comparison
-
-#### BigQuery Connector
-
-* [x] BigQuery dataset comparison
-* [x] Service account authentication
-* [x] Query-based workflows
-
-#### Redshift Connector
-
-* Redshift warehouse support
-* Efficient table extraction
-* Warehouse schema compatibility
-
-### Configuration System
-
-#### Config File Support
-
-* [x] YAML configuration support
-* [x] TOML configuration support
-* [x] JSON configuration support
-* [x] Dataset path support in configuration files  
-
-#### Saved Comparison Profiles
-
-* [x] Reusable comparison profiles
-* [x] Saved report configurations
-* [x] Named comparison presets
-
-#### Reusable Threshold Configs
-
-* [x] Numeric drift thresholds
-* [x] Categorical shift thresholds
-* [x] Outlier thresholds
-* [x] Column-level threshold overrides
-
-#### Environment-Based Configs
-
-* [x] Development/staging/production configs
-* [x] Environment variable support
-* [x] Secret management preparation
-
-
-### Automation Features
-
-#### Scheduled Comparisons
-
-* [x] Scheduled dataset checks
-* [x] Cron-friendly execution
-* [x] Time-based comparison workflows
-
-#### CLI Automation Workflows
-
-* [x] Non-interactive CLI support
-* [x] Automation-friendly exit codes
-* Pipeline integration support
-
-#### Batch Dataset Comparison
-
-* [x] Multi-dataset comparison support
-* [x] Folder-based comparisons
-* [x] Batch report generation
-
-#### Comparison History
-
-* [x] Historical comparison tracking
-* [x] Drift trend analysis
-* [x] Historical risk tracking
-
-### Reporting Improvements
-
-#### Better Excel Formatting
-
-* [x] Severity color coding
-* [x] Conditional formatting
-* [x] Improved worksheet layouts
-* [x] Better readability styling
-
-#### Better HTML Reports
-
-* [x] Drift highlighting
-* [x] Severity badges
-* [x] Improved visual summaries
-* [x] Responsive layouts
-
-#### Report Metadata Expansion
-
-* [x] Execution timestamps
-* [x] Runtime metrics
-* [x] Dataset source metadata
-* [x] Threshold metadata
-
-
-### Developer Experience
-
-#### Testing Improvements
-
-* Connector integration tests
-* Cross-format consistency tests
-* Warehouse mock testing
-
-#### CLI Improvements
-
-* Better help messages
-* Clearer validation errors
-* Progress indicators
-
-#### Plugin Preparation
-
-* Extensible reader interfaces
-* Connector registry architecture
-* Internal plugin preparation
-
+```text
+docs/roadmap.md
+```
 
 ---
 
-## Contributing
+# Contributing
 
 Contributions are welcome.
 
@@ -1904,28 +523,32 @@ See:
 CONTRIBUTING.md
 ```
 
-Ways to help:
+Ways to contribute:
 
-* Fix bugs
-* Improve docs
-* Add tests
-* Improve performance
-* Add connectors
-* Improve CLI UX
+- fix bugs
+- improve docs
+- improve testing
+- improve performance
+- add connectors
+- improve reporting
+- improve automation workflows
 
 ---
 
-## License
+# License
 
 MIT License
 
 ---
 
-## Vision
+# Vision
 
 Dift aims to become the open-source standard for:
-* dataset regression testing
-* data drift monitoring
-* ML data validation
-* warehouse trust checks
-* automated data quality enforcement
+
+- dataset regression testing
+- data drift monitoring
+- ML dataset validation
+- warehouse trust validation
+- automated data quality enforcement
+- data deployment validation
+- dataset observability

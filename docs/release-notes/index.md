@@ -63,7 +63,7 @@ Core comparison engine introduced:
 
 ---
 
-# v0.2.1 — Stability & Reporting
+# v0.2.1 - Stability & Reporting
 
 Focused on:
 
@@ -74,7 +74,7 @@ Focused on:
 
 ---
 
-# v0.3.0 — Reusable Workflows
+# v0.3.0 - Reusable Workflows
 
 Introduced:
 
@@ -86,7 +86,7 @@ Introduced:
 
 ---
 
-# v0.5.0 — Automation & Drift Intelligence
+# v0.5.0 - Automation & Drift Intelligence
 
 Major additions:
 
@@ -100,7 +100,7 @@ Major additions:
 
 ---
 
-# v0.6.0 — Connectors & Architecture
+# v0.6.0 - Connectors & Architecture
 
 Major architectural release introducing:
 

@@ -1,0 +1,80 @@
+site_name: Dift
+site_description: Open-source dataset comparison, drift detection, and data trust validation platform.
+site_author: Reginald Erzoah
+repo_url: https://github.com/ReginaldErzoah/Dift
+repo_name: ReginaldErzoah/Dift
+
+theme:
+  name: material
+
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - tables
+
+  - toc:
+      permalink: true
+
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+
+  - Getting Started:
+      - Installation: installation.md
+      - Quickstart: quickstart.md
+
+  - Guides:
+      - Configuration: configuration.md
+      - Reports: reports.md
+      - Automation: automation.md
+      - Examples: examples.md
+      - Roadmap: roadmap.md
+
+  - Developer:
+      - Architecture: developer/architecture.md
+      - Plugin Preparation: developer/plugin-preparation.md
+      - Reader Registry: developer/reader-registry.md
+      - Testing: developer/testing.md
+
+  - Releases:
+      - Overview: release-notes/index.md
+      - v0.1.0: release-notes/v0.1.0.md
+      - v0.2.1: release-notes/v0.2.1.md
+      - v0.3.0: release-notes/v0.3.0.md
+      - v0.5.0: release-notes/v0.5.0.md
+      - v0.6.0: release-notes/v0.6.0.md
