@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from pathlib import Path
 
 import polars as pl
@@ -19,6 +20,10 @@ SUPPORTED_EXTENSIONS = {
     ".json",
 }
 
+CHUNK_SUPPORTED_EXTENSIONS = {
+    ".csv",
+}
+
 SUPPORTED_SOURCE_TYPES = sorted(
     list(SUPPORTED_EXTENSIONS)
     + [
@@ -35,6 +40,14 @@ SUPPORTED_SOURCE_TYPES = sorted(
 
 class DatasetReadError(ValueError):
     """Raised when Dift cannot read a dataset."""
+
+
+def _validate_chunk_size(chunk_size: int) -> None:
+    if chunk_size <= 0:
+        raise DatasetReadError(
+            f"Invalid chunk size: {chunk_size}\n"
+            "Chunk size must be a positive integer."
+        )
 
 
 class LocalFileReader(BaseReader):
@@ -92,6 +105,51 @@ class LocalFileReader(BaseReader):
             "For database inputs, use a supported connector URI."
         )
 
+    def supports_chunks(self, source: str) -> bool:
+        dataset_path = Path(source)
+        return dataset_path.suffix.lower() in CHUNK_SUPPORTED_EXTENSIONS
+
+    def read_chunks(self, source: str, chunk_size: int) -> Iterator[pl.DataFrame]:
+        _validate_chunk_size(chunk_size)
+
+        dataset_path = Path(source)
+
+        if not dataset_path.exists():
+            raise DatasetReadError(
+                f"Dataset not found: {dataset_path}\n"
+                "Check that the file path is correct.\n"
+                "Example:\n"
+                "  dift examples/old.csv examples/new.csv"
+            )
+
+        suffix = dataset_path.suffix.lower()
+
+        if suffix != ".csv":
+            raise DatasetReadError(
+                f"Chunked reading is not supported for '{suffix}' files yet.\n"
+                "Currently supported chunked file types: .csv"
+            )
+
+        try:
+            with pl.read_csv_batched(dataset_path, batch_size=chunk_size) as reader:
+                while True:
+                    batches = reader.next_batches(1)
+
+                    if not batches:
+                        break
+
+                    for batch in batches:
+                        if batch.height > 0:
+                            yield batch
+
+        except DatasetReadError:
+            raise
+
+        except Exception as exc:
+            raise DatasetReadError(
+                f"Failed to read dataset source '{source}' in chunks. {exc}"
+            ) from exc
+
 
 def create_default_registry() -> ReaderRegistry:
     """Create the default Dift reader registry."""
@@ -146,4 +204,38 @@ def read_dataset(path: str | Path) -> pl.DataFrame:
     except Exception as exc:
         raise DatasetReadError(
             f"Failed to read dataset source '{source}'. {exc}"
+        ) from exc
+
+
+def read_dataset_chunks(
+    path: str | Path,
+    chunk_size: int,
+) -> Iterator[pl.DataFrame]:
+    """Read a dataset source incrementally as Polars DataFrame chunks."""
+    source = str(path)
+    reader = get_reader(source)
+
+    _validate_chunk_size(chunk_size)
+
+    if not reader.supports_chunks(source):
+        raise DatasetReadError(
+            f"Chunked reading is not supported for source: {source}\n"
+            "Currently supported chunked sources: local CSV files."
+        )
+
+    try:
+        yield from reader.read_chunks(source, chunk_size)
+
+    except DatasetReadError:
+        raise
+
+    except ImportError as exc:
+        raise DatasetReadError(str(exc)) from exc
+
+    except ValueError as exc:
+        raise DatasetReadError(str(exc)) from exc
+
+    except Exception as exc:
+        raise DatasetReadError(
+            f"Failed to read dataset source '{source}' in chunks. {exc}"
         ) from exc
