@@ -131,17 +131,13 @@ class LocalFileReader(BaseReader):
             )
 
         try:
-            reader = pl.read_csv_batched(dataset_path, batch_size=chunk_size)
+            batches = pl.scan_csv(dataset_path).collect_batches(
+                chunk_size=chunk_size,
+            )
 
-            while True:
-                batches = reader.next_batches(1)
-
-                if not batches:
-                    break
-
-                for batch in batches:
-                    if batch.height > 0:
-                        yield batch
+            for batch in batches:
+                if batch.height > 0:
+                    yield batch
 
         except DatasetReadError:
             raise
