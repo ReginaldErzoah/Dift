@@ -134,6 +134,23 @@ def risk_exit_code(risk_level: str) -> int:
     return ERROR_EXIT_CODE
 
 
+def _resolve_chunk_size(
+    cli_chunk_size: int | None,
+    config_data: dict,
+) -> int | None:
+    chunk_size = cli_chunk_size
+
+    if chunk_size is None:
+        config_chunk_size = config_data.get("chunk_size")
+        if config_chunk_size is not None:
+            chunk_size = int(config_chunk_size)
+
+    if chunk_size is not None and chunk_size <= 0:
+        raise ValidationError("--chunk-size must be a positive integer.")
+
+    return chunk_size
+
+
 def run_comparison(
     old_dataset: str | None,
     new_dataset: str | None,
@@ -151,6 +168,7 @@ def run_comparison(
     quiet: bool = False,
     no_color: bool = False,
     verbose: bool = False,
+    chunk_size: int | None = None,
 ) -> None:
     configure_output(quiet=quiet, no_color=no_color)
 
@@ -173,6 +191,13 @@ def run_comparison(
         error(f"Error: Failed to load config file '{config}'.")
         warning("Tip:")
         warning("Check that the config file exists, is valid, and matches the expected format.")
+        raise typer.Exit(code=ERROR_EXIT_CODE) from exc
+
+    try:
+        chunk_size = _resolve_chunk_size(chunk_size, config_data)
+
+    except ValidationError as exc:
+        error(f"Error: {exc}")
         raise typer.Exit(code=ERROR_EXIT_CODE) from exc
 
     threshold_config = resolve_threshold_config(
@@ -296,7 +321,13 @@ def run_comparison(
     started_at = perf_counter()
     generated_at = datetime.now(UTC).isoformat()
 
-    progress("Loading datasets and running comparison...", verbose=verbose)
+    if chunk_size is not None:
+        progress(
+            f"Loading datasets in chunks of {chunk_size} rows and running comparison...",
+            verbose=verbose,
+        )
+    else:
+        progress("Loading datasets and running comparison...", verbose=verbose)
 
     diff_report = compare_datasets(
         old_dataset,
@@ -304,6 +335,7 @@ def run_comparison(
         key=key,
         threshold=numeric_threshold,
         threshold_config=threshold_config,
+        chunk_size=chunk_size,
     )
 
     runtime_seconds = round(perf_counter() - started_at, 4)
@@ -380,6 +412,9 @@ Examples:
 
   Compare CSV files:
     dift old.csv new.csv --key customer_id
+
+  Compare CSV files with chunked loading:
+    dift old.csv new.csv --key customer_id --chunk-size 50000
 
   Generate JSON report:
     dift old.csv new.csv --report json --output report.json
@@ -470,6 +505,11 @@ def main(
         "--strict-exit-codes",
         help="Exit with risk-based codes: 0 low, 1 medium, 2 high, 3 error.",
     ),
+    chunk_size: int | None = typer.Option(
+        None,
+        "--chunk-size",
+        help="Read supported datasets in chunks of N rows. Currently supports local CSV files.",
+    ),
     quiet: bool = typer.Option(
         False,
         "--quiet",
@@ -507,6 +547,7 @@ def main(
             quiet=quiet,
             no_color=no_color,
             verbose=verbose,
+            chunk_size=chunk_size,
         )
 
     except typer.Exit:
@@ -545,6 +586,11 @@ def batch_run(
         False,
         "--strict-exit-codes",
         help="Exit with risk-based codes during batch comparisons.",
+    ),
+    chunk_size: int | None = typer.Option(
+        None,
+        "--chunk-size",
+        help="Read supported datasets in chunks of N rows. Currently supports local CSV files.",
     ),
     quiet: bool = typer.Option(
         False,
@@ -608,6 +654,7 @@ def batch_run(
                     quiet=quiet,
                     no_color=no_color,
                     verbose=verbose,
+                    chunk_size=chunk_size,
                 )
 
             except typer.Exit as exc:
@@ -711,6 +758,11 @@ def profile_create(
     output: str | None = typer.Option(None, "--output", "-o"),
     output_dir: str | None = typer.Option(None, "--output-dir"),
     template: str = typer.Option(DEFAULT_TEMPLATE, "--template"),
+    chunk_size: int | None = typer.Option(
+        None,
+        "--chunk-size",
+        help="Read supported datasets in chunks of N rows. Currently supports local CSV files.",
+    ),
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
     overwrite: bool = typer.Option(False, "--overwrite"),
     quiet: bool = typer.Option(False, "--quiet"),
@@ -719,6 +771,9 @@ def profile_create(
     configure_output(quiet=quiet, no_color=no_color)
 
     try:
+        if chunk_size is not None and chunk_size <= 0:
+            raise ValueError("--chunk-size must be a positive integer.")
+
         create_profile(
             name=name,
             profile={
@@ -730,6 +785,7 @@ def profile_create(
                 "output": output,
                 "output_dir": output_dir,
                 "template": template,
+                "chunk_size": chunk_size,
             },
             path=profiles_file,
             overwrite=overwrite,
@@ -814,6 +870,11 @@ def profile_run(
     output: str | None = typer.Option(None, "--output", "-o"),
     output_dir: str | None = typer.Option(None, "--output-dir"),
     template: str | None = typer.Option(None, "--template"),
+    chunk_size: int | None = typer.Option(
+        None,
+        "--chunk-size",
+        help="Override profile chunk size for supported datasets.",
+    ),
     profiles_file: str | None = typer.Option(None, "--profiles-file"),
     save_history: bool = typer.Option(
         False,
@@ -861,6 +922,15 @@ def profile_run(
 
         profile_report = profile.get("report", DEFAULT_REPORT.value)
 
+        profile_chunk_size = profile.get("chunk_size")
+        resolved_chunk_size = (
+            chunk_size
+            if chunk_size is not None
+            else int(profile_chunk_size)
+            if profile_chunk_size is not None
+            else None
+        )
+
         run_comparison(
             old_dataset=old_dataset,
             new_dataset=new_dataset,
@@ -888,6 +958,7 @@ def profile_run(
             quiet=quiet,
             no_color=no_color,
             verbose=verbose,
+            chunk_size=resolved_chunk_size,
         )
 
     except typer.Exit:
@@ -1032,6 +1103,7 @@ def schedule_run(
             output=None,
             output_dir=None,
             template=None,
+            chunk_size=None,
             profiles_file=None,
             save_history=bool(schedule.get("history", True)),
             history_dir=None,
