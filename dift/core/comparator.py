@@ -1,13 +1,43 @@
 from __future__ import annotations
 
+import polars as pl
+
 from dift.core.quality_diff import compare_quality
 from dift.core.risk import assign_risk_level
 from dift.core.row_diff import compare_rows
 from dift.core.schema_diff import compare_schema
 from dift.core.stats_diff import compare_stats
-from dift.io.readers import read_dataset
+from dift.io.readers import read_dataset, read_dataset_chunks
 from dift.reports.models import DiffReport, Summary
 from dift.thresholds import ThresholdConfig
+
+
+def _read_dataset_with_optional_chunks(
+    dataset: str,
+    chunk_size: int | None = None,
+) -> pl.DataFrame:
+    """
+    Read a dataset normally or through the chunked reader path.
+
+    This is the first chunk-aware comparison step. It allows Dift to load
+    supported sources incrementally before combining them into the existing
+    comparison engine.
+
+    Future versions can push chunk processing deeper into row/stat comparison
+    so very large datasets do not need to be materialized before comparison.
+    """
+    if chunk_size is None:
+        return read_dataset(dataset)
+
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be a positive integer.")
+
+    chunks = list(read_dataset_chunks(dataset, chunk_size=chunk_size))
+
+    if not chunks:
+        return pl.DataFrame()
+
+    return pl.concat(chunks, how="vertical")
 
 
 def compare_datasets(
@@ -16,10 +46,11 @@ def compare_datasets(
     key: str | None = None,
     threshold: float = 0.1,
     threshold_config: ThresholdConfig | None = None,
+    chunk_size: int | None = None,
 ) -> DiffReport:
     """Run the full dataset comparison."""
-    old = read_dataset(old_dataset)
-    new = read_dataset(new_dataset)
+    old = _read_dataset_with_optional_chunks(old_dataset, chunk_size=chunk_size)
+    new = _read_dataset_with_optional_chunks(new_dataset, chunk_size=chunk_size)
 
     schema_diff = compare_schema(old, new)
     row_diff = compare_rows(old, new, key=key)
