@@ -4,11 +4,11 @@
   <picture>
     <source
       media="(prefers-color-scheme: dark)"
-      srcset="https://raw.githubusercontent.com/ReginaldErzoah/Dift/main/assets/dift-logo-dark.png"
+      srcset="https://github.com/ReginaldErzoah/Dift/blob/main/assets/dift-logo-dark.png"
     />
     <source
       media="(prefers-color-scheme: light)"
-      srcset="https://raw.githubusercontent.com/ReginaldErzoah/Dift/main/assets/dift-logo-light.png"
+      srcset="https://github.com/ReginaldErzoah/Dift/blob/main/assets/dift-logo-light.png"
     />
   </picture>
 </p>
