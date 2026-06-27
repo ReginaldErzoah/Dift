@@ -18,9 +18,13 @@
   </picture>
 </p>
 
-![Python](https://img.shields.io/badge/python-3.10+-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-0.6.0-orange)
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.10+-blue" />
+  <img src="https://img.shields.io/badge/license-MIT-green" />
+  <img src="https://img.shields.io/badge/version-0.6.0-orange" />
+</p>
+
+## What is Dift?
 
 Dift is an open-source platform for dataset comparison, drift detection, and automated data trust validation.
 
@@ -42,7 +46,7 @@ Dift supports:
 
 ---
 
-# Documentation
+## Documentation
 
 Full documentation is available here:
 
@@ -50,7 +54,7 @@ https://reginalderzoah.github.io/Dift/
 
 ---
 
-# Why Dift?
+## Why Dift?
 
 Bad data silently breaks:
 
@@ -65,9 +69,9 @@ Dift helps teams detect risky dataset changes before they propagate into product
 
 ---
 
-# Key Features
+## Key Features
 
-## Dataset Comparison
+### Dataset Comparison
 
 - Schema comparison
 - Row-level comparison
@@ -78,23 +82,23 @@ Dift helps teams detect risky dataset changes before they propagate into product
 
 ---
 
-## Drift Detection
+### Drift Detection
 
-### Numeric Drift
+#### Numeric Drift
 
 - Mean shift detection
 - Standard deviation drift
 - Range shift analysis
 - Severity classification
 
-### Categorical Drift
+#### Categorical Drift
 
 - New value detection
 - Removed value detection
 - Frequency shift analysis
 - Severity scoring
 
-### Outlier Detection
+#### Outlier Detection
 
 - IQR outlier analysis
 - Outlier spike detection
@@ -102,16 +106,16 @@ Dift helps teams detect risky dataset changes before they propagate into product
 
 ---
 
-# Supported Dataset Sources
+## Supported Dataset Sources
 
-## Local Files
+### Local Files
 
 - CSV
 - Parquet
 - Excel (`.xlsx`, `.xls`)
 - JSON
 
-## Databases & Warehouses
+### Databases & Warehouses
 
 - SQLite
 - PostgreSQL
@@ -123,7 +127,7 @@ Dift helps teams detect risky dataset changes before they propagate into product
 
 ---
 
-# Reporting
+## Reporting
 
 Dift supports:
 
@@ -135,7 +139,7 @@ Dift supports:
 
 ---
 
-# HTML Templates
+## HTML Templates
 
 Available templates:
 
@@ -155,7 +159,7 @@ dift old.csv new.csv \
 
 ---
 
-# Automation Features
+## Automation Features
 
 - Scheduled comparisons
 - Batch dataset comparison
@@ -167,9 +171,9 @@ dift old.csv new.csv \
 
 ---
 
-# Installation
+## Installation
 
-## Install
+### Install
 
 ```bash
 pip install dift-cli
@@ -177,7 +181,7 @@ pip install dift-cli
 
 ---
 
-## Upgrade
+### Upgrade
 
 ```bash
 pip install --upgrade dift-cli
@@ -185,45 +189,45 @@ pip install --upgrade dift-cli
 
 ---
 
-# Optional Connector Dependencies
+## Optional Connector Dependencies
 
-## SQL Support
+### SQL Support
 
 ```bash
 pip install sqlalchemy
 ```
 
-## PostgreSQL
+### PostgreSQL
 
 ```bash
 pip install psycopg2-binary
 ```
 
-## MySQL
+### MySQL
 
 ```bash
 pip install pymysql
 ```
 
-## Redshift
+### Redshift
 
 ```bash
 pip install sqlalchemy-redshift redshift-connector
 ```
 
-## Snowflake
+### Snowflake
 
 ```bash
 pip install snowflake-sqlalchemy
 ```
 
-## BigQuery
+### BigQuery
 
 ```bash
 pip install google-cloud-bigquery db-dtypes
 ```
 
-## DuckDB
+### DuckDB
 
 ```bash
 pip install duckdb
@@ -231,9 +235,9 @@ pip install duckdb
 
 ---
 
-# Quick Start
+## Quick Start
 
-## Compare CSV Files
+### Compare CSV Files
 
 ```bash
 dift examples/old.csv examples/new.csv \
@@ -242,7 +246,7 @@ dift examples/old.csv examples/new.csv \
 
 ---
 
-## Generate JSON Report
+### Generate JSON Report
 
 ```bash
 dift examples/old.csv examples/new.csv \
@@ -253,7 +257,7 @@ dift examples/old.csv examples/new.csv \
 
 ---
 
-## Generate HTML Report
+### Generate HTML Report
 
 ```bash
 dift examples/old.csv examples/new.csv \
@@ -265,7 +269,7 @@ dift examples/old.csv examples/new.csv \
 
 ---
 
-## Detect Numeric Drift
+### Detect Numeric Drift
 
 ```bash
 dift examples/old_drift.csv examples/new_drift.csv \
@@ -275,9 +279,9 @@ dift examples/old_drift.csv examples/new_drift.csv \
 
 ---
 
-# Database & Warehouse Examples
+## Database & Warehouse Examples
 
-## PostgreSQL
+### PostgreSQL
 
 ```bash
 dift postgresql://user:password@localhost:5432/sales_db:customers_old \
@@ -287,7 +291,7 @@ dift postgresql://user:password@localhost:5432/sales_db:customers_old \
 
 ---
 
-## DuckDB
+### DuckDB
 
 ```bash
 dift duckdb:///warehouse.duckdb:orders_old \
@@ -297,7 +301,7 @@ dift duckdb:///warehouse.duckdb:orders_old \
 
 ---
 
-## BigQuery
+### BigQuery
 
 ```bash
 dift bigquery://analytics.sales.orders_old \
@@ -307,7 +311,7 @@ dift bigquery://analytics.sales.orders_old \
 
 ---
 
-# Batch Comparison
+## Batch Comparison
 
 ```bash
 dift batch \
@@ -318,9 +322,9 @@ dift batch \
 
 ---
 
-# Scheduled Workflows
+## Scheduled Workflows
 
-## Create Profile
+### Create Profile
 
 ```bash
 dift profile create nightly-check \
@@ -329,13 +333,13 @@ dift profile create nightly-check \
   --key customer_id
 ```
 
-## Run Profile
+### Run Profile
 
 ```bash
 dift profile run nightly-check
 ```
 
-## Generate Cron Schedule
+### Generate Cron Schedule
 
 ```bash
 dift schedule cron nightly-check
@@ -343,7 +347,7 @@ dift schedule cron nightly-check
 
 ---
 
-# Comparison History
+## Comparison History
 
 Enable persistent history tracking:
 
@@ -354,7 +358,7 @@ dift examples/old.csv examples/new.csv \
 
 ---
 
-# Automation-Friendly Execution
+## Automation-Friendly Execution
 
 ```bash
 dift prod.csv staging.csv \
@@ -365,7 +369,7 @@ dift prod.csv staging.csv \
 
 ---
 
-# Configuration Support
+## Configuration Support
 
 Supported config formats:
 
@@ -381,7 +385,7 @@ dift --config examples/config_sample.yaml
 
 ---
 
-# Environment-Based Configs
+## Environment-Based Configs
 
 ```bash
 dift --config examples/config_env.yaml \
@@ -390,7 +394,7 @@ dift --config examples/config_env.yaml \
 
 ---
 
-# Example Files
+## Example Files
 
 Most examples use files located in the project's `examples/` directory.
 
@@ -417,7 +421,7 @@ examples/
 ---
 
 
-# Project Structure
+## Project Structure
 
 ```text
 dift/
@@ -443,7 +447,7 @@ examples/
 
 ---
 
-# Developer Features
+## Developer Features
 
 - Connector registry architecture
 - Shared reader interfaces
@@ -454,7 +458,7 @@ examples/
 
 ---
 
-# Run Tests
+## Run Tests
 
 ```bash
 pytest
@@ -462,7 +466,7 @@ pytest
 
 ---
 
-# Linting
+## Linting
 
 ```bash
 ruff check .
@@ -470,7 +474,7 @@ ruff check .
 
 ---
 
-# Type Checking
+## Type Checking
 
 ```bash
 mypy dift
@@ -478,7 +482,7 @@ mypy dift
 
 ---
 
-# Roadmap
+## Roadmap
 
 Upcoming areas of focus include:
 
@@ -501,7 +505,7 @@ docs/roadmap.md
 
 ---
 
-# Contributing
+## Contributing
 
 Contributions are welcome.
 
@@ -523,13 +527,7 @@ Ways to contribute:
 
 ---
 
-# License
-
-MIT License
-
----
-
-# Vision
+## Vision
 
 Dift aims to become the open-source standard for:
 
