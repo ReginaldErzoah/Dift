@@ -257,7 +257,7 @@ This cancels the rebase.
 | Clone             | `git clone https://github.com/YOUR_USERNAME/Dift.git`                |
 | Enter Dift        | `cd Dift`                                                            |
 | Add upstream      | `git remote add upstream https://github.com/ReginaldErzoah/Dift.git` |
-| Install           | `pip install -e .`                                            |
+| Install           | `pip install -e .[dev]`                                            |
 | Create branch     | `git checkout -b my-issue`                                           |
 | Test              | `pytest`                                                             |
 | Lint              | `ruff check .`                                                       |
