@@ -263,4 +263,4 @@ This cancels the rebase.
 | Lint              | `ruff check .`                                                       |
 | Commit            | `git commit -m "type: description"`                                  |
 | Push              | `git push origin my-issue`                                           |
-| Rebase            | `
+| Rebase            
