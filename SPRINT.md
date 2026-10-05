@@ -264,4 +264,3 @@ This cancels the rebase.
 | Commit            | `git commit -m "type: description"`                                  |
 | Push              | `git push origin my-issue`                                           |
 | Rebase            | `git fetch upstream && git rebase upstream/main`                     |
-| Push after rebase | `git push origin my-issue --force-with-lease`                        |
