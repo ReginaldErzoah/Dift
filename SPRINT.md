@@ -262,4 +262,4 @@ This cancels the rebase.
 | Test              | `pytest`                                                             |
 | Lint              | `ruff check .`                                                       |
 | Commit            | `git commit -m "type: description"`                                  |
-| Push              | `git push 
+| Push              | `git pu
