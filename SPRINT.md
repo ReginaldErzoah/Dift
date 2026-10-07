@@ -261,4 +261,4 @@ This cancels the rebase.
 | Create branch     | `git checkout -b my-issue`                                           |
 | Test              | `pytest`                                                             |
 | Lint              | `ruff check .`                                                       |
-| Commit            | `git commit -
+| Commit            | `git comm
